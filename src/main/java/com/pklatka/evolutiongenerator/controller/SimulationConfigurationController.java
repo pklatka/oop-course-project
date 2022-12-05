@@ -3,10 +3,12 @@ package com.pklatka.evolutiongenerator.controller;
 import com.pklatka.evolutiongenerator.handler.ChoiceBoxHandler;
 import com.pklatka.evolutiongenerator.handler.IConfigurationField;
 import com.pklatka.evolutiongenerator.handler.TextFieldHandler;
+import com.pklatka.evolutiongenerator.stage.SimulationStage;
 import com.pklatka.evolutiongenerator.utils.FileChooserUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
@@ -132,6 +134,17 @@ public class SimulationConfigurationController implements Initializable {
         simulationProperties.put("animalBehaviourVariant", new ChoiceBoxHandler(animalBehaviourVariant));
         simulationProperties.put("plantGrowVariant", new ChoiceBoxHandler(plantGrowVariant));
         simulationProperties.put("mutationVariant", new ChoiceBoxHandler(mutationVariant));
+    }
+
+    private HashMap<String, String> getSimulationOptions(){
+        HashMap<String, String> options = new HashMap<>();
+        // ************* Additional options
+        options.put("statisticsFileLocationURL", statisticsFileLocationURL);
+
+        simulationProperties.keySet().forEach((key)->{
+            options.put(key, simulationProperties.get(key).readProperty());
+        });
+        return options;
     }
 
     public void setFileChooserUtil(FileChooserUtil fileChooserUtil){
@@ -275,8 +288,11 @@ public class SimulationConfigurationController implements Initializable {
             }));
 
             runSimulation.setOnAction((event -> {
-                // Send arguments to simulation stage
+                // Get all arguments
+                HashMap<String, String> args = getSimulationOptions();
 
+                // Send arguments to simulation stage
+                new SimulationStage(new String[]{}, new Stage());
             }));
 
         }catch (IOException | IllegalArgumentException e){

@@ -9,5 +9,6 @@ module com.pklatka.evolutiongenerator {
     exports com.pklatka.evolutiongenerator.stage;
     exports com.pklatka.evolutiongenerator.utils;
     exports com.pklatka.evolutiongenerator.handler;
+    exports com.pklatka.evolutiongenerator.model;
     opens com.pklatka.evolutiongenerator.controller to javafx.fxml;
 }
