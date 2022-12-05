@@ -168,5 +168,6 @@
       </Label>
       <CheckBox fx:id="saveStatistics" layoutX="710.0" layoutY="623.0" mnemonicParsing="false" />
       <Button fx:id="statisticsFileLocation" disable="true" layoutX="740.0" layoutY="618.0" mnemonicParsing="false" text="Wybierz lokalizację" />
+      <Label fx:id="statisticsFileLocationStatus" alignment="CENTER" layoutX="725.0" layoutY="645.0" prefHeight="17.0" prefWidth="147.0" textAlignment="CENTER" />
    </children>
 </AnchorPane>

@@ -1,0 +1,16 @@
+animalCreationEnergyConsumption=30
+plantGrowVariant=zalesione równiki
+mapVariant=kula ziemska
+maximumMutationNumber=15
+mutationVariant=pełna losowość
+plantStartNumber=40
+animalCreationEnergy=20
+mapHeight=800
+animalStartNumber=50
+animalStartEnergy=40
+animalBehaviourVariant=pełna predestynacja
+genomLength=10
+plantSpawnNumber=10
+plantEnergy=10
+mapWidth=1000
+minimumMutationNumber=0

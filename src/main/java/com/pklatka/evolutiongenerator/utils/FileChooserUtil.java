@@ -22,7 +22,6 @@ public class FileChooserUtil
 
         //Show save file dialog
         File file = fileChooser.showOpenDialog(stage);
-
         if (file != null) {
             return file.getPath();
         }
