@@ -141,14 +141,19 @@ public class SimulationConfigurationController implements Initializable {
     }
 
     private HashMap<String, String> getSimulationOptions(){
-        HashMap<String, String> options = new HashMap<>();
-        // ************* Additional options
-        options.put("statisticsFileLocationURL", statisticsFileLocationURL);
+        HashMap<String, String> args = new HashMap<>();
+        // ******* Additional arguments
+        args.put("statisticsFileLocationURL", statisticsFileLocationURL);
 
-        simulationProperties.keySet().forEach((key)->{
-            options.put(key, simulationProperties.get(key).readProperty());
-        });
-        return options;
+        for(String key: simulationProperties.keySet()) {
+            String property = simulationProperties.get(key).readProperty();
+            if(property.equals("")){
+                alertError("Błąd parametru", "Error", "Parametr "+key+ " ma błędną wartość");
+                return null;
+            }
+            args.put(key, property);
+        }
+        return args;
     }
 
     public void setFileChooserUtil(FileChooserUtil fileChooserUtil){
@@ -306,16 +311,8 @@ public class SimulationConfigurationController implements Initializable {
                 // Get all arguments
                 HashMap<String, String> args = getSimulationOptions();
 
-                // ******* Additional arguments
-                args.put("statisticsFileLocationURL", statisticsFileLocationURL);
-
-                for(String key: simulationProperties.keySet()) {
-                    String property = simulationProperties.get(key).readProperty();
-                    if(property.equals("")){
-                        alertError("Błąd parametru", "Error", "Parametr "+key+ " ma błędną wartość");
-                        return;
-                    }
-                    args.put(key, property);
+                if(args == null){
+                    return;
                 }
 
                 // Send arguments to simulation stage
