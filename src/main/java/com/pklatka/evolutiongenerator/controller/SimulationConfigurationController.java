@@ -86,6 +86,7 @@ public class SimulationConfigurationController implements Initializable {
     @FXML
     private Label statisticsFileLocationStatus;
     private String statisticsFileLocationURL = "";
+    private boolean stopListeningExampleConfiguration = false;
 
     // ************* Utils
     private final HashMap<String, IConfigurationField> simulationProperties = new HashMap<>();
@@ -118,26 +119,24 @@ public class SimulationConfigurationController implements Initializable {
 
         // Load elements to hashmap
         // ********* TextField
-        simulationProperties.put("mapWidth", new TextFieldHandler(mapWidth));
-        simulationProperties.put("mapHeight", new TextFieldHandler(mapHeight));
-        simulationProperties.put("animalStartNumber", new TextFieldHandler(animalStartNumber));
-        simulationProperties.put("genomLength", new TextFieldHandler(genomLength));
-        simulationProperties.put("animalStartEnergy", new TextFieldHandler(animalStartEnergy));
-        simulationProperties.put("animalCreationEnergy", new TextFieldHandler(animalCreationEnergy));
-        simulationProperties.put("animalCreationEnergyConsumption", new TextFieldHandler(animalCreationEnergyConsumption));
-        simulationProperties.put("plantStartNumber", new TextFieldHandler(plantStartNumber));
-        simulationProperties.put("plantEnergy", new TextFieldHandler(plantEnergy));
-        simulationProperties.put("plantSpawnNumber", new TextFieldHandler(plantSpawnNumber));
-        simulationProperties.put("minimumMutationNumber", new TextFieldHandler(minimumMutationNumber));
-        simulationProperties.put("maximumMutationNumber", new TextFieldHandler(maximumMutationNumber));
+        simulationProperties.put("mapWidth", new TextFieldHandler(mapWidth, exampleConfiguration));
+        simulationProperties.put("mapHeight", new TextFieldHandler(mapHeight, exampleConfiguration));
+        simulationProperties.put("animalStartNumber", new TextFieldHandler(animalStartNumber, exampleConfiguration));
+        simulationProperties.put("genomLength", new TextFieldHandler(genomLength, exampleConfiguration));
+        simulationProperties.put("animalStartEnergy", new TextFieldHandler(animalStartEnergy, exampleConfiguration));
+        simulationProperties.put("animalCreationEnergy", new TextFieldHandler(animalCreationEnergy, exampleConfiguration));
+        simulationProperties.put("animalCreationEnergyConsumption", new TextFieldHandler(animalCreationEnergyConsumption, exampleConfiguration));
+        simulationProperties.put("plantStartNumber", new TextFieldHandler(plantStartNumber, exampleConfiguration));
+        simulationProperties.put("plantEnergy", new TextFieldHandler(plantEnergy, exampleConfiguration));
+        simulationProperties.put("plantSpawnNumber", new TextFieldHandler(plantSpawnNumber, exampleConfiguration));
+        simulationProperties.put("minimumMutationNumber", new TextFieldHandler(minimumMutationNumber, exampleConfiguration));
+        simulationProperties.put("maximumMutationNumber", new TextFieldHandler(maximumMutationNumber, exampleConfiguration));
 
         // ********* ChoiceBox<String>
-        simulationProperties.put("mapVariant", new ChoiceBoxHandler(mapVariant));
-        simulationProperties.put("animalBehaviourVariant", new ChoiceBoxHandler(animalBehaviourVariant));
-        simulationProperties.put("plantGrowVariant", new ChoiceBoxHandler(plantGrowVariant));
-        simulationProperties.put("mutationVariant", new ChoiceBoxHandler(mutationVariant));
-
-        // TODO: Reset exampleConfiguration ChocieBox when value has changed
+        simulationProperties.put("mapVariant", new ChoiceBoxHandler(mapVariant, exampleConfiguration));
+        simulationProperties.put("animalBehaviourVariant", new ChoiceBoxHandler(animalBehaviourVariant, exampleConfiguration));
+        simulationProperties.put("plantGrowVariant", new ChoiceBoxHandler(plantGrowVariant, exampleConfiguration));
+        simulationProperties.put("mutationVariant", new ChoiceBoxHandler(mutationVariant, exampleConfiguration));
     }
 
     private HashMap<String, String> getSimulationOptions(){
@@ -187,6 +186,7 @@ public class SimulationConfigurationController implements Initializable {
         }
         catch (IOException e) {
             e.printStackTrace();
+            alertError("Odczyt pliku", "Error", "Błąd odczytu pliku: "+e.getLocalizedMessage());
             throw new IOException(e);
         }
     }
@@ -209,14 +209,25 @@ public class SimulationConfigurationController implements Initializable {
             Path path = Paths.get(filePath);
             Files.write(path, lines, utf8,
                     StandardOpenOption.CREATE);
+
+            alertInformation("Zapis pliku", "Informacja", "Plik został zapisany");
         } catch (IOException e) {
             e.printStackTrace();
+            alertError("Zapis pliku", "Error", "Błąd zapisu pliku: "+e.getLocalizedMessage());
             throw new IOException(e);
         }
     }
 
     private void alertError(String title, String header, String content){
         Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.show();
+    }
+
+    private void alertInformation(String title, String header, String content){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(header);
         alert.setContentText(content);
@@ -245,11 +256,26 @@ public class SimulationConfigurationController implements Initializable {
             exampleConfiguration.setValue(exampleConfiguration.getItems().get(0));
 
             // Load default configuration
-            loadConfiguration(getExampleConfigurationPath(exampleConfiguration.getValue()));
+            String defaultConfigurationFilename = exampleConfiguration.getValue();
+            loadConfiguration(getExampleConfigurationPath(defaultConfigurationFilename));
+
+            stopListeningExampleConfiguration = true;
+            exampleConfiguration.setValue(defaultConfigurationFilename);
 
             exampleConfiguration.setOnAction((event)->{
                 try{
-                    loadConfiguration(getExampleConfigurationPath(exampleConfiguration.getValue()));
+                    if(stopListeningExampleConfiguration){
+                        stopListeningExampleConfiguration = false;
+                        return;
+                    }
+                    if(exampleConfiguration.getValue().equals("")){
+                        return;
+                    }
+                    String filename = exampleConfiguration.getValue();
+                    loadConfiguration(getExampleConfigurationPath(filename));
+
+                    stopListeningExampleConfiguration = true;
+                    exampleConfiguration.setValue(filename);
                 }catch (IOException | IllegalArgumentException e){
                     alertError("Błąd pliku", "Error", e.getMessage());
                 }

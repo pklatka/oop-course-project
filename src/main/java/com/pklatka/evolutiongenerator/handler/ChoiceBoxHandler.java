@@ -4,8 +4,13 @@ import javafx.scene.control.ChoiceBox;
 
 public class ChoiceBoxHandler implements IConfigurationField{
     private ChoiceBox<String> choiceBox;
-    public ChoiceBoxHandler(ChoiceBox<String> choiceBox){
+    public ChoiceBoxHandler(ChoiceBox<String> choiceBox, ChoiceBox<String>exampleConfiguration){
         this.choiceBox = choiceBox;
+
+        choiceBox.setOnAction((event)->{
+            // Reset exampleConfiguration
+            exampleConfiguration.setValue("");
+        });
     }
 
     @Override

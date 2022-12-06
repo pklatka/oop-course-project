@@ -8,12 +8,15 @@ import javafx.scene.control.TextFormatter;
 public class TextFieldHandler implements IConfigurationField {
     private TextField textField;
 
-    public TextFieldHandler(TextField textField){
+    public TextFieldHandler(TextField textField, ChoiceBox<String>exampleConfiguration){
         this.textField = textField;
 
         // Validate if textField contains number
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
             try{
+                // Reset exampleConfiguration
+                exampleConfiguration.setValue("");
+
                 if(newValue.equals("")){
                     textField.setText("");
                     return;
