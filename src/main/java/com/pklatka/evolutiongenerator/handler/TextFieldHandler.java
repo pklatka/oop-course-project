@@ -1,11 +1,30 @@
 package com.pklatka.evolutiongenerator.handler;
 
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Control;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 
 public class TextFieldHandler implements IConfigurationField {
-    TextField textField;
+    private TextField textField;
+
     public TextFieldHandler(TextField textField){
         this.textField = textField;
+
+        // Validate if textField contains number
+        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+            try{
+                if(newValue.equals("")){
+                    textField.setText("");
+                    return;
+                }
+
+                Integer.parseInt(newValue);
+                textField.setText(newValue);
+            }catch(NumberFormatException e){
+                textField.setText(oldValue);
+            }
+        });
     }
 
     @Override

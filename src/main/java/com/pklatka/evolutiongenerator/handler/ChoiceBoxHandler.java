@@ -3,7 +3,7 @@ package com.pklatka.evolutiongenerator.handler;
 import javafx.scene.control.ChoiceBox;
 
 public class ChoiceBoxHandler implements IConfigurationField{
-    ChoiceBox<String> choiceBox;
+    private ChoiceBox<String> choiceBox;
     public ChoiceBoxHandler(ChoiceBox<String> choiceBox){
         this.choiceBox = choiceBox;
     }

@@ -85,10 +85,12 @@ public class SimulationConfigurationController implements Initializable {
     private Button statisticsFileLocation;
     @FXML
     private Label statisticsFileLocationStatus;
+    private String statisticsFileLocationURL = "";
+
+    // ************* Utils
     private final HashMap<String, IConfigurationField> simulationProperties = new HashMap<>();
 
     private FileChooserUtil fileChooserUtil;
-    private String statisticsFileLocationURL = "";
 
     private void loadProperties() throws IOException{
         // Load files from example-configurations directory
@@ -134,6 +136,8 @@ public class SimulationConfigurationController implements Initializable {
         simulationProperties.put("animalBehaviourVariant", new ChoiceBoxHandler(animalBehaviourVariant));
         simulationProperties.put("plantGrowVariant", new ChoiceBoxHandler(plantGrowVariant));
         simulationProperties.put("mutationVariant", new ChoiceBoxHandler(mutationVariant));
+
+        // TODO: Reset exampleConfiguration ChocieBox when value has changed
     }
 
     private HashMap<String, String> getSimulationOptions(){
@@ -161,8 +165,14 @@ public class SimulationConfigurationController implements Initializable {
                 // Parse line and update values in GUI
                 if (line.contains("=")){
                     String[] propPair = line.split("=");
+                    if(propPair.length < 2){
+                        throw new IllegalArgumentException("Zły argument "+ propPair[0] +" w pliku " + filePath);
+                    }
                     IConfigurationField field = simulationProperties.get(propPair[0].trim());
                     if (field != null){
+                        if(propPair[1].equals("")){
+                            throw new IllegalArgumentException("Parametr "+ propPair[0]+ " ma błędną wartość w pliku "+filePath);
+                        }
                         field.writeProperty(propPair[1].trim());
                     }else {
                         throw new IllegalArgumentException("Zły argument "+ propPair[0] +" w pliku " + filePath);
@@ -181,10 +191,14 @@ public class SimulationConfigurationController implements Initializable {
         try {
             ArrayList<String> lines = new ArrayList<>();
             // Read data
-            simulationProperties.keySet().forEach((key)->{
-                IConfigurationField field = simulationProperties.get(key);
-                lines.add(key + "=" + field.readProperty());
-            });
+            for(String key: simulationProperties.keySet()){
+                String property = simulationProperties.get(key).readProperty();
+                if(property.equals("")){
+                    alertError("Błąd parametru", "Error", "Parametr "+key+ " ma błędną wartość");
+                    return;
+                }
+                lines.add(key + "=" + property);
+            }
 
             Charset utf8 = StandardCharsets.UTF_8;
             Path path = Paths.get(filePath);
@@ -245,6 +259,7 @@ public class SimulationConfigurationController implements Initializable {
                         return;
                     }
                     loadConfiguration(path);
+                    exampleConfiguration.setValue("");
                 }catch (IOException | IllegalArgumentException e){
                     alertError("Błąd pliku","Error", e.getMessage());
                 }
@@ -291,10 +306,21 @@ public class SimulationConfigurationController implements Initializable {
                 // Get all arguments
                 HashMap<String, String> args = getSimulationOptions();
 
+                // ******* Additional arguments
+                args.put("statisticsFileLocationURL", statisticsFileLocationURL);
+
+                for(String key: simulationProperties.keySet()) {
+                    String property = simulationProperties.get(key).readProperty();
+                    if(property.equals("")){
+                        alertError("Błąd parametru", "Error", "Parametr "+key+ " ma błędną wartość");
+                        return;
+                    }
+                    args.put(key, property);
+                }
+
                 // Send arguments to simulation stage
                 new SimulationStage(new String[]{}, new Stage());
             }));
-
         }catch (IOException | IllegalArgumentException e){
             alertError("Błąd pliku","Error", e.getMessage());
         }
