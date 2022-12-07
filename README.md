@@ -1,2 +1,2 @@
-# oop-course-project
-First final project for Object Oriented Programming Course at AGH University of Science and Technology.
+# Object-oriented programming course final project
+First final project for object-oriented programming course at AGH University of Science and Technology.
