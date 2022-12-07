@@ -1,6 +1,13 @@
 package com.pklatka.evolutiongenerator.stage;
 
-import com.pklatka.evolutiongenerator.model.*;
+import com.pklatka.evolutiongenerator.model.engine.SimulationEngine;
+import com.pklatka.evolutiongenerator.model.map.AbstractWorldMap;
+import com.pklatka.evolutiongenerator.model.map.GrassField;
+import com.pklatka.evolutiongenerator.model.mapObject.IMapElement;
+import com.pklatka.evolutiongenerator.model.mapObject.MoveDirection;
+import com.pklatka.evolutiongenerator.model.ui.GuiElementBox;
+import com.pklatka.evolutiongenerator.utils.StringOptionParser;
+import com.pklatka.evolutiongenerator.utils.Vector2d;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -36,7 +43,7 @@ public class SimulationStage extends Application {
 
     public void init(String[] args) throws IllegalArgumentException {
         try {
-            MoveDirection[] directions = new OptionsParser().parse(args);
+            MoveDirection[] directions = new StringOptionParser().parse(args);
             this.mapElementPositions = new Vector2d[]{new Vector2d(2, 2), new Vector2d(3, 4)};
             this.map = new GrassField(10);
             this.simulationEngine = new SimulationEngine(map, mapElementPositions, directions, this, 1000);
@@ -50,7 +57,7 @@ public class SimulationStage extends Application {
 
     private void startAnimation(TextField textField) {
         String[] args = textField.getText().split(" ");
-        simulationEngine.setDirectionArray(new OptionsParser().parse(args));
+        simulationEngine.setDirectionArray(new StringOptionParser().parse(args));
         Thread engineThread = new Thread(simulationEngine);
         engineThread.start();
     }

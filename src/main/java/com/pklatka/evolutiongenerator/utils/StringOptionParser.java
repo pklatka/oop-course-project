@@ -1,6 +1,8 @@
-package com.pklatka.evolutiongenerator.model;
+package com.pklatka.evolutiongenerator.utils;
 
-public class OptionsParser {
+import com.pklatka.evolutiongenerator.model.mapObject.MoveDirection;
+
+public class StringOptionParser {
     public MoveDirection[] parse(String[] strArr) throws IllegalArgumentException {
 
         int moveDirectionArrLength = 0;

@@ -1,5 +1,6 @@
-package com.pklatka.evolutiongenerator.model;
+package com.pklatka.evolutiongenerator.model.ui;
 
+import com.pklatka.evolutiongenerator.model.mapObject.IMapElement;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;

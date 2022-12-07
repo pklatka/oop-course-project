@@ -1,4 +1,7 @@
-package com.pklatka.evolutiongenerator.model;
+package com.pklatka.evolutiongenerator.model.map;
+
+import com.pklatka.evolutiongenerator.model.map.AbstractWorldMap;
+import com.pklatka.evolutiongenerator.utils.Vector2d;
 
 public class RectangularMap extends AbstractWorldMap {
     public RectangularMap(int width, int height) {

@@ -1,4 +1,9 @@
-package com.pklatka.evolutiongenerator.model;
+package com.pklatka.evolutiongenerator.model.map;
+
+import com.pklatka.evolutiongenerator.model.mapObject.Animal;
+import com.pklatka.evolutiongenerator.model.mapObject.Grass;
+import com.pklatka.evolutiongenerator.model.ui.MapVisualizer;
+import com.pklatka.evolutiongenerator.utils.Vector2d;
 
 import java.util.HashMap;
 

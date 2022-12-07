@@ -1,4 +1,9 @@
-package com.pklatka.evolutiongenerator.model;
+package com.pklatka.evolutiongenerator.model.mapObject;
+
+import com.pklatka.evolutiongenerator.model.map.IPositionChangeObserver;
+import com.pklatka.evolutiongenerator.model.map.IWorldMap;
+import com.pklatka.evolutiongenerator.model.map.RectangularMap;
+import com.pklatka.evolutiongenerator.utils.Vector2d;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -78,11 +83,11 @@ public class Animal implements IMapElement {
         return this.position.x == position.x && this.position.y == position.y;
     }
 
-    void addObserver(IPositionChangeObserver observer) {
+    public void addObserver(IPositionChangeObserver observer) {
         observers.add(observer);
     }
 
-    void removeObserver(IPositionChangeObserver observer) {
+    public void removeObserver(IPositionChangeObserver observer) {
         observers.remove(observer);
     }
 

@@ -1,4 +1,7 @@
-package com.pklatka.evolutiongenerator.model;
+package com.pklatka.evolutiongenerator.model.map;
+
+import com.pklatka.evolutiongenerator.model.mapObject.Animal;
+import com.pklatka.evolutiongenerator.utils.Vector2d;
 
 /**
  * The interface responsible for interacting with the map of the world.

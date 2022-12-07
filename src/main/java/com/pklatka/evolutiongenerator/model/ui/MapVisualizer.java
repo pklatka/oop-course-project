@@ -1,4 +1,7 @@
-package com.pklatka.evolutiongenerator.model;
+package com.pklatka.evolutiongenerator.model.ui;
+
+import com.pklatka.evolutiongenerator.model.map.IWorldMap;
+import com.pklatka.evolutiongenerator.utils.Vector2d;
 
 /**
  * The map visualizer converts the {@link IWorldMap} map into a string

@@ -1,4 +1,4 @@
-package com.pklatka.evolutiongenerator.model;
+package com.pklatka.evolutiongenerator.model.engine;
 
 /**
  * The interface responsible for managing the moves of the animals.

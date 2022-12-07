@@ -1,4 +1,7 @@
-package com.pklatka.evolutiongenerator.model;
+package com.pklatka.evolutiongenerator.model.map;
+
+import com.pklatka.evolutiongenerator.model.map.IPositionChangeObserver;
+import com.pklatka.evolutiongenerator.utils.Vector2d;
 
 import java.util.Comparator;
 import java.util.TreeMap;

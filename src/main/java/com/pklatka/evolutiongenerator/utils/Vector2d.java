@@ -1,4 +1,4 @@
-package com.pklatka.evolutiongenerator.model;
+package com.pklatka.evolutiongenerator.utils;
 
 import java.util.Objects;
 

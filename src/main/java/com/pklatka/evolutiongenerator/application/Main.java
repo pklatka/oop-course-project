@@ -1,4 +1,4 @@
-package com.pklatka.evolutiongenerator;
+package com.pklatka.evolutiongenerator.application;
 
 import com.pklatka.evolutiongenerator.stage.SimulationConfigurationStage;
 import javafx.application.Application;

@@ -4,7 +4,7 @@ import com.pklatka.evolutiongenerator.handler.ChoiceBoxHandler;
 import com.pklatka.evolutiongenerator.handler.IConfigurationField;
 import com.pklatka.evolutiongenerator.handler.TextFieldHandler;
 import com.pklatka.evolutiongenerator.stage.SimulationStage;
-import com.pklatka.evolutiongenerator.utils.FileChooserUtil;
+import com.pklatka.evolutiongenerator.utils.FileChooser;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -91,12 +91,12 @@ public class SimulationConfigurationController implements Initializable {
     // ************* Utils
     private final HashMap<String, IConfigurationField> simulationProperties = new HashMap<>();
 
-    private FileChooserUtil fileChooserUtil;
+    private String configurationsFolderPath = "/src/main/resources/simulation/configurations/";
+    private FileChooser fileChooser;
 
     private void loadProperties() throws IOException{
-        // Load files from example-configurations directory
-        String filePath = new File("").getAbsolutePath();
-        filePath = filePath.concat("/src/main/resources/example-configurations");
+        // Load files from configurationsFolderPath directory
+        String filePath = new File("").getAbsolutePath().concat(configurationsFolderPath);
 
         try (Stream<Path> stream = Files.list(Paths.get(filePath))) {
             exampleConfigurations = stream.filter(file -> !Files.isDirectory(file))
@@ -155,13 +155,12 @@ public class SimulationConfigurationController implements Initializable {
         return args;
     }
 
-    public void setFileChooserUtil(FileChooserUtil fileChooserUtil){
-        this.fileChooserUtil = fileChooserUtil;
+    public void setFileChooserUtil(FileChooser fileChooser){
+        this.fileChooser = fileChooser;
     }
 
     private String getExampleConfigurationPath(String filename){
-            String filePath = new File("").getAbsolutePath();
-            return filePath.concat("/src/main/resources/example-configurations/" + filename + ".txt");
+            return new File("").getAbsolutePath().concat(configurationsFolderPath + filename + ".txt");
     }
     private void loadConfiguration(String filePath) throws IllegalArgumentException, IOException {
         try (Stream<String> stream = Files.lines(Paths.get(filePath))) {
@@ -284,7 +283,7 @@ public class SimulationConfigurationController implements Initializable {
             // Initialize button handlers
             loadConfiguration.setOnAction((event) -> {
                 try{
-                    String path = fileChooserUtil.getFilePath();
+                    String path = fileChooser.getFilePath();
                     // User has clicked cancel button
                     if(path.equals("")) {
                         return;
@@ -298,7 +297,7 @@ public class SimulationConfigurationController implements Initializable {
 
             saveConfiguration.setOnAction((event)->{
                 try{
-                    String path = fileChooserUtil.saveFilePath();
+                    String path = fileChooser.saveFilePath();
                     // User has clicked cancel button
                     if(path.equals("")) {
                         return;
@@ -311,7 +310,7 @@ public class SimulationConfigurationController implements Initializable {
 
             statisticsFileLocation.setOnAction((event) -> {
                 if(saveStatistics.isSelected()){
-                    statisticsFileLocationURL = fileChooserUtil.saveFilePath();
+                    statisticsFileLocationURL = fileChooser.saveFilePath();
                     if (statisticsFileLocationURL.equals("")){
                         statisticsFileLocationStatus.setText("Nie podano lokalizacji!");
                     }else{

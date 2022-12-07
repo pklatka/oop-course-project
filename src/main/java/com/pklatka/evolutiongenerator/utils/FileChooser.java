@@ -1,23 +1,22 @@
 package com.pklatka.evolutiongenerator.utils;
 
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
 
-public class FileChooserUtil
+public class FileChooser
 {
     private final Stage stage;
 
-    public FileChooserUtil(Stage stage){
+    public FileChooser(Stage stage){
         this.stage = stage;
     }
 
     public String getFilePath(){
-        FileChooser fileChooser = new FileChooser();
+        javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
 
         // Set extension filter for text files
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+        javafx.stage.FileChooser.ExtensionFilter extFilter = new javafx.stage.FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
         fileChooser.getExtensionFilters().add(extFilter);
 
         //Show save file dialog
@@ -29,10 +28,10 @@ public class FileChooserUtil
     }
 
     public String saveFilePath(){
-        FileChooser fileChooser = new FileChooser();
+        javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
 
         // Set extension filter for text files
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+        javafx.stage.FileChooser.ExtensionFilter extFilter = new javafx.stage.FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
         fileChooser.getExtensionFilters().add(extFilter);
 
         //Show save file dialog

@@ -1,8 +1,8 @@
 package com.pklatka.evolutiongenerator.stage;
 
-import com.pklatka.evolutiongenerator.Main;
+import com.pklatka.evolutiongenerator.application.Main;
 import com.pklatka.evolutiongenerator.controller.SimulationConfigurationController;
-import com.pklatka.evolutiongenerator.utils.FileChooserUtil;
+import com.pklatka.evolutiongenerator.utils.FileChooser;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -20,7 +20,7 @@ public class SimulationConfigurationStage extends Application {
 
             // Set stage for controller
             SimulationConfigurationController controller = (SimulationConfigurationController)fxmlLoader.getController();
-            controller.setFileChooserUtil(new FileChooserUtil(stage));
+            controller.setFileChooserUtil(new FileChooser(stage));
 
             // Stage options
             stage.setTitle("Evolution Generator");

@@ -1,6 +1,10 @@
-package com.pklatka.evolutiongenerator.model;
+package com.pklatka.evolutiongenerator.model.engine;
 
+import com.pklatka.evolutiongenerator.model.mapObject.MoveDirection;
+import com.pklatka.evolutiongenerator.model.map.IWorldMap;
+import com.pklatka.evolutiongenerator.model.mapObject.Animal;
 import com.pklatka.evolutiongenerator.stage.SimulationStage;
+import com.pklatka.evolutiongenerator.utils.Vector2d;
 import javafx.application.Platform;
 
 import java.util.ArrayList;

@@ -1,4 +1,6 @@
-package com.pklatka.evolutiongenerator.model;
+package com.pklatka.evolutiongenerator.model.mapObject;
+
+import com.pklatka.evolutiongenerator.utils.Vector2d;
 
 public enum MapDirection {
     NORTH, WEST, SOUTH, EAST;

@@ -24,8 +24,8 @@ tasks.withType(JavaCompile) {
 }
 
 application {
-    mainModule = 'com.pklatka.evolutiongenerator'
-    mainClass = 'com.pklatka.evolutiongenerator.Main'
+    mainModule = 'com.pklatka.evolutiongenerator.application'
+    mainClass = 'com.pklatka.evolutiongenerator.application.Main'
 }
 
 javafx {
