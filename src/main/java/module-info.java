@@ -3,15 +3,15 @@ module com.pklatka.evolutiongenerator {
     requires javafx.fxml;
 
 
-    exports com.pklatka.evolutiongenerator.controller;
-    exports com.pklatka.evolutiongenerator.stage;
-    exports com.pklatka.evolutiongenerator.utils;
-    exports com.pklatka.evolutiongenerator.handler;
-    opens com.pklatka.evolutiongenerator.controller to javafx.fxml;
-    exports com.pklatka.evolutiongenerator.application;
-    opens com.pklatka.evolutiongenerator.application to javafx.fxml;
-    exports com.pklatka.evolutiongenerator.model.map;
-    exports com.pklatka.evolutiongenerator.model.mapObject;
-    exports com.pklatka.evolutiongenerator.model.engine;
-    exports com.pklatka.evolutiongenerator.model.ui;
+    exports com.evolutiongenerator.controller;
+    exports com.evolutiongenerator.stage;
+    exports com.evolutiongenerator.utils;
+    exports com.evolutiongenerator.handler;
+    opens com.evolutiongenerator.controller to javafx.fxml;
+    exports com.evolutiongenerator.application;
+    opens com.evolutiongenerator.application to javafx.fxml;
+    exports com.evolutiongenerator.model.map;
+    exports com.evolutiongenerator.model.mapObject;
+    exports com.evolutiongenerator.model.engine;
+    exports com.evolutiongenerator.model.ui;
 }
