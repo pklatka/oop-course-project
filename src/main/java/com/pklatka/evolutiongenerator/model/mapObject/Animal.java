@@ -98,6 +98,9 @@ public class Animal implements IMapElement {
     }
 
     public void move(MoveDirection direction) {
+        // TODO zmieniac na nastepna pozycję wzgledem genu
+        // TODO interfejs w genach który przesuwa nam na nastepny gen
+        // TODO
         // direction handling
         switch (direction) {
             case RIGHT -> heading = heading.next();
@@ -116,6 +119,6 @@ public class Animal implements IMapElement {
                 }
             }
         }
-
     }
+
 }

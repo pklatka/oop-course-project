@@ -3,6 +3,8 @@ package com.pklatka.evolutiongenerator.model.map;
 import com.pklatka.evolutiongenerator.model.mapObject.Animal;
 import com.pklatka.evolutiongenerator.utils.Vector2d;
 
+import java.util.HashMap;
+
 /**
  * The interface responsible for interacting with the map of the world.
  * Assumes that Vector2d and MoveDirection classes are defined.
@@ -10,6 +12,7 @@ import com.pklatka.evolutiongenerator.utils.Vector2d;
  * @author apohllo
  */
 public interface IWorldMap {
+    HashMap<Vector2d,Integer> mapDeathStat = new HashMap<>();
     /**
      * Indicate if any object can move to the given position.
      *
@@ -43,4 +46,14 @@ public interface IWorldMap {
      * @return Object or null if the position is not occupied.
      */
     Object objectAt(Vector2d position);
+    /**
+     * TODO
+     *
+     * @param newPosition
+     * @return Position on the map relative to the map variant.
+     */
+    Vector2d getRelativePositionToMapVariant(Vector2d newPosition);
+    void cleanDeathAnimals();
+
+
 }
