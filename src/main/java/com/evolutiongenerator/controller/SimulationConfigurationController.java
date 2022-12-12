@@ -257,8 +257,6 @@ public class SimulationConfigurationController implements Initializable {
             // Load default configuration
             String defaultConfigurationFilename = exampleConfiguration.getValue();
             loadConfiguration(getExampleConfigurationPath(defaultConfigurationFilename));
-
-            stopListeningExampleConfiguration = true;
             exampleConfiguration.setValue(defaultConfigurationFilename);
 
             exampleConfiguration.setOnAction((event)->{
