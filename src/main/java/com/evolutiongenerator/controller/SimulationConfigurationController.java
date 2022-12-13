@@ -1,5 +1,6 @@
 package com.evolutiongenerator.controller;
 
+import com.evolutiongenerator.constant.*;
 import com.evolutiongenerator.handler.ChoiceBoxHandler;
 import com.evolutiongenerator.handler.IConfigurationField;
 import com.evolutiongenerator.handler.TextFieldHandler;
@@ -27,10 +28,11 @@ public class SimulationConfigurationController implements Initializable {
 
     // ********** Configuration for ChoiceBox objects
     List<String> exampleConfigurations;
-    String[] animalBehaviourVariants = new String[]{"pełna predestynacja", "nieco szaleństwa"};
-    String[] mutationVariants = new String[]{"pełna losowość", "lekka korekta"};
-    String[] plantGrowVariants = new String[]{"zalesione równiki", "toksyczne trupy"};
-    String[] mapVariants = new String[]{"kula ziemska", "piekielny portal"};
+    String[] animalBehaviourVariants = AnimalBehaviourVariant.getValuesAsStringArray();
+    String[] mutationVariants = MutationVariant.getValuesAsStringArray();
+    String[] plantGrowVariants = PlantGrowthVariant.getValuesAsStringArray();
+    String[] mapVariants = MapVariant.getValuesAsStringArray();
+
     // ********** Configuration fields
     @FXML
     private Button runSimulation;
@@ -40,6 +42,7 @@ public class SimulationConfigurationController implements Initializable {
     private Button loadConfiguration;
     @FXML
     private ChoiceBox<String> exampleConfiguration;
+
     // ********** Map fields
     @FXML
     private TextField mapWidth;
@@ -61,6 +64,7 @@ public class SimulationConfigurationController implements Initializable {
     private TextField animalCreationEnergyConsumption;
     @FXML
     private ChoiceBox<String> animalBehaviourVariant;
+
     // ********** Plants fields
     @FXML
     private TextField plantStartNumber;
@@ -78,6 +82,7 @@ public class SimulationConfigurationController implements Initializable {
     private TextField maximumMutationNumber;
     @FXML
     private ChoiceBox<String> mutationVariant;
+
     // ********** Options fields
     @FXML
     private CheckBox saveStatistics;
@@ -89,9 +94,8 @@ public class SimulationConfigurationController implements Initializable {
     private boolean stopListeningExampleConfiguration = false;
 
     // ************* Utils
-    private final HashMap<String, IConfigurationField> simulationProperties = new HashMap<>();
-
-    private String configurationsFolderPath = "/src/main/resources/simulation/configurations/";
+    private final HashMap<ConfigurationConstant, IConfigurationField> simulationProperties = new HashMap<>();
+    private final String configurationsFolderPath = "/src/main/resources/simulation/configurations/";
     private FileChooser fileChooser;
 
     private void loadProperties() throws IOException{
@@ -116,38 +120,36 @@ public class SimulationConfigurationController implements Initializable {
             throw new IOException(e);
         }
 
-
-        // Load elements to hashmap
         // ********* TextField
-        simulationProperties.put("mapWidth", new TextFieldHandler(mapWidth, exampleConfiguration));
-        simulationProperties.put("mapHeight", new TextFieldHandler(mapHeight, exampleConfiguration));
-        simulationProperties.put("animalStartNumber", new TextFieldHandler(animalStartNumber, exampleConfiguration));
-        simulationProperties.put("genomLength", new TextFieldHandler(genomLength, exampleConfiguration));
-        simulationProperties.put("animalStartEnergy", new TextFieldHandler(animalStartEnergy, exampleConfiguration));
-        simulationProperties.put("animalCreationEnergy", new TextFieldHandler(animalCreationEnergy, exampleConfiguration));
-        simulationProperties.put("animalCreationEnergyConsumption", new TextFieldHandler(animalCreationEnergyConsumption, exampleConfiguration));
-        simulationProperties.put("plantStartNumber", new TextFieldHandler(plantStartNumber, exampleConfiguration));
-        simulationProperties.put("plantEnergy", new TextFieldHandler(plantEnergy, exampleConfiguration));
-        simulationProperties.put("plantSpawnNumber", new TextFieldHandler(plantSpawnNumber, exampleConfiguration));
-        simulationProperties.put("minimumMutationNumber", new TextFieldHandler(minimumMutationNumber, exampleConfiguration));
-        simulationProperties.put("maximumMutationNumber", new TextFieldHandler(maximumMutationNumber, exampleConfiguration));
+        simulationProperties.put(ConfigurationConstant.MAP_WIDTH, new TextFieldHandler(mapWidth, exampleConfiguration));
+        simulationProperties.put(ConfigurationConstant.MAP_HEIGHT, new TextFieldHandler(mapHeight, exampleConfiguration));
+        simulationProperties.put(ConfigurationConstant.ANIMAL_START_NUMBER, new TextFieldHandler(animalStartNumber, exampleConfiguration));
+        simulationProperties.put(ConfigurationConstant.GENOTYPE_LENGTH, new TextFieldHandler(genomLength, exampleConfiguration));
+        simulationProperties.put(ConfigurationConstant.ANIMAL_START_ENERGY, new TextFieldHandler(animalStartEnergy, exampleConfiguration));
+        simulationProperties.put(ConfigurationConstant.ANIMAL_REPRODUCTION_ENERGY, new TextFieldHandler(animalCreationEnergy, exampleConfiguration));
+        simulationProperties.put(ConfigurationConstant.ANIMAL_REPRODUCTION_ENERGY_COST, new TextFieldHandler(animalCreationEnergyConsumption, exampleConfiguration));
+        simulationProperties.put(ConfigurationConstant.PLANT_START_NUMBER, new TextFieldHandler(plantStartNumber, exampleConfiguration));
+        simulationProperties.put(ConfigurationConstant.PLANT_ENERGY, new TextFieldHandler(plantEnergy, exampleConfiguration));
+        simulationProperties.put(ConfigurationConstant.PLANT_SPAWN_NUMBER, new TextFieldHandler(plantSpawnNumber, exampleConfiguration));
+        simulationProperties.put(ConfigurationConstant.MINIMUM_MUTATION_NUMBER, new TextFieldHandler(minimumMutationNumber, exampleConfiguration));
+        simulationProperties.put(ConfigurationConstant.MAXIMUM_MUTATION_NUMBER, new TextFieldHandler(maximumMutationNumber, exampleConfiguration));
 
         // ********* ChoiceBox<String>
-        simulationProperties.put("mapVariant", new ChoiceBoxHandler(mapVariant, exampleConfiguration));
-        simulationProperties.put("animalBehaviourVariant", new ChoiceBoxHandler(animalBehaviourVariant, exampleConfiguration));
-        simulationProperties.put("plantGrowVariant", new ChoiceBoxHandler(plantGrowVariant, exampleConfiguration));
-        simulationProperties.put("mutationVariant", new ChoiceBoxHandler(mutationVariant, exampleConfiguration));
+        simulationProperties.put(ConfigurationConstant.MAP_VARIANT, new ChoiceBoxHandler(mapVariant, exampleConfiguration, MapVariant::fromString));
+        simulationProperties.put(ConfigurationConstant.ANIMAL_BEHAVIOUR_VARIANT, new ChoiceBoxHandler(animalBehaviourVariant, exampleConfiguration, AnimalBehaviourVariant::fromString));
+        simulationProperties.put(ConfigurationConstant.PLANT_GROWTH_VARIANT, new ChoiceBoxHandler(plantGrowVariant, exampleConfiguration, PlantGrowthVariant::fromString));
+        simulationProperties.put(ConfigurationConstant.MUTATION_VARIANT, new ChoiceBoxHandler(mutationVariant, exampleConfiguration, MutationVariant::fromString));
     }
 
-    private HashMap<String, String> getSimulationOptions(){
-        HashMap<String, String> args = new HashMap<>();
+    private HashMap<ConfigurationConstant, Object> getSimulationOptions(){
+        HashMap<ConfigurationConstant, Object> args = new HashMap<>();
         // ******* Additional arguments
-        args.put("statisticsFileLocationURL", statisticsFileLocationURL);
+        args.put(ConfigurationConstant.STATISTICS_FILE_PATH, statisticsFileLocationURL);
 
-        for(String key: simulationProperties.keySet()) {
-            String property = simulationProperties.get(key).readProperty();
+        for(ConfigurationConstant key: simulationProperties.keySet()) {
+            Object property = simulationProperties.get(key).readProperty();
             if(property.equals("")){
-                alertError("Błąd parametru", "Error", "Parametr "+key+ " ma błędną wartość");
+                alertError("Błąd parametru", "Error", "Parametr "+ key+ " ma błędną wartość");
                 return null;
             }
             args.put(key, property);
@@ -160,9 +162,17 @@ public class SimulationConfigurationController implements Initializable {
     }
 
     private String getExampleConfigurationPath(String filename){
-            return new File("").getAbsolutePath().concat(configurationsFolderPath + filename + ".txt");
+        if(filename == null || filename.equals("")){
+            return "";
+        }
+
+        return new File("").getAbsolutePath().concat(configurationsFolderPath + filename + ".txt");
     }
     private void loadConfiguration(String filePath) throws IllegalArgumentException, IOException {
+        if(filePath.equals("")){
+            return;
+        }
+
         try (Stream<String> stream = Files.lines(Paths.get(filePath))) {
             stream.forEach((line) -> {
                 // Parse line and update values in GUI
@@ -171,7 +181,7 @@ public class SimulationConfigurationController implements Initializable {
                     if(propPair.length < 2){
                         throw new IllegalArgumentException("Zły argument "+ propPair[0] +" w pliku " + filePath);
                     }
-                    IConfigurationField field = simulationProperties.get(propPair[0].trim());
+                    IConfigurationField field = simulationProperties.get(ConfigurationConstant.valueOf(propPair[0].trim()));
                     if (field != null){
                         if(propPair[1].equals("")){
                             throw new IllegalArgumentException("Parametr "+ propPair[0]+ " ma błędną wartość w pliku "+filePath);
@@ -194,9 +204,10 @@ public class SimulationConfigurationController implements Initializable {
     private void saveConfiguration(String filePath) throws IOException {
         try {
             ArrayList<String> lines = new ArrayList<>();
+
             // Read data
-            for(String key: simulationProperties.keySet()){
-                String property = simulationProperties.get(key).readProperty();
+            for(ConfigurationConstant key: simulationProperties.keySet()){
+                Object property = simulationProperties.get(key).readProperty();
                 if(property.equals("")){
                     alertError("Błąd parametru", "Error", "Parametr "+key+ " ma błędną wartość");
                     return;
@@ -240,19 +251,29 @@ public class SimulationConfigurationController implements Initializable {
 
             // Initialize ChoiceBox objects
             animalBehaviourVariant.getItems().addAll(animalBehaviourVariants);
-            animalBehaviourVariant.setValue(animalBehaviourVariant.getItems().get(0));
+            if(animalBehaviourVariant.getItems().size() > 0){
+                animalBehaviourVariant.setValue(animalBehaviourVariant.getItems().get(0));
+            }
 
             mapVariant.getItems().addAll(mapVariants);
-            mapVariant.setValue(mapVariant.getItems().get(0));
+            if(mapVariant.getItems().size() > 0){
+                mapVariant.setValue(mapVariant.getItems().get(0));
+            }
 
             plantGrowVariant.getItems().addAll(plantGrowVariants);
-            plantGrowVariant.setValue(plantGrowVariant.getItems().get(0));
+            if(plantGrowVariant.getItems().size() > 0){
+                plantGrowVariant.setValue(plantGrowVariant.getItems().get(0));
+            }
 
             mutationVariant.getItems().addAll(mutationVariants);
-            mutationVariant.setValue(mutationVariant.getItems().get(0));
+            if(mutationVariant.getItems().size() > 0){
+                mutationVariant.setValue(mutationVariant.getItems().get(0));
+            }
 
             exampleConfiguration.getItems().addAll(exampleConfigurations);
-            exampleConfiguration.setValue(exampleConfiguration.getItems().get(0));
+            if(exampleConfiguration.getItems().size() > 0){
+                exampleConfiguration.setValue(exampleConfiguration.getItems().get(0));
+            }
 
             // Load default configuration
             String defaultConfigurationFilename = exampleConfiguration.getValue();
@@ -332,7 +353,7 @@ public class SimulationConfigurationController implements Initializable {
 
             runSimulation.setOnAction((event -> {
                 // Get all arguments
-                HashMap<String, String> args = getSimulationOptions();
+                HashMap<ConfigurationConstant, Object> args = getSimulationOptions();
 
                 if(args == null){
                     return;

@@ -2,11 +2,14 @@ package com.evolutiongenerator.handler;
 
 import javafx.scene.control.ChoiceBox;
 
+import java.util.function.Function;
+
 public class ChoiceBoxHandler implements IConfigurationField{
     private ChoiceBox<String> choiceBox;
-    public ChoiceBoxHandler(ChoiceBox<String> choiceBox, ChoiceBox<String>exampleConfiguration){
+    private Function<String, Object> fromStringFunction;
+    public ChoiceBoxHandler(ChoiceBox<String> choiceBox, ChoiceBox<String>exampleConfiguration, Function<String, Object> fromStringFunction) {
         this.choiceBox = choiceBox;
-
+        this.fromStringFunction = fromStringFunction;
         choiceBox.setOnAction((event)->{
             // Reset exampleConfiguration
             exampleConfiguration.setValue("");
@@ -21,7 +24,7 @@ public class ChoiceBoxHandler implements IConfigurationField{
     }
 
     @Override
-    public String readProperty() {
-        return choiceBox.getValue();
+    public Object readProperty() {
+        return fromStringFunction.apply(choiceBox.getValue());
     }
 }

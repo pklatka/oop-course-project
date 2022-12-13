@@ -34,7 +34,7 @@ public class TextFieldHandler implements IConfigurationField {
     }
 
     @Override
-    public String readProperty() {
-        return textField.getText().trim();
+    public Integer readProperty() {
+        return Integer.valueOf(textField.getText().trim());
     }
 }
