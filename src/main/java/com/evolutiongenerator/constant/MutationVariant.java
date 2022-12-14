@@ -1,6 +1,8 @@
 package com.evolutiongenerator.constant;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
 
 public enum MutationVariant
 {
@@ -21,7 +23,7 @@ public enum MutationVariant
                 .orElseThrow(() -> new IllegalArgumentException("No enum constant " + MutationVariant.class.getCanonicalName() + "." + text));
     }
 
-    public static String[] getValuesAsStringArray() {
-        return Arrays.stream(MutationVariant.values()).map(Enum::toString).toArray(String[]::new);
+    public static List<String> getValuesAsStringList() {
+        return Stream.of(MutationVariant.values()).map(Enum::toString).toList();
     }
 }

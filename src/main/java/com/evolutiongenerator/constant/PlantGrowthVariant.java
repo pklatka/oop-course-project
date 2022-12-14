@@ -8,11 +8,12 @@ package com.evolutiongenerator.constant;
  * */
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
 
 public enum PlantGrowthVariant {
     FORESTED_EQUATOR, // The plants' preference is for a horizontal strip of fields in the central part of the map (pretending to be the equator and surrounding areas).
     TOXIC_CORPSES;// Plants prefer those fields where animals die the least - they grow in those fields where the fewest animals ended their lives during the simulation.
-
 
     public String toString() {
         return switch (this) {
@@ -28,7 +29,7 @@ public enum PlantGrowthVariant {
                 .orElseThrow(() -> new IllegalArgumentException("No enum constant " + PlantGrowthVariant.class.getCanonicalName() + "." + text));
     }
 
-    public static String[] getValuesAsStringArray() {
-        return Arrays.stream(PlantGrowthVariant.values()).map(Enum::toString).toArray(String[]::new);
+    public static List<String> getValuesAsStringList() {
+        return Stream.of(PlantGrowthVariant.values()).map(Enum::toString).toList();
     }
 }

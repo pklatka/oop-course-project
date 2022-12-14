@@ -1,6 +1,8 @@
 package com.evolutiongenerator.constant;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
 
 public enum MapVariant  {
     GLOBE, // The left and right edges of the map loop (if the animal goes beyond the left edge, it will appear on the right side - and if it goes beyond the right edge, it will appear on the left); the top and bottom edges of the map are poles - you can't go there (if the animal tries to go beyond these edges of the map, it stays on the field it was on, and its direction changes to the opposite).
@@ -20,7 +22,7 @@ public enum MapVariant  {
                 .orElseThrow(() -> new IllegalArgumentException("No enum constant " + MapVariant.class.getCanonicalName() + "." + text));
     }
 
-    public static String[] getValuesAsStringArray() {
-        return Arrays.stream(MapVariant.values()).map(Enum::toString).toArray(String[]::new);
+    public static List<String> getValuesAsStringList() {
+        return Stream.of(MapVariant.values()).map(Enum::toString).toList();
     }
 }
