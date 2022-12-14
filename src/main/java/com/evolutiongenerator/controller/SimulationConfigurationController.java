@@ -32,7 +32,8 @@ public class SimulationConfigurationController implements Initializable {
 
     // ********** Path configuration **********
     private final String configurationsFolderPath = "/src/main/resources/simulation/configurations/";
-    private final ExtensionFilter extensionFilter = new ExtensionFilter("TXT files (*.txt)", "*.txt");
+    private final ExtensionFilter txtExtensionFilter = new ExtensionFilter("TXT files (*.txt)", "*.txt");
+    private final ExtensionFilter csvExtensionFilter = new ExtensionFilter("CSV files (*.csv)", "*.csv");
 
 
     // ********** Configuration for ChoiceBox objects **********
@@ -261,7 +262,7 @@ public class SimulationConfigurationController implements Initializable {
      */
     private void loadConfigurationHandler(ActionEvent event){
         try {
-            String path = fileChooser.getFilePath(extensionFilter);
+            String path = fileChooser.getFilePath(txtExtensionFilter);
 
             // User has clicked cancel button
             if (path == null || path.equals("")) {
@@ -281,7 +282,7 @@ public class SimulationConfigurationController implements Initializable {
      */
     private void saveConfigurationHandler(ActionEvent event){
         try {
-            String path = fileChooser.saveFilePath(extensionFilter);
+            String path = fileChooser.saveFilePath(txtExtensionFilter);
 
             // User has clicked cancel button
             if (path.equals("")) {
@@ -301,7 +302,7 @@ public class SimulationConfigurationController implements Initializable {
      */
     private void statisticsFileLocationHandler(ActionEvent event){
         if (saveStatistics.isSelected()) {
-            statisticsFileLocationURL = fileChooser.saveFilePath(extensionFilter);
+            statisticsFileLocationURL = fileChooser.saveFilePath(csvExtensionFilter);
             if (statisticsFileLocationURL.equals("")) {
                 statisticsFileLocationStatus.setText("Nie podano lokalizacji!");
             } else {
@@ -314,7 +315,7 @@ public class SimulationConfigurationController implements Initializable {
     }
 
     /**
-     * Handles saveStatistics button.
+     * Handles saveStatistics checkbox.
      *
      * @author Patryk Klatka
      */

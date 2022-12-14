@@ -31,7 +31,7 @@ public class SimulationConfigurationStage extends Application {
             Scene scene = new Scene(fxmlLoader.load());
 
             // Set stage for controller
-            SimulationConfigurationController controller = (SimulationConfigurationController)fxmlLoader.getController();
+            SimulationConfigurationController controller = fxmlLoader.getController();
             controller.setFileChooserUtil(new FileChooser(stage));
 
             // Stage options
