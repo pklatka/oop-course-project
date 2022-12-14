@@ -149,7 +149,7 @@ public class SimulationConfigurationController implements Initializable {
         for(ConfigurationConstant key: simulationProperties.keySet()) {
             Object property = simulationProperties.get(key).readProperty();
             if(property.equals("")){
-                alertError("Błąd parametru", "Error", "Parametr "+ key+ " ma błędną wartość");
+                alert(Alert.AlertType.ERROR, "Błąd parametru", "Error", "Parametr "+ key+ " ma błędną wartość");
                 return null;
             }
             args.put(key, property);
@@ -195,7 +195,7 @@ public class SimulationConfigurationController implements Initializable {
         }
         catch (IOException e) {
             e.printStackTrace();
-            alertError("Odczyt pliku", "Error", "Błąd odczytu pliku: "+e.getLocalizedMessage());
+            alert(Alert.AlertType.ERROR, "Odczyt pliku", "Error", "Błąd odczytu pliku: "+e.getLocalizedMessage());
             throw new IOException(e);
         }
     }
@@ -209,7 +209,7 @@ public class SimulationConfigurationController implements Initializable {
             for(ConfigurationConstant key: simulationProperties.keySet()){
                 Object property = simulationProperties.get(key).readProperty();
                 if(property.equals("")){
-                    alertError("Błąd parametru", "Error", "Parametr "+key+ " ma błędną wartość");
+                    alert(Alert.AlertType.ERROR, "Błąd parametru", "Error", "Parametr "+key+ " ma błędną wartość");
                     return;
                 }
                 lines.add(key + "=" + property);
@@ -220,24 +220,16 @@ public class SimulationConfigurationController implements Initializable {
             Files.write(path, lines, utf8,
                     StandardOpenOption.CREATE);
 
-            alertInformation("Zapis pliku", "Informacja", "Plik został zapisany");
+            alert(Alert.AlertType.INFORMATION, "Zapis pliku", "Informacja", "Plik został zapisany");
         } catch (IOException e) {
             e.printStackTrace();
-            alertError("Zapis pliku", "Error", "Błąd zapisu pliku: "+e.getLocalizedMessage());
+            alert(Alert.AlertType.ERROR,"Zapis pliku", "Error", "Błąd zapisu pliku: "+e.getLocalizedMessage());
             throw new IOException(e);
         }
     }
 
-    private void alertError(String title, String header, String content){
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(header);
-        alert.setContentText(content);
-        alert.show();
-    }
-
-    private void alertInformation(String title, String header, String content){
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    private void alert(Alert.AlertType type, String title, String header, String content){
+        Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(header);
         alert.setContentText(content);
@@ -295,7 +287,7 @@ public class SimulationConfigurationController implements Initializable {
                     stopListeningExampleConfiguration = true;
                     exampleConfiguration.setValue(filename);
                 }catch (IOException | IllegalArgumentException e){
-                    alertError("Błąd pliku", "Error", e.getMessage());
+                    alert(Alert.AlertType.ERROR, "Błąd pliku", "Error", e.getMessage());
                 }
             });
 
@@ -310,7 +302,7 @@ public class SimulationConfigurationController implements Initializable {
                     loadConfiguration(path);
                     exampleConfiguration.setValue("");
                 }catch (IOException | IllegalArgumentException e){
-                    alertError("Błąd pliku","Error", e.getMessage());
+                    alert(Alert.AlertType.ERROR, "Błąd pliku","Error", e.getMessage());
                 }
             });
 
@@ -323,7 +315,7 @@ public class SimulationConfigurationController implements Initializable {
                     }
                     saveConfiguration(path);
                 }catch (IOException e){
-                    alertError("Błąd pliku","Error", e.getMessage());
+                    alert(Alert.AlertType.ERROR,"Błąd pliku","Error", e.getMessage());
                 }
             });
 
@@ -363,7 +355,7 @@ public class SimulationConfigurationController implements Initializable {
                 new SimulationStage(new String[]{}, new Stage());
             }));
         }catch (IOException | IllegalArgumentException e){
-            alertError("Błąd pliku","Error", e.getMessage());
+            alert(Alert.AlertType.ERROR,"Błąd pliku","Error", e.getMessage());
         }
     }
 }
