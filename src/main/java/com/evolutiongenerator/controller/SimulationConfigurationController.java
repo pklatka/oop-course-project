@@ -6,6 +6,7 @@ import com.evolutiongenerator.handler.IConfigurationField;
 import com.evolutiongenerator.handler.TextFieldHandler;
 import com.evolutiongenerator.stage.SimulationStage;
 import com.evolutiongenerator.utils.FileChooser;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -91,6 +92,7 @@ public class SimulationConfigurationController implements Initializable {
     // ************* Utils *************
     private final HashMap<ConfigurationConstant, IConfigurationField> simulationProperties = new HashMap<>();
     private FileChooser fileChooser;
+
 
     private void loadProperties() throws IOException {
         // Load files from configurationsFolderPath directory
@@ -230,6 +232,93 @@ public class SimulationConfigurationController implements Initializable {
         choiceBox.getSelectionModel().selectFirst();
     }
 
+    private void exampleConfigurationHandler(ActionEvent event){
+        try {
+            if (stopListeningExampleConfiguration) {
+                stopListeningExampleConfiguration = false;
+                return;
+            }
+
+            if (exampleConfiguration.getValue().equals("")) {
+                return;
+            }
+
+            String filename = exampleConfiguration.getValue();
+            loadConfiguration(getExampleConfigurationPath(filename));
+
+            stopListeningExampleConfiguration = true;
+            exampleConfiguration.setValue(filename);
+        } catch (IOException | IllegalArgumentException e) {
+            alert(Alert.AlertType.ERROR, "Błąd pliku", "Error", e.getMessage());
+        }
+    }
+
+    private void loadConfigurationHandler(ActionEvent event){
+        try {
+            String path = fileChooser.getFilePath();
+
+            // User has clicked cancel button
+            if (path == null || path.equals("")) {
+                return;
+            }
+            loadConfiguration(path);
+            exampleConfiguration.setValue("");
+        } catch (IOException | IllegalArgumentException e) {
+            alert(Alert.AlertType.ERROR, "Błąd pliku", "Error", e.getMessage());
+        }
+    }
+
+    private void saveConfigurationHandler(ActionEvent event){
+        try {
+            String path = fileChooser.saveFilePath();
+
+            // User has clicked cancel button
+            if (path.equals("")) {
+                return;
+            }
+
+            saveConfiguration(path);
+        } catch (IOException e) {
+            alert(Alert.AlertType.ERROR, "Błąd pliku", "Error", e.getMessage());
+        }
+    }
+
+    private void statisticsFileLocationHandler(ActionEvent event){
+        if (saveStatistics.isSelected()) {
+            statisticsFileLocationURL = fileChooser.saveFilePath();
+            if (statisticsFileLocationURL.equals("")) {
+                statisticsFileLocationStatus.setText("Nie podano lokalizacji!");
+            } else {
+                statisticsFileLocationStatus.setText("Zapisano lokalizację");
+            }
+        } else {
+            statisticsFileLocation.setDisable(true);
+            statisticsFileLocationStatus.setText("");
+        }
+    }
+
+    private void saveStatisticsHandler(ActionEvent event){
+        if (saveStatistics.isSelected()) {
+            statisticsFileLocation.setDisable(false);
+        } else {
+            statisticsFileLocation.setDisable(true);
+            statisticsFileLocationStatus.setText("");
+            statisticsFileLocationURL = "";
+        }
+    }
+
+    private void runSimulationHandler(ActionEvent event){
+        // Get all arguments
+        HashMap<ConfigurationConstant, Object> args = getSimulationOptions();
+
+        if (args == null) {
+            return;
+        }
+
+        // Send arguments to simulation stage
+        new SimulationStage(args, new Stage());
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
@@ -247,93 +336,14 @@ public class SimulationConfigurationController implements Initializable {
             loadConfiguration(getExampleConfigurationPath(defaultConfigurationFilename));
             exampleConfiguration.setValue(defaultConfigurationFilename);
 
-            exampleConfiguration.setOnAction((event) -> {
-                try {
-                    if (stopListeningExampleConfiguration) {
-                        stopListeningExampleConfiguration = false;
-                        return;
-                    }
-
-                    if (exampleConfiguration.getValue().equals("")) {
-                        return;
-                    }
-
-                    String filename = exampleConfiguration.getValue();
-                    loadConfiguration(getExampleConfigurationPath(filename));
-
-                    stopListeningExampleConfiguration = true;
-                    exampleConfiguration.setValue(filename);
-                } catch (IOException | IllegalArgumentException e) {
-                    alert(Alert.AlertType.ERROR, "Błąd pliku", "Error", e.getMessage());
-                }
-            });
-
             // Initialize button handlers
-            loadConfiguration.setOnAction((event) -> {
-                try {
-                    String path = fileChooser.getFilePath();
+            exampleConfiguration.setOnAction(this::exampleConfigurationHandler);
+            loadConfiguration.setOnAction(this::loadConfigurationHandler);
+            saveConfiguration.setOnAction(this::saveConfigurationHandler);
+            statisticsFileLocation.setOnAction(this::statisticsFileLocationHandler);
+            saveStatistics.setOnAction(this::saveStatisticsHandler);
+            runSimulation.setOnAction(this::runSimulationHandler);
 
-                    // User has clicked cancel button
-                    if (path == null || path.equals("")) {
-                        return;
-                    }
-                    loadConfiguration(path);
-                    exampleConfiguration.setValue("");
-                } catch (IOException | IllegalArgumentException e) {
-                    alert(Alert.AlertType.ERROR, "Błąd pliku", "Error", e.getMessage());
-                }
-            });
-
-            saveConfiguration.setOnAction((event) -> {
-                try {
-                    String path = fileChooser.saveFilePath();
-
-                    // User has clicked cancel button
-                    if (path.equals("")) {
-                        return;
-                    }
-                    
-                    saveConfiguration(path);
-                } catch (IOException e) {
-                    alert(Alert.AlertType.ERROR, "Błąd pliku", "Error", e.getMessage());
-                }
-            });
-
-            statisticsFileLocation.setOnAction((event) -> {
-                if (saveStatistics.isSelected()) {
-                    statisticsFileLocationURL = fileChooser.saveFilePath();
-                    if (statisticsFileLocationURL.equals("")) {
-                        statisticsFileLocationStatus.setText("Nie podano lokalizacji!");
-                    } else {
-                        statisticsFileLocationStatus.setText("Zapisano lokalizację");
-                    }
-                } else {
-                    statisticsFileLocation.setDisable(true);
-                    statisticsFileLocationStatus.setText("");
-                }
-            });
-
-            saveStatistics.setOnAction((event -> {
-                if (saveStatistics.isSelected()) {
-                    statisticsFileLocation.setDisable(false);
-                } else {
-                    statisticsFileLocation.setDisable(true);
-                    statisticsFileLocationStatus.setText("");
-                    statisticsFileLocationURL = "";
-                }
-            }));
-
-            runSimulation.setOnAction((event -> {
-                // Get all arguments
-                HashMap<ConfigurationConstant, Object> args = getSimulationOptions();
-
-                if (args == null) {
-                    return;
-                }
-
-                // Send arguments to simulation stage
-                new SimulationStage(args, new Stage());
-            }));
         } catch (IOException | IllegalArgumentException e) {
             alert(Alert.AlertType.ERROR, "Błąd pliku", "Error", e.getMessage());
         }
