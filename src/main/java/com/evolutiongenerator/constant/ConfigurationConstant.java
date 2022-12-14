@@ -1,5 +1,10 @@
 package com.evolutiongenerator.constant;
 
+/**
+ * Configuration constants
+ *
+ * @author Patryk Klatka
+ */
 public enum ConfigurationConstant {
     MAP_WIDTH,
     MAP_HEIGHT,
@@ -15,11 +20,18 @@ public enum ConfigurationConstant {
     MAXIMUM_MUTATION_NUMBER,
     STATISTICS_FILE_PATH,
 
-    // Variants
+    // ******** Variants ********
     MAP_VARIANT,
     ANIMAL_BEHAVIOUR_VARIANT,
     PLANT_GROWTH_VARIANT,
     MUTATION_VARIANT;
+
+    /**
+     * Returns a ConfigurationConstantType of constant
+     *
+     * @author Patryk Klatka
+     * @return ConfigurationConstantType of constant
+     */
     public ConfigurationConstantType getType() throws IllegalArgumentException{
         return switch (this) {
             case MAP_WIDTH, MAP_HEIGHT, ANIMAL_START_NUMBER, GENOTYPE_LENGTH,

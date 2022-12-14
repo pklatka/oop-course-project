@@ -1,5 +1,10 @@
 package com.evolutiongenerator.constant;
 
+/**
+ * Configuration constants types
+ *
+ * @author Patryk Klatka
+ */
 public enum ConfigurationConstantType
 {
     INTEGER,
