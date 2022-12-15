@@ -19,7 +19,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javafx.stage.FileChooser.ExtensionFilter;
 
@@ -37,12 +36,12 @@ public class SimulationConfigurationController implements Initializable {
 
 
     // ********** Configuration for ChoiceBox objects **********
-    List<String> exampleConfigurations;
+    String[] exampleConfigurations;
 
     // ************* Properties *************
-    private String statisticsFileLocationURL = "";
+    private PathValue statisticsFileLocationURL = null;
     private boolean stopListeningExampleConfiguration = false;
-    private final HashMap<ConfigurationConstant, IConfigurationField> simulationProperties = new HashMap<>();
+    private final Map<ConfigurationConstant, IConfigurationField> simulationProperties = new EnumMap<>(ConfigurationConstant.class);
     private FileChooser fileChooser;
 
     // ********** Configuration fields **********
@@ -61,7 +60,7 @@ public class SimulationConfigurationController implements Initializable {
     @FXML
     private TextField mapHeight;
     @FXML
-    private ChoiceBox<String> mapVariant;
+    private ChoiceBox<ISimulationValue> mapVariant;
 
     // ********** Animal fields **********
     @FXML
@@ -75,7 +74,7 @@ public class SimulationConfigurationController implements Initializable {
     @FXML
     private TextField animalCreationEnergyConsumption;
     @FXML
-    private ChoiceBox<String> animalBehaviourVariant;
+    private ChoiceBox<ISimulationValue> animalBehaviourVariant;
 
     // ********** Plants fields **********
     @FXML
@@ -85,7 +84,7 @@ public class SimulationConfigurationController implements Initializable {
     @FXML
     private TextField plantSpawnNumber;
     @FXML
-    private ChoiceBox<String> plantGrowVariant;
+    private ChoiceBox<ISimulationValue> plantGrowVariant;
 
     // ********** Mutations fields **********
     @FXML
@@ -93,7 +92,7 @@ public class SimulationConfigurationController implements Initializable {
     @FXML
     private TextField maximumMutationNumber;
     @FXML
-    private ChoiceBox<String> mutationVariant;
+    private ChoiceBox<ISimulationValue> mutationVariant;
 
     // ********** Options fields **********
     @FXML
@@ -141,19 +140,19 @@ public class SimulationConfigurationController implements Initializable {
      * @return HashMap with saved options
      */
     private HashMap<ConfigurationConstant, Object> getSimulationOptions() {
-        HashMap<ConfigurationConstant, Object> args = new HashMap<>();
-        // ******* Additional arguments *******
-        args.put(ConfigurationConstant.STATISTICS_FILE_PATH, statisticsFileLocationURL);
+        try{
+            HashMap<ConfigurationConstant, Object> args = new HashMap<>();
+            // ******* Additional arguments *******
+            args.put(ConfigurationConstant.STATISTICS_FILE_PATH, statisticsFileLocationURL);
 
-        for (ConfigurationConstant key : simulationProperties.keySet()) {
-            Object property = simulationProperties.get(key).readProperty();
-            if (property.equals("")) {
-                alert(Alert.AlertType.ERROR, "Błąd parametru", "Error", "Parametr " + key + " ma błędną wartość");
-                return null;
+            for (ConfigurationConstant key : simulationProperties.keySet()) {
+                args.put(key, simulationProperties.get(key).readProperty());
             }
-            args.put(key, property);
+
+            return args;
+        }catch (IllegalArgumentException e){
+            return null;
         }
-        return args;
     }
 
     // ************* File utilities *************
@@ -177,12 +176,15 @@ public class SimulationConfigurationController implements Initializable {
                     if (propPair.length < 2) {
                         throw new IllegalArgumentException("Zły argument " + propPair[0] + " w pliku " + filePath);
                     }
-                    IConfigurationField field = simulationProperties.get(ConfigurationConstant.valueOf(propPair[0].trim()));
+                    ConfigurationConstant configurationConstant = ConfigurationConstant.valueOf(propPair[0].trim());
+
+                    IConfigurationField field = simulationProperties.get(configurationConstant);
                     if (field != null) {
                         if (propPair[1].equals("")) {
                             throw new IllegalArgumentException("Parametr " + propPair[0] + " ma błędną wartość w pliku " + filePath);
                         }
-                        field.writeProperty(propPair[1].trim());
+
+                        field.writeProperty(configurationConstant.getType().getValueFromString(propPair[1].trim()));
                     } else {
                         throw new IllegalArgumentException("Zły argument " + propPair[0] + " w pliku " + filePath);
                     }
@@ -207,12 +209,7 @@ public class SimulationConfigurationController implements Initializable {
 
             // Read data
             for (ConfigurationConstant key : simulationProperties.keySet()) {
-                Object property = simulationProperties.get(key).readProperty();
-                if (property.equals("")) {
-                    alert(Alert.AlertType.ERROR, "Błąd parametru", "Error", "Parametr " + key + " ma błędną wartość");
-                    return;
-                }
-                lines.add(key + "=" + property);
+                lines.add(key + "=" + simulationProperties.get(key).readProperty());
             }
 
             Charset utf8 = StandardCharsets.UTF_8;
@@ -220,7 +217,7 @@ public class SimulationConfigurationController implements Initializable {
             Files.write(path, lines, utf8, StandardOpenOption.CREATE);
 
             alert(Alert.AlertType.INFORMATION, "Zapis pliku", "Informacja", "Plik został zapisany");
-        } catch (IOException e) {
+        } catch (IOException | IllegalArgumentException e) {
             e.printStackTrace();
             alert(Alert.AlertType.ERROR, "Zapis pliku", "Error", "Błąd zapisu pliku: " + e.getLocalizedMessage());
             throw new IOException(e);
@@ -302,11 +299,16 @@ public class SimulationConfigurationController implements Initializable {
      */
     private void statisticsFileLocationHandler(ActionEvent event){
         if (saveStatistics.isSelected()) {
-            statisticsFileLocationURL = fileChooser.saveFilePath(csvExtensionFilter);
-            if (statisticsFileLocationURL.equals("")) {
+            String path = fileChooser.saveFilePath(csvExtensionFilter);
+            if (path == null) {
                 statisticsFileLocationStatus.setText("Nie podano lokalizacji!");
             } else {
-                statisticsFileLocationStatus.setText("Zapisano lokalizację");
+                try{
+                    statisticsFileLocationURL = new PathValue(path);
+                    statisticsFileLocationStatus.setText("Zapisano lokalizację");
+                }catch (InvalidPathException e){
+                    statisticsFileLocationStatus.setText(e.getMessage());
+                }
             }
         } else {
             statisticsFileLocation.setDisable(true);
@@ -325,7 +327,7 @@ public class SimulationConfigurationController implements Initializable {
         } else {
             statisticsFileLocation.setDisable(true);
             statisticsFileLocationStatus.setText("");
-            statisticsFileLocationURL = "";
+            statisticsFileLocationURL = null;
         }
     }
 
@@ -365,31 +367,30 @@ public class SimulationConfigurationController implements Initializable {
                     fileName = fileName.substring(0, pos);
                 }
                 return fileName;
-            }).collect(Collectors.toList());
+            }).toArray(String[]::new);
         } catch (IOException e) {
-            e.printStackTrace();
             throw new IOException(e);
         }
 
         // ********* TextField
-        simulationProperties.put(ConfigurationConstant.MAP_WIDTH, new TextFieldHandler(mapWidth, exampleConfiguration, Integer::valueOf));
-        simulationProperties.put(ConfigurationConstant.MAP_HEIGHT, new TextFieldHandler(mapHeight, exampleConfiguration, Integer::valueOf));
-        simulationProperties.put(ConfigurationConstant.ANIMAL_START_NUMBER, new TextFieldHandler(animalStartNumber, exampleConfiguration, Integer::valueOf));
-        simulationProperties.put(ConfigurationConstant.GENOTYPE_LENGTH, new TextFieldHandler(genomLength, exampleConfiguration, Integer::valueOf));
-        simulationProperties.put(ConfigurationConstant.ANIMAL_START_ENERGY, new TextFieldHandler(animalStartEnergy, exampleConfiguration, Integer::valueOf));
-        simulationProperties.put(ConfigurationConstant.ANIMAL_REPRODUCTION_ENERGY, new TextFieldHandler(animalCreationEnergy, exampleConfiguration, Integer::valueOf));
-        simulationProperties.put(ConfigurationConstant.ANIMAL_REPRODUCTION_ENERGY_COST, new TextFieldHandler(animalCreationEnergyConsumption, exampleConfiguration, Integer::valueOf));
-        simulationProperties.put(ConfigurationConstant.PLANT_START_NUMBER, new TextFieldHandler(plantStartNumber, exampleConfiguration, Integer::valueOf));
-        simulationProperties.put(ConfigurationConstant.PLANT_ENERGY, new TextFieldHandler(plantEnergy, exampleConfiguration, Integer::valueOf));
-        simulationProperties.put(ConfigurationConstant.PLANT_SPAWN_NUMBER, new TextFieldHandler(plantSpawnNumber, exampleConfiguration, Integer::valueOf));
-        simulationProperties.put(ConfigurationConstant.MINIMUM_MUTATION_NUMBER, new TextFieldHandler(minimumMutationNumber, exampleConfiguration, Integer::valueOf));
-        simulationProperties.put(ConfigurationConstant.MAXIMUM_MUTATION_NUMBER, new TextFieldHandler(maximumMutationNumber, exampleConfiguration, Integer::valueOf));
+        simulationProperties.put(ConfigurationConstant.MAP_WIDTH, new TextFieldHandler(mapWidth, exampleConfiguration));
+        simulationProperties.put(ConfigurationConstant.MAP_HEIGHT, new TextFieldHandler(mapHeight, exampleConfiguration));
+        simulationProperties.put(ConfigurationConstant.ANIMAL_START_NUMBER, new TextFieldHandler(animalStartNumber, exampleConfiguration));
+        simulationProperties.put(ConfigurationConstant.GENOTYPE_LENGTH, new TextFieldHandler(genomLength, exampleConfiguration));
+        simulationProperties.put(ConfigurationConstant.ANIMAL_START_ENERGY, new TextFieldHandler(animalStartEnergy, exampleConfiguration));
+        simulationProperties.put(ConfigurationConstant.ANIMAL_REPRODUCTION_ENERGY, new TextFieldHandler(animalCreationEnergy, exampleConfiguration));
+        simulationProperties.put(ConfigurationConstant.ANIMAL_REPRODUCTION_ENERGY_COST, new TextFieldHandler(animalCreationEnergyConsumption, exampleConfiguration));
+        simulationProperties.put(ConfigurationConstant.PLANT_START_NUMBER, new TextFieldHandler(plantStartNumber, exampleConfiguration));
+        simulationProperties.put(ConfigurationConstant.PLANT_ENERGY, new TextFieldHandler(plantEnergy, exampleConfiguration));
+        simulationProperties.put(ConfigurationConstant.PLANT_SPAWN_NUMBER, new TextFieldHandler(plantSpawnNumber, exampleConfiguration));
+        simulationProperties.put(ConfigurationConstant.MINIMUM_MUTATION_NUMBER, new TextFieldHandler(minimumMutationNumber, exampleConfiguration));
+        simulationProperties.put(ConfigurationConstant.MAXIMUM_MUTATION_NUMBER, new TextFieldHandler(maximumMutationNumber, exampleConfiguration));
 
         // ********* ChoiceBox<String>
-        simulationProperties.put(ConfigurationConstant.MAP_VARIANT, new ChoiceBoxHandler(mapVariant, exampleConfiguration, MapVariant::fromString));
-        simulationProperties.put(ConfigurationConstant.ANIMAL_BEHAVIOUR_VARIANT, new ChoiceBoxHandler(animalBehaviourVariant, exampleConfiguration, AnimalBehaviourVariant::fromString));
-        simulationProperties.put(ConfigurationConstant.PLANT_GROWTH_VARIANT, new ChoiceBoxHandler(plantGrowVariant, exampleConfiguration, PlantGrowthVariant::fromString));
-        simulationProperties.put(ConfigurationConstant.MUTATION_VARIANT, new ChoiceBoxHandler(mutationVariant, exampleConfiguration, MutationVariant::fromString));
+        simulationProperties.put(ConfigurationConstant.MAP_VARIANT, new ChoiceBoxHandler(mapVariant, exampleConfiguration));
+        simulationProperties.put(ConfigurationConstant.ANIMAL_BEHAVIOUR_VARIANT, new ChoiceBoxHandler(animalBehaviourVariant, exampleConfiguration));
+        simulationProperties.put(ConfigurationConstant.PLANT_GROWTH_VARIANT, new ChoiceBoxHandler(plantGrowVariant, exampleConfiguration));
+        simulationProperties.put(ConfigurationConstant.MUTATION_VARIANT, new ChoiceBoxHandler(mutationVariant, exampleConfiguration));
     }
 
 
@@ -400,10 +401,16 @@ public class SimulationConfigurationController implements Initializable {
      * @param choiceBox ChoiceBox to initialize
      * @param values List of strings to initialize ChoiceBox
      */
-    private void initializeChoiceBox(ChoiceBox<String> choiceBox, List<String> values) {
+    private void initializeChoiceBox(ChoiceBox<ISimulationValue> choiceBox, ISimulationValue[] values) {
         choiceBox.getItems().addAll(values);
         choiceBox.getSelectionModel().selectFirst();
     }
+
+    private void initializeChoiceBox(ChoiceBox<String> choiceBox, String[] values) {
+        choiceBox.getItems().addAll(values);
+        choiceBox.getSelectionModel().selectFirst();
+    }
+
 
     /**
      * Initializes SimulationConfiguration handlers, listeners, variables.
@@ -418,10 +425,10 @@ public class SimulationConfigurationController implements Initializable {
             loadProperties();
 
             // Initialize ChoiceBox objects
-            initializeChoiceBox(animalBehaviourVariant, AnimalBehaviourVariant.getValuesAsStringList());
-            initializeChoiceBox(mapVariant, MapVariant.getValuesAsStringList());
-            initializeChoiceBox(plantGrowVariant, PlantGrowthVariant.getValuesAsStringList());
-            initializeChoiceBox(mutationVariant, MutationVariant.getValuesAsStringList());
+            initializeChoiceBox(animalBehaviourVariant, AnimalBehaviourVariant.values());
+            initializeChoiceBox(mapVariant, MapVariant.values());
+            initializeChoiceBox(plantGrowVariant, PlantGrowthVariant.values());
+            initializeChoiceBox(mutationVariant, MutationVariant.values());
             initializeChoiceBox(exampleConfiguration, exampleConfigurations);
 
             // Load default configuration

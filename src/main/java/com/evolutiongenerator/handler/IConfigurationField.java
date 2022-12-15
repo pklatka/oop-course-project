@@ -1,5 +1,7 @@
 package com.evolutiongenerator.handler;
 
+import com.evolutiongenerator.constant.ISimulationValue;
+
 /**
  * Interface for handlers of configuration fields
  *
@@ -10,15 +12,15 @@ public interface IConfigurationField {
      * Write value to field
      *
      * @author Patryk Klatka
-     * @param text String value to write
+     * @param text ISimulationValue value to write
      */
-    void writeProperty(String text);
+    void writeProperty(ISimulationValue text);
 
     /**
      * Get value from field
      *
      * @author Patryk Klatka
-     * @return Object value from field
+     * @return ISimulationValue value from field
      */
-    Object readProperty();
+    ISimulationValue readProperty() throws IllegalArgumentException;
 }

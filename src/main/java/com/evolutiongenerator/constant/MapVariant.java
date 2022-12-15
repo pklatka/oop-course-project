@@ -9,7 +9,7 @@ import java.util.stream.Stream;
  *
  * @author Patryk Klatka
  */
-public enum MapVariant  {
+public enum MapVariant implements ISimulationValue {
     /**
      * The left and right edges of the map loop (if the animal goes beyond the left edge,
      * it will appear on the right side - and if it goes beyond the right edge, it will appear on the left);
@@ -38,27 +38,10 @@ public enum MapVariant  {
         };
     }
 
-    /**
-     * Returns a constant representation of string
-     *
-     * @author Patryk Klatka
-     * @throws IllegalArgumentException if string is not a valid constant
-     * @return Constant, if representation exists
-     */
-    public static Object fromString(String text) {
+    public static ISimulationValue fromString(String value) throws IllegalArgumentException {
         return Arrays.stream(MapVariant.values())
-                .filter(mapVariant -> mapVariant.toString().equals(text))
+                .filter(v -> v.toString().equals(value))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("No enum constant " + MapVariant.class.getCanonicalName() + "." + text));
-    }
-
-    /**
-     * Returns a string list of all constants
-     *
-     * @author Patryk Klatka
-     * @return String list of all constants
-     */
-    public static List<String> getValuesAsStringList() {
-        return Stream.of(MapVariant.values()).map(Enum::toString).toList();
+                .orElseThrow(()-> new IllegalArgumentException("No enum constant " + value));
     }
 }

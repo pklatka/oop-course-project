@@ -1,9 +1,9 @@
 package com.evolutiongenerator.handler;
 
+import com.evolutiongenerator.constant.ISimulationValue;
+import com.evolutiongenerator.constant.IntegerValue;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
-
-import java.util.function.Function;
 
 /**
  * Wrapper class for TextField
@@ -12,7 +12,7 @@ import java.util.function.Function;
  */
 public class TextFieldHandler implements IConfigurationField {
     private final TextField textField;
-    private final Function<String, Object> fromStringFunction;
+
     /**
      * Constructor, sets textField and fromStringFunction,
      * adds listener to textField to reset exampleConfiguration value.
@@ -20,11 +20,9 @@ public class TextFieldHandler implements IConfigurationField {
      * @author Patryk Klatka
      * @param textField TextField
      * @param exampleConfiguration ExampleConfiguration object
-     * @param fromStringFunction Function to convert String to Object (e.g. Integer::parseInt)
      */
-    public TextFieldHandler(TextField textField, ChoiceBox<String>exampleConfiguration, Function<String, Object> fromStringFunction){
+    public TextFieldHandler(TextField textField, ChoiceBox<String>exampleConfiguration){
         this.textField = textField;
-        this.fromStringFunction = fromStringFunction;
 
         // Validate if textField contains number
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -49,21 +47,25 @@ public class TextFieldHandler implements IConfigurationField {
      * Write value to TextField
      *
      * @author Patryk Klatka
-     * @param text String value to write
+     * @param value String value to write
      */
     @Override
-    public void writeProperty(String text) {
-        textField.setText(text);
+    public void writeProperty(ISimulationValue value) {
+        textField.setText(value.toString());
     }
 
     /**
      * Get value from TextField
      *
      * @author Patryk Klatka
-     * @return Integer value from TextField
+     * @return ISimulationValue value from TextField
      */
     @Override
-    public Object readProperty() {
-        return fromStringFunction.apply(textField.getText().trim());
+    public ISimulationValue readProperty() throws IllegalArgumentException {
+        try{
+            return new IntegerValue(textField.getText());
+        }catch (IllegalArgumentException e){
+            throw new IllegalArgumentException(e);
+        }
     }
 }

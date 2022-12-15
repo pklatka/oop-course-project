@@ -40,10 +40,8 @@ public class FileChooser
 
         //Show save file dialog
         File file = fileChooser.showOpenDialog(stage);
-        if (file != null) {
-            return file.getPath();
-        }
-        return "";
+
+        return file.getPath();
     }
 
     /**
@@ -62,10 +60,6 @@ public class FileChooser
         //Show save file dialog
         File file = fileChooser.showSaveDialog(stage);
 
-        if (file != null) {
-            return file.getPath();
-        }
-        return "";
+        return file.getPath();
     }
-
 }

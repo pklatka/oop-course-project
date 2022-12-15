@@ -1,8 +1,7 @@
 package com.evolutiongenerator.handler;
 
+import com.evolutiongenerator.constant.ISimulationValue;
 import javafx.scene.control.ChoiceBox;
-
-import java.util.function.Function;
 
 /**
  * Wrapper class for ChoiceBox
@@ -10,8 +9,7 @@ import java.util.function.Function;
  * @author Patryk Klatka
  */
 public class ChoiceBoxHandler implements IConfigurationField{
-    private final ChoiceBox<String> choiceBox;
-    private final Function<String, Object> fromStringFunction;
+    private final ChoiceBox<ISimulationValue> choiceBox;
 
     /**
      * Constructor, sets choiceBox and fromStringFunction,
@@ -20,11 +18,9 @@ public class ChoiceBoxHandler implements IConfigurationField{
      * @author Patryk Klatka
      * @param choiceBox ChoiceBox of strings
      * @param exampleConfiguration ExampleConfiguration object
-     * @param fromStringFunction Function to convert String to Object (e.g. Integer::parseInt)
      */
-    public ChoiceBoxHandler(ChoiceBox<String> choiceBox, ChoiceBox<String>exampleConfiguration, Function<String, Object> fromStringFunction) {
+    public ChoiceBoxHandler(ChoiceBox<ISimulationValue> choiceBox, ChoiceBox<String>exampleConfiguration) {
         this.choiceBox = choiceBox;
-        this.fromStringFunction = fromStringFunction;
 
         choiceBox.setOnAction((event)->{
             // Reset exampleConfiguration
@@ -36,23 +32,27 @@ public class ChoiceBoxHandler implements IConfigurationField{
      * Write value to ChoiceBox
      *
      * @author Patryk Klatka
-     * @param text String value to write
+     * @param value ISimulationValue value to write
      */
     @Override
-    public void writeProperty(String text) {
-        if(choiceBox.getItems().contains(text)){
-            choiceBox.setValue(text);
+    public void writeProperty(ISimulationValue value) {
+        if(choiceBox.getItems().contains(value)){
+            choiceBox.setValue(value);
         }
     }
 
     /**
-     * Get converted value (String to specific object) from ChoiceBox
+     * Get value from ChoiceBox
      *
      * @author Patryk Klatka
-     * @return Object value from ChoiceBox
+     * @return ISimulationValue value from ChoiceBox
      */
     @Override
-    public Object readProperty() {
-        return fromStringFunction.apply(choiceBox.getValue());
+    public ISimulationValue readProperty() throws IllegalArgumentException {
+        try{
+            return choiceBox.getValue();
+        }catch (IllegalArgumentException e){
+            throw new IllegalArgumentException("ChoiceBox value is not valid");
+        }
     }
 }

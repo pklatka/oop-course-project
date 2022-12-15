@@ -1,15 +1,13 @@
 package com.evolutiongenerator.constant;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * Animal behaviour variants constants
  *
  * @author Patryk Klatka
  */
-public enum AnimalBehaviourVariant {
+public enum AnimalBehaviourVariant implements ISimulationValue {
     /**
      * The animal always performs the genes sequentially, one after the other
      * */
@@ -35,26 +33,15 @@ public enum AnimalBehaviourVariant {
     }
 
     /**
-     * Returns a constant representation of string
+     * Returns a parsed from string AnimalBehaviourVariant value
      *
      * @author Patryk Klatka
-     * @throws IllegalArgumentException if string is not a valid constant
-     * @return Constant, if representation exists
+     * @return ISimulationValue value
      */
-    public static AnimalBehaviourVariant fromString(String text) throws IllegalArgumentException{
+    public static ISimulationValue fromString(String value) throws IllegalArgumentException {
         return Arrays.stream(AnimalBehaviourVariant.values())
-                .filter(behaviourVariant -> behaviourVariant.toString().equals(text))
+                .filter(v -> v.toString().equals(value))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("No enum constant " + AnimalBehaviourVariant.class.getCanonicalName() + "." + text));
-    }
-
-    /**
-     * Returns a string list of all constants
-     *
-     * @author Patryk Klatka
-     * @return String list of all constants
-     */
-    public static List<String> getValuesAsStringList() {
-        return Stream.of(AnimalBehaviourVariant.values()).map(Enum::toString).toList();
+                .orElseThrow(()-> new IllegalArgumentException("No enum constant " + value));
     }
 }

@@ -9,8 +9,7 @@ import java.util.stream.Stream;
  *
  * @author Patryk Klatka
  */
-public enum MutationVariant
-{
+public enum MutationVariant implements ISimulationValue {
     /**
      * The gene is replaced with a random gene.
      * */
@@ -33,27 +32,10 @@ public enum MutationVariant
         };
     }
 
-    /**
-     * Returns a constant representation of string
-     *
-     * @author Patryk Klatka
-     * @throws IllegalArgumentException if string is not a valid constant
-     * @return Constant, if representation exists
-     */
-    public static MutationVariant fromString(String text) throws IllegalArgumentException{
+    public static ISimulationValue fromString(String value) throws IllegalArgumentException {
         return Arrays.stream(MutationVariant.values())
-                .filter(mutationVariant -> mutationVariant.toString().equals(text))
+                .filter(v -> v.toString().equals(value))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("No enum constant " + MutationVariant.class.getCanonicalName() + "." + text));
-    }
-
-    /**
-     * Returns a string list of all constants
-     *
-     * @author Patryk Klatka
-     * @return String list of all constants
-     */
-    public static List<String> getValuesAsStringList() {
-        return Stream.of(MutationVariant.values()).map(Enum::toString).toList();
+                .orElseThrow(()-> new IllegalArgumentException("No enum constant " + value));
     }
 }

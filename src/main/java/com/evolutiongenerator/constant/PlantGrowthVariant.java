@@ -16,7 +16,7 @@ import java.util.stream.Stream;
  *
  * @author Patryk Klatka
  */
-public enum PlantGrowthVariant {
+public enum PlantGrowthVariant implements ISimulationValue {
     /**
      * The plants' preference is for a horizontal strip of fields in the central part of the map
      * (pretending to be the equator and surrounding areas).
@@ -41,27 +41,10 @@ public enum PlantGrowthVariant {
         };
     }
 
-    /**
-     * Returns a constant representation of string
-     *
-     * @author Patryk Klatka
-     * @throws IllegalArgumentException if string is not a valid constant
-     * @return Constant, if representation exists
-     */
-    public static Object fromString(String text) throws IllegalArgumentException{
+    public static ISimulationValue fromString(String value) throws IllegalArgumentException {
         return Arrays.stream(PlantGrowthVariant.values())
-                .filter(plantGrowthVariant -> plantGrowthVariant.toString().equals(text))
+                .filter(v -> v.toString().equals(value))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("No enum constant " + PlantGrowthVariant.class.getCanonicalName() + "." + text));
-    }
-
-    /**
-     * Returns a string list of all constants
-     *
-     * @author Patryk Klatka
-     * @return String list of all constants
-     */
-    public static List<String> getValuesAsStringList() {
-        return Stream.of(PlantGrowthVariant.values()).map(Enum::toString).toList();
+                .orElseThrow(()-> new IllegalArgumentException("No enum constant " + value));
     }
 }
