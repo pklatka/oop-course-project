@@ -4,16 +4,17 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 
 /**
- * Class, that wraps the String object which should be a path to a file
+ * String object wrapper, that additionally checks if the given string is a valid path.
  *
  * @author Patryk Klatka
  */
-public class PathValue implements ISimulationValue {
+public class PathValue implements ISimulationConfigurationValue {
     private String path;
+
     public PathValue(String path) throws InvalidPathException {
-        try{
+        try {
             setValue(path);
-        }catch (InvalidPathException e){
+        } catch (InvalidPathException e) {
             throw new InvalidPathException(e.getMessage(), e.getReason());
         }
     }
@@ -39,10 +40,9 @@ public class PathValue implements ISimulationValue {
     /**
      * Returns a parsed from string PathValue value
      *
-     * @author Patryk Klatka
-     * @return ISimulationValue value
+     * @return ISimulationConfigurationValue value
      */
-    public static ISimulationValue fromString(String value) {
+    public static ISimulationConfigurationValue fromString(String value) {
         return new PathValue(value);
     }
 }

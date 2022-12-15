@@ -11,28 +11,25 @@ import java.io.File;
  *
  * @author Patryk Klatka
  */
-public class FileChooser
-{
+public class FileChooser {
     private final Stage stage;
 
     /**
      * Constructor, sets stage
      *
-     * @author Patryk Klatka
      * @param stage Stage object
      */
-    public FileChooser(Stage stage){
+    public FileChooser(Stage stage) {
         this.stage = stage;
- }
+    }
 
     /**
      * Show file chooser dialog to get file path
      *
-     * @author Patryk Klatka
      * @param extensionFilter Extension filter for file chooser
      * @return File path
      */
-    public String getFilePath(ExtensionFilter extensionFilter){
+    public String getFilePath(ExtensionFilter extensionFilter) {
         javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
 
         // Set extension filter for text files
@@ -41,17 +38,20 @@ public class FileChooser
         //Show save file dialog
         File file = fileChooser.showOpenDialog(stage);
 
+        if(file == null){
+            return null;
+        }
+
         return file.getPath();
     }
 
     /**
      * Show file chooser dialog to get location where to save file
      *
-     * @author Patryk Klatka
      * @param extensionFilter Extension filter for file chooser
      * @return File path
      */
-    public String saveFilePath(ExtensionFilter extensionFilter){
+    public String saveFilePath(ExtensionFilter extensionFilter) {
         javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
 
         // Set extension filter for text files
@@ -59,6 +59,10 @@ public class FileChooser
 
         //Show save file dialog
         File file = fileChooser.showSaveDialog(stage);
+
+        if(file == null){
+            return null;
+        }
 
         return file.getPath();
     }

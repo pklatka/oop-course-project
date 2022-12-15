@@ -1,9 +1,9 @@
 package com.evolutiongenerator.handler;
 
-import com.evolutiongenerator.constant.ISimulationValue;
+import com.evolutiongenerator.constant.ISimulationConfigurationValue;
 
 /**
- * Interface for handlers of configuration fields
+ * Interface for configuration fields handlers
  *
  * @author Patryk Klatka
  */
@@ -11,16 +11,14 @@ public interface IConfigurationField {
     /**
      * Write value to field
      *
-     * @author Patryk Klatka
-     * @param text ISimulationValue value to write
+     * @param text ISimulationConfigurationValue value to write
      */
-    void writeProperty(ISimulationValue text);
+    void writeProperty(ISimulationConfigurationValue text);
 
     /**
      * Get value from field
      *
-     * @author Patryk Klatka
-     * @return ISimulationValue value from field
+     * @return ISimulationConfigurationValue value from field
      */
-    ISimulationValue readProperty() throws IllegalArgumentException;
+    ISimulationConfigurationValue readProperty() throws IllegalArgumentException;
 }

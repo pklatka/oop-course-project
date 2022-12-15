@@ -1,28 +1,25 @@
 package com.evolutiongenerator.handler;
 
-import com.evolutiongenerator.constant.ISimulationValue;
+import com.evolutiongenerator.constant.ISimulationConfigurationValue;
 import javafx.scene.control.ChoiceBox;
 
 /**
  * Wrapper class for ChoiceBox
- *
- * @author Patryk Klatka
  */
-public class ChoiceBoxHandler implements IConfigurationField{
-    private final ChoiceBox<ISimulationValue> choiceBox;
+public class ChoiceBoxHandler implements IConfigurationField {
+    private final ChoiceBox<ISimulationConfigurationValue> choiceBox;
 
     /**
      * Constructor, sets choiceBox and fromStringFunction,
      * adds listener to choiceBox to reset exampleConfiguration value.
      *
-     * @author Patryk Klatka
-     * @param choiceBox ChoiceBox of strings
+     * @param choiceBox            ChoiceBox of strings
      * @param exampleConfiguration ExampleConfiguration object
      */
-    public ChoiceBoxHandler(ChoiceBox<ISimulationValue> choiceBox, ChoiceBox<String>exampleConfiguration) {
+    public ChoiceBoxHandler(ChoiceBox<ISimulationConfigurationValue> choiceBox, ChoiceBox<String> exampleConfiguration) {
         this.choiceBox = choiceBox;
 
-        choiceBox.setOnAction((event)->{
+        choiceBox.setOnAction((event) -> {
             // Reset exampleConfiguration
             exampleConfiguration.setValue("");
         });
@@ -31,12 +28,11 @@ public class ChoiceBoxHandler implements IConfigurationField{
     /**
      * Write value to ChoiceBox
      *
-     * @author Patryk Klatka
-     * @param value ISimulationValue value to write
+     * @param value ISimulationConfigurationValue value to write
      */
     @Override
-    public void writeProperty(ISimulationValue value) {
-        if(choiceBox.getItems().contains(value)){
+    public void writeProperty(ISimulationConfigurationValue value) {
+        if (choiceBox.getItems().contains(value)) {
             choiceBox.setValue(value);
         }
     }
@@ -44,15 +40,14 @@ public class ChoiceBoxHandler implements IConfigurationField{
     /**
      * Get value from ChoiceBox
      *
-     * @author Patryk Klatka
-     * @return ISimulationValue value from ChoiceBox
+     * @return ISimulationConfigurationValue value from ChoiceBox
      */
     @Override
-    public ISimulationValue readProperty() throws IllegalArgumentException {
-        try{
+    public ISimulationConfigurationValue readProperty() throws IllegalArgumentException {
+        try {
             return choiceBox.getValue();
-        }catch (IllegalArgumentException e){
-            throw new IllegalArgumentException("ChoiceBox value is not valid");
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Wartość listy rozwijalnej jest niepoprawna");
         }
     }
 }

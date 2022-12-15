@@ -1,6 +1,6 @@
 package com.evolutiongenerator.handler;
 
-import com.evolutiongenerator.constant.ISimulationValue;
+import com.evolutiongenerator.constant.ISimulationConfigurationValue;
 import com.evolutiongenerator.constant.IntegerValue;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
@@ -17,27 +17,26 @@ public class TextFieldHandler implements IConfigurationField {
      * Constructor, sets textField and fromStringFunction,
      * adds listener to textField to reset exampleConfiguration value.
      *
-     * @author Patryk Klatka
-     * @param textField TextField
+     * @param textField            TextField
      * @param exampleConfiguration ExampleConfiguration object
      */
-    public TextFieldHandler(TextField textField, ChoiceBox<String>exampleConfiguration){
+    public TextFieldHandler(TextField textField, ChoiceBox<String> exampleConfiguration) {
         this.textField = textField;
 
         // Validate if textField contains number
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
-            try{
+            try {
                 // Reset exampleConfiguration
                 exampleConfiguration.setValue("");
 
-                if(newValue.equals("")){
+                if (newValue.equals("")) {
                     textField.setText("");
                     return;
                 }
 
                 Integer.parseInt(newValue);
                 textField.setText(newValue);
-            }catch(NumberFormatException e){
+            } catch (NumberFormatException e) {
                 textField.setText(oldValue);
             }
         });
@@ -46,26 +45,24 @@ public class TextFieldHandler implements IConfigurationField {
     /**
      * Write value to TextField
      *
-     * @author Patryk Klatka
      * @param value String value to write
      */
     @Override
-    public void writeProperty(ISimulationValue value) {
+    public void writeProperty(ISimulationConfigurationValue value) {
         textField.setText(value.toString());
     }
 
     /**
      * Get value from TextField
      *
-     * @author Patryk Klatka
-     * @return ISimulationValue value from TextField
+     * @return ISimulationConfigurationValue value from TextField
      */
     @Override
-    public ISimulationValue readProperty() throws IllegalArgumentException {
-        try{
+    public ISimulationConfigurationValue readProperty() throws IllegalArgumentException {
+        try {
             return new IntegerValue(textField.getText());
-        }catch (IllegalArgumentException e){
-            throw new IllegalArgumentException(e);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Błąd wartości w polu tekstowym: " + e.getMessage());
         }
     }
 }

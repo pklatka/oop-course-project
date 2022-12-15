@@ -26,9 +26,13 @@ public enum ConfigurationConstant {
     PLANT_GROWTH_VARIANT,
     MUTATION_VARIANT;
 
-    // ******** Types of constants ********
 
-    public enum ConfigurationConstantType{
+    /**
+     * Configuration constants types. Used to determine the type of the value.
+     *
+     * @author Patryk Klatka
+     */
+    public enum ConfigurationConstantType {
         INTEGER,
         PATH,
         ANIMAL_BEHAVIOUR_VARIANT,
@@ -37,14 +41,13 @@ public enum ConfigurationConstant {
         MUTATION_VARIANT;
 
         /**
-         * Returns a parsed from string ISimulationValue value
+         * Returns a parsed from string ISimulationConfigurationValue value
          *
-         * @author Patryk Klatka
-         * @return ISimulationValue value
+         * @return ISimulationConfigurationValue value
          */
-        public ISimulationValue getValueFromString(String value) {
-            try{
-                return switch (this){
+        public ISimulationConfigurationValue getValueFromString(String value) throws IllegalArgumentException {
+            try {
+                return switch (this) {
                     case INTEGER -> IntegerValue.fromString(value);
                     case PATH -> PathValue.fromString(value);
                     case ANIMAL_BEHAVIOUR_VARIANT -> AnimalBehaviourVariant.fromString(value);
@@ -53,7 +56,8 @@ public enum ConfigurationConstant {
                     case MUTATION_VARIANT -> MutationVariant.fromString(value);
                 };
             } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("Value is not a number");
+                throw new IllegalArgumentException("Nie udało się przekonwertować wartości " + value + " do typu "
+                        + this + ". Czy na pewno jest ona poprawna?");
             }
         }
     }
@@ -62,17 +66,15 @@ public enum ConfigurationConstant {
     /**
      * Returns a ConfigurationConstantType of constant
      *
-     * @author Patryk Klatka
      * @return ConfigurationConstantType of constant
      */
-    public ConfigurationConstantType getType() throws IllegalArgumentException{
+    public ConfigurationConstantType getType() throws IllegalArgumentException {
         return switch (this) {
             case MAP_WIDTH, MAP_HEIGHT, ANIMAL_START_NUMBER, GENOTYPE_LENGTH,
                     ANIMAL_START_ENERGY, ANIMAL_REPRODUCTION_ENERGY,
                     ANIMAL_REPRODUCTION_ENERGY_COST, PLANT_START_NUMBER,
                     PLANT_ENERGY, PLANT_SPAWN_NUMBER, MINIMUM_MUTATION_NUMBER,
-                    MAXIMUM_MUTATION_NUMBER ->
-                    ConfigurationConstantType.INTEGER;
+                    MAXIMUM_MUTATION_NUMBER -> ConfigurationConstantType.INTEGER;
             case STATISTICS_FILE_PATH -> ConfigurationConstantType.PATH;
             case MAP_VARIANT -> ConfigurationConstantType.MAP_VARIANT;
             case ANIMAL_BEHAVIOUR_VARIANT -> ConfigurationConstantType.ANIMAL_BEHAVIOUR_VARIANT;

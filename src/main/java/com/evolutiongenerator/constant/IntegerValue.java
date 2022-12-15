@@ -1,11 +1,11 @@
 package com.evolutiongenerator.constant;
 
 /**
- * Class, that wraps integer value
+ * Integer object wrapper, that implements ISimulationValue interface.
  *
  * @author Patryk Klatka
  */
-public class IntegerValue implements ISimulationValue {
+public class IntegerValue implements ISimulationConfigurationValue {
     private Integer value;
 
     public IntegerValue(Integer value) {
@@ -13,7 +13,7 @@ public class IntegerValue implements ISimulationValue {
     }
 
     public IntegerValue(String value) throws IllegalArgumentException {
-        try{
+        try {
             this.value = Integer.valueOf(value);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Wartość nie jest liczbą całkowitą");
@@ -37,10 +37,9 @@ public class IntegerValue implements ISimulationValue {
     /**
      * Returns a parsed from string IntegerValue value
      *
-     * @author Patryk Klatka
-     * @return ISimulationValue value
+     * @return ISimulationConfigurationValue value
      */
-    public static ISimulationValue fromString(String value) {
+    public static ISimulationConfigurationValue fromString(String value) {
         return new IntegerValue(value);
     }
 }

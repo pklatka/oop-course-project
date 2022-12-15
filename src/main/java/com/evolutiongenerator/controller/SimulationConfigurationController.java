@@ -20,10 +20,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Stream;
+
 import javafx.stage.FileChooser.ExtensionFilter;
 
 /**
- * Controller for simulation configuration window.
+ * Controller for simulation configuration stage.
  *
  * @author Patryk Klatka
  */
@@ -40,7 +41,7 @@ public class SimulationConfigurationController implements Initializable {
 
     // ************* Properties *************
     private PathValue statisticsFileLocationURL = null;
-    private boolean stopListeningExampleConfiguration = false;
+    private boolean listenForIConfigurationFieldInput = false;
     private final Map<ConfigurationConstant, IConfigurationField> simulationProperties = new EnumMap<>(ConfigurationConstant.class);
     private FileChooser fileChooser;
 
@@ -60,7 +61,7 @@ public class SimulationConfigurationController implements Initializable {
     @FXML
     private TextField mapHeight;
     @FXML
-    private ChoiceBox<ISimulationValue> mapVariant;
+    private ChoiceBox<ISimulationConfigurationValue> mapVariant;
 
     // ********** Animal fields **********
     @FXML
@@ -74,7 +75,7 @@ public class SimulationConfigurationController implements Initializable {
     @FXML
     private TextField animalCreationEnergyConsumption;
     @FXML
-    private ChoiceBox<ISimulationValue> animalBehaviourVariant;
+    private ChoiceBox<ISimulationConfigurationValue> animalBehaviourVariant;
 
     // ********** Plants fields **********
     @FXML
@@ -84,7 +85,7 @@ public class SimulationConfigurationController implements Initializable {
     @FXML
     private TextField plantSpawnNumber;
     @FXML
-    private ChoiceBox<ISimulationValue> plantGrowVariant;
+    private ChoiceBox<ISimulationConfigurationValue> plantGrowVariant;
 
     // ********** Mutations fields **********
     @FXML
@@ -92,7 +93,7 @@ public class SimulationConfigurationController implements Initializable {
     @FXML
     private TextField maximumMutationNumber;
     @FXML
-    private ChoiceBox<ISimulationValue> mutationVariant;
+    private ChoiceBox<ISimulationConfigurationValue> mutationVariant;
 
     // ********** Options fields **********
     @FXML
@@ -108,7 +109,6 @@ public class SimulationConfigurationController implements Initializable {
     /**
      * Sets the fileChooser utility from simulationConfiguration stage.
      *
-     * @author Patryk Klatka
      * @param fileChooser reference to fileChooser utility
      */
     public void setFileChooserUtil(FileChooser fileChooser) {
@@ -121,27 +121,25 @@ public class SimulationConfigurationController implements Initializable {
     /**
      * Get path to the example configuration file.
      *
-     * @author Patryk Klatka
      * @param filename name of the example configuration file
      * @return path to file
      */
-    private String getExampleConfigurationPath(String filename) {
+    private String getExampleConfigurationPath(String filename) throws IllegalArgumentException {
         if (filename == null || filename.equals("")) {
-            return "";
+            throw new IllegalArgumentException("Nazwa pliku przykładowej konfiguracji nie może być pusta.");
         }
 
         return new File("").getAbsolutePath().concat(configurationsFolderPath + filename + ".txt");
     }
 
     /**
-     * Gets saved options as HashMap.
+     * Gets saved options as EnumMap.
      *
-     * @author Patryk Klatka
-     * @return HashMap with saved options
+     * @return EnumMap with saved options
      */
-    private HashMap<ConfigurationConstant, Object> getSimulationOptions() {
-        try{
-            HashMap<ConfigurationConstant, Object> args = new HashMap<>();
+    private Map<ConfigurationConstant, ISimulationConfigurationValue> getSimulationOptions() {
+        try {
+            Map<ConfigurationConstant, ISimulationConfigurationValue> args = new EnumMap<>(ConfigurationConstant.class);
             // ******* Additional arguments *******
             args.put(ConfigurationConstant.STATISTICS_FILE_PATH, statisticsFileLocationURL);
 
@@ -150,8 +148,8 @@ public class SimulationConfigurationController implements Initializable {
             }
 
             return args;
-        }catch (IllegalArgumentException e){
-            return null;
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Niepoprawne argumenty symulacji. Sprawdź poprawność wprowadzonych danych.");
         }
     }
 
@@ -160,12 +158,11 @@ public class SimulationConfigurationController implements Initializable {
     /**
      * Loads configuration from filePath.
      *
-     * @author Patryk Klatka
      * @param filePath path to file
      */
-    private void loadConfiguration(String filePath) throws IllegalArgumentException, IOException {
-        if (filePath.equals("")) {
-            return;
+    private void loadConfiguration(String filePath) throws IOException, IllegalArgumentException {
+        if (filePath == null || filePath.equals("")) {
+            throw new IllegalArgumentException("Ścieżka ładowanego pliku nie może być pusta.");
         }
 
         try (Stream<String> stream = Files.lines(Paths.get(filePath))) {
@@ -174,40 +171,36 @@ public class SimulationConfigurationController implements Initializable {
                 if (line.contains("=")) {
                     String[] propPair = line.split("=");
                     if (propPair.length < 2) {
-                        throw new IllegalArgumentException("Zły argument " + propPair[0] + " w pliku " + filePath);
+                        throw new IllegalArgumentException("Zły format pliku " + filePath + ". Prawdopodobnie brakuje znaku '='.");
                     }
+
                     ConfigurationConstant configurationConstant = ConfigurationConstant.valueOf(propPair[0].trim());
-
                     IConfigurationField field = simulationProperties.get(configurationConstant);
-                    if (field != null) {
-                        if (propPair[1].equals("")) {
-                            throw new IllegalArgumentException("Parametr " + propPair[0] + " ma błędną wartość w pliku " + filePath);
-                        }
 
-                        field.writeProperty(configurationConstant.getType().getValueFromString(propPair[1].trim()));
-                    } else {
-                        throw new IllegalArgumentException("Zły argument " + propPair[0] + " w pliku " + filePath);
+                    if (field == null) {
+                        throw new IllegalArgumentException("Zła wartość argumentu " + propPair[0] + " w pliku " + filePath + ".");
                     }
+
+                    field.writeProperty(configurationConstant.getType().getValueFromString(propPair[1].trim()));
                 }
             });
         } catch (IOException e) {
-            e.printStackTrace();
-            alert(Alert.AlertType.ERROR, "Odczyt pliku", "Error", "Błąd odczytu pliku: " + e.getLocalizedMessage());
-            throw new IOException(e);
+            throw new IOException("Nie udało się wczytać pliku " + filePath + ". " + e.getMessage(), e);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(e);
         }
     }
 
     /**
      * Saves current configuration to file.
      *
-     * @author Patryk Klatka
      * @param filePath path to file
      */
     private void saveConfiguration(String filePath) throws IOException {
         try {
             ArrayList<String> lines = new ArrayList<>();
 
-            // Read data
+            // Save data as pairs of key and value separated by '='
             for (ConfigurationConstant key : simulationProperties.keySet()) {
                 lines.add(key + "=" + simulationProperties.get(key).readProperty());
             }
@@ -217,9 +210,10 @@ public class SimulationConfigurationController implements Initializable {
             Files.write(path, lines, utf8, StandardOpenOption.CREATE);
 
             alert(Alert.AlertType.INFORMATION, "Zapis pliku", "Informacja", "Plik został zapisany");
-        } catch (IOException | IllegalArgumentException e) {
-            e.printStackTrace();
-            alert(Alert.AlertType.ERROR, "Zapis pliku", "Error", "Błąd zapisu pliku: " + e.getLocalizedMessage());
+        }catch (InvalidPathException e){
+            throw new IOException("Błędna ścieżka do pliku z zapisem danych", e);
+        }
+        catch (IOException | IllegalArgumentException e) {
             throw new IOException(e);
         }
     }
@@ -228,13 +222,11 @@ public class SimulationConfigurationController implements Initializable {
 
     /**
      * Handles exampleConfiguration button.
-     *
-     * @author Patryk Klatka
      */
-    private void exampleConfigurationHandler(ActionEvent event){
+    private void exampleConfigurationHandler(ActionEvent event) {
         try {
-            if (stopListeningExampleConfiguration) {
-                stopListeningExampleConfiguration = false;
+            if (listenForIConfigurationFieldInput) {
+                listenForIConfigurationFieldInput = false;
                 return;
             }
 
@@ -245,70 +237,73 @@ public class SimulationConfigurationController implements Initializable {
             String filename = exampleConfiguration.getValue();
             loadConfiguration(getExampleConfigurationPath(filename));
 
-            stopListeningExampleConfiguration = true;
+            listenForIConfigurationFieldInput = true;
             exampleConfiguration.setValue(filename);
         } catch (IOException | IllegalArgumentException e) {
+            e.printStackTrace();
             alert(Alert.AlertType.ERROR, "Błąd pliku", "Error", e.getMessage());
         }
     }
 
     /**
      * Handles loadConfiguration button.
-     *
-     * @author Patryk Klatka
      */
-    private void loadConfigurationHandler(ActionEvent event){
+    private void loadConfigurationHandler(ActionEvent event) {
         try {
             String path = fileChooser.getFilePath(txtExtensionFilter);
 
             // User has clicked cancel button
-            if (path == null || path.equals("")) {
+            if (path == null) {
                 return;
             }
+
             loadConfiguration(path);
             exampleConfiguration.setValue("");
         } catch (IOException | IllegalArgumentException e) {
+            e.printStackTrace();
             alert(Alert.AlertType.ERROR, "Błąd pliku", "Error", e.getMessage());
         }
     }
 
     /**
      * Handles saveConfiguration button.
-     *
-     * @author Patryk Klatka
      */
-    private void saveConfigurationHandler(ActionEvent event){
+    private void saveConfigurationHandler(ActionEvent event) {
         try {
             String path = fileChooser.saveFilePath(txtExtensionFilter);
 
             // User has clicked cancel button
-            if (path.equals("")) {
+            if (path == null) {
+                // Do not inform user, when he has clicked cancel button
                 return;
             }
 
             saveConfiguration(path);
         } catch (IOException e) {
+            e.printStackTrace();
             alert(Alert.AlertType.ERROR, "Błąd pliku", "Error", e.getMessage());
         }
     }
 
     /**
      * Handles statisticsFileLocation button.
-     *
-     * @author Patryk Klatka
      */
-    private void statisticsFileLocationHandler(ActionEvent event){
+    private void statisticsFileLocationHandler(ActionEvent event) {
         if (saveStatistics.isSelected()) {
             String path = fileChooser.saveFilePath(csvExtensionFilter);
+
+            // User has clicked cancel button
             if (path == null) {
-                statisticsFileLocationStatus.setText("Nie podano lokalizacji!");
-            } else {
-                try{
-                    statisticsFileLocationURL = new PathValue(path);
-                    statisticsFileLocationStatus.setText("Zapisano lokalizację");
-                }catch (InvalidPathException e){
-                    statisticsFileLocationStatus.setText(e.getMessage());
-                }
+                statisticsFileLocationStatus.setText("Nie podano lokalizacji.");
+                return;
+            }
+
+            try {
+                statisticsFileLocationURL = new PathValue(path);
+                statisticsFileLocationStatus.setText("Zapisano lokalizację.");
+            } catch (InvalidPathException e) {
+                e.printStackTrace();
+                statisticsFileLocationStatus.setText(e.getMessage());
             }
         } else {
             statisticsFileLocation.setDisable(true);
@@ -318,10 +313,8 @@ public class SimulationConfigurationController implements Initializable {
 
     /**
      * Handles saveStatistics checkbox.
-     *
-     * @author Patryk Klatka
      */
-    private void saveStatisticsHandler(ActionEvent event){
+    private void saveStatisticsHandler(ActionEvent event) {
         if (saveStatistics.isSelected()) {
             statisticsFileLocation.setDisable(false);
         } else {
@@ -333,27 +326,25 @@ public class SimulationConfigurationController implements Initializable {
 
     /**
      * Handles runSimulation button.
-     *
-     * @author Patryk Klatka
      */
-    private void runSimulationHandler(ActionEvent event){
-        // Get all arguments
-        HashMap<ConfigurationConstant, Object> args = getSimulationOptions();
+    private void runSimulationHandler(ActionEvent event) {
+        try {
+            // Get all arguments
+            Map<ConfigurationConstant, ISimulationConfigurationValue> args = getSimulationOptions();
 
-        if (args == null) {
-            return;
+            // Send arguments to simulation stage
+            new SimulationStage(args, new Stage());
+
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            alert(Alert.AlertType.ERROR, "Błąd załączania symulacji", "Error", e.getMessage());
         }
-
-        // Send arguments to simulation stage
-        new SimulationStage(args, new Stage());
     }
 
     // ************* Initialization *************
 
     /**
      * Loads example configurations from resources folder and initializes variables which handle form.
-     *
-     * @author Patryk Klatka
      */
     private void loadProperties() throws IOException {
         // Load files from configurationsFolderPath directory
@@ -397,11 +388,10 @@ public class SimulationConfigurationController implements Initializable {
     /**
      * Initializes ChoiceBox from List of strings.
      *
-     * @author Patryk Klatka
      * @param choiceBox ChoiceBox to initialize
-     * @param values List of strings to initialize ChoiceBox
+     * @param values    List of strings to initialize ChoiceBox
      */
-    private void initializeChoiceBox(ChoiceBox<ISimulationValue> choiceBox, ISimulationValue[] values) {
+    private void initializeChoiceBox(ChoiceBox<ISimulationConfigurationValue> choiceBox, ISimulationConfigurationValue[] values) {
         choiceBox.getItems().addAll(values);
         choiceBox.getSelectionModel().selectFirst();
     }
@@ -415,8 +405,7 @@ public class SimulationConfigurationController implements Initializable {
     /**
      * Initializes SimulationConfiguration handlers, listeners, variables.
      *
-     * @author Patryk Klatka
-     * @param location URL
+     * @param location  URL
      * @param resources ResourceBundle
      */
     @Override
@@ -445,7 +434,8 @@ public class SimulationConfigurationController implements Initializable {
             runSimulation.setOnAction(this::runSimulationHandler);
 
         } catch (IOException | IllegalArgumentException e) {
-            alert(Alert.AlertType.ERROR, "Błąd pliku", "Error", e.getMessage());
+            e.printStackTrace();
+            alert(Alert.AlertType.ERROR, "Błąd inicjalizacji", "Error", e.getMessage());
         }
     }
 
@@ -455,11 +445,10 @@ public class SimulationConfigurationController implements Initializable {
     /**
      * Shows alert with given parameters.
      *
-     * @author Patryk Klatka
      * @param alertType Alert type
-     * @param title Alert title
-     * @param header Alert header
-     * @param content Alert content
+     * @param title     Alert title
+     * @param header    Alert header
+     * @param content   Alert content
      */
     private void alert(Alert.AlertType alertType, String title, String header, String content) {
         Alert alert = new Alert(alertType);

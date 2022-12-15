@@ -20,13 +20,12 @@ public class SimulationConfigurationStage extends Application {
     /**
      * Starts the stage.
      *
-     * @author Patryk Klatka
      * @param stage Stage to start
      * @throws IOException If the fxml file is not found
      */
     @Override
     public void start(Stage stage) throws IOException {
-        try{
+        try {
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("start-window.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
 
@@ -38,7 +37,7 @@ public class SimulationConfigurationStage extends Application {
             stage.setTitle("Evolution Generator");
             stage.setScene(scene);
             stage.show();
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
             throw new IOException(e);
         }
@@ -47,7 +46,6 @@ public class SimulationConfigurationStage extends Application {
     /**
      * Launches the stage.
      *
-     * @author Patryk Klatka
      * @param args Arguments
      */
     public static void main(String[] args) {

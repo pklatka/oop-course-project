@@ -7,10 +7,10 @@ import java.util.Arrays;
  *
  * @author Patryk Klatka
  */
-public enum AnimalBehaviourVariant implements ISimulationValue {
+public enum AnimalBehaviourVariant implements ISimulationConfigurationValue {
     /**
      * The animal always performs the genes sequentially, one after the other
-     * */
+     */
     NORMAL,
 
     /**
@@ -22,7 +22,6 @@ public enum AnimalBehaviourVariant implements ISimulationValue {
     /**
      * Returns a string representation of constant
      *
-     * @author Patryk Klatka
      * @return String representation of constant
      */
     public String toString() {
@@ -35,13 +34,12 @@ public enum AnimalBehaviourVariant implements ISimulationValue {
     /**
      * Returns a parsed from string AnimalBehaviourVariant value
      *
-     * @author Patryk Klatka
-     * @return ISimulationValue value
+     * @return ISimulationConfigurationValue value
      */
-    public static ISimulationValue fromString(String value) throws IllegalArgumentException {
+    public static ISimulationConfigurationValue fromString(String value) throws IllegalArgumentException {
         return Arrays.stream(AnimalBehaviourVariant.values())
                 .filter(v -> v.toString().equals(value))
                 .findFirst()
-                .orElseThrow(()-> new IllegalArgumentException("No enum constant " + value));
+                .orElseThrow(() -> new IllegalArgumentException("Brak stałej " + AnimalBehaviourVariant.class.getCanonicalName() + "." + value));
     }
 }

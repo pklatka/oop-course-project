@@ -1,6 +1,7 @@
 package com.evolutiongenerator.stage;
 
 import com.evolutiongenerator.constant.ConfigurationConstant;
+import com.evolutiongenerator.constant.ISimulationConfigurationValue;
 import com.evolutiongenerator.model.engine.SimulationEngine;
 import com.evolutiongenerator.model.map.AbstractWorldMap;
 import com.evolutiongenerator.model.map.GrassField;
@@ -26,6 +27,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
+import java.util.Map;
 
 public class SimulationStage extends Application {
 
@@ -38,7 +40,8 @@ public class SimulationStage extends Application {
     private GridPane grid = new GridPane();
     private Vector2d[] mapBounds;
 
-    public SimulationStage(HashMap<ConfigurationConstant, Object> args, Stage primaryStage){
+    public SimulationStage(Map<ConfigurationConstant, ISimulationConfigurationValue> args, Stage primaryStage) {
+        args.keySet().forEach(key -> System.out.println(key + " " + args.get(key)));
         init(new String[]{});
         start(primaryStage);
     }
