@@ -1,46 +1,69 @@
 package com.evolutiongenerator.utils;
 
 import javafx.stage.Stage;
+import javafx.stage.FileChooser.ExtensionFilter;
+
 
 import java.io.File;
 
-public class FileChooser
-{
+/**
+ * Wrapper class for javafx.stage.FileChooser
+ *
+ * @author Patryk Klatka
+ */
+public class FileChooser {
     private final Stage stage;
 
-    public FileChooser(Stage stage){
+    /**
+     * Constructor, sets stage
+     *
+     * @param stage Stage object
+     */
+    public FileChooser(Stage stage) {
         this.stage = stage;
     }
 
-    public String getFilePath(){
+    /**
+     * Show file chooser dialog to get file path
+     *
+     * @param extensionFilter Extension filter for file chooser
+     * @return File path
+     */
+    public String getFilePath(ExtensionFilter extensionFilter) {
         javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
 
         // Set extension filter for text files
-        javafx.stage.FileChooser.ExtensionFilter extFilter = new javafx.stage.FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
-        fileChooser.getExtensionFilters().add(extFilter);
+        fileChooser.getExtensionFilters().add(extensionFilter);
 
         //Show save file dialog
         File file = fileChooser.showOpenDialog(stage);
-        if (file != null) {
-            return file.getPath();
+
+        if(file == null){
+            return null;
         }
-        return "";
+
+        return file.getPath();
     }
 
-    public String saveFilePath(){
+    /**
+     * Show file chooser dialog to get location where to save file
+     *
+     * @param extensionFilter Extension filter for file chooser
+     * @return File path
+     */
+    public String saveFilePath(ExtensionFilter extensionFilter) {
         javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
 
         // Set extension filter for text files
-        javafx.stage.FileChooser.ExtensionFilter extFilter = new javafx.stage.FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
-        fileChooser.getExtensionFilters().add(extFilter);
+        fileChooser.getExtensionFilters().add(extensionFilter);
 
         //Show save file dialog
         File file = fileChooser.showSaveDialog(stage);
 
-        if (file != null) {
-            return file.getPath();
+        if(file == null){
+            return null;
         }
-        return "";
-    }
 
+        return file.getPath();
+    }
 }
