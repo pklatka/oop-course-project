@@ -3,7 +3,7 @@ package com.evolutiongenerator.model.engine;
 import com.evolutiongenerator.model.map.IWorldMap;
 import com.evolutiongenerator.model.mapObject.Animal;
 import com.evolutiongenerator.model.mapObject.MoveDirection;
-import com.evolutiongenerator.stage.SimulationStage;
+import com.evolutiongenerator.stage.SimulationStageOld;
 import com.evolutiongenerator.utils.Vector2d;
 import javafx.application.Platform;
 
@@ -17,7 +17,7 @@ public class SimulationEngine implements IEngine, Runnable {
     // Use ArrayList to remember initial animal order
     private final ArrayList<Animal> animalsOrder = new ArrayList<>();
     private int moveDelay = 1000;
-    private final ArrayList<SimulationStage> observers = new ArrayList<>();
+    private final ArrayList<SimulationStageOld> observers = new ArrayList<>();
 
     public SimulationEngine(IWorldMap map, Vector2d[] positionArray) {
         this.map = map;
@@ -37,12 +37,12 @@ public class SimulationEngine implements IEngine, Runnable {
         this.directionArray = directionArray;
     }
 
-    public SimulationEngine(IWorldMap map, Vector2d[] positionArray, MoveDirection[] directionArray, SimulationStage observer) {
+    public SimulationEngine(IWorldMap map, Vector2d[] positionArray, MoveDirection[] directionArray, SimulationStageOld observer) {
         this(map, positionArray, directionArray);
         this.observers.add(observer);
     }
 
-    public SimulationEngine(IWorldMap map, Vector2d[] positionArray, MoveDirection[] directionArray, SimulationStage observer, int moveDelay) {
+    public SimulationEngine(IWorldMap map, Vector2d[] positionArray, MoveDirection[] directionArray, SimulationStageOld observer, int moveDelay) {
         this(map, positionArray, directionArray, observer);
         this.moveDelay = moveDelay;
     }
@@ -54,10 +54,10 @@ public class SimulationEngine implements IEngine, Runnable {
             // Why using CountDownLatch?
             // Rendering grid might be time-consuming, so we must be ensured, that old grid has already been rendered.
             CountDownLatch doneLatch = new CountDownLatch(observers.size());
-            for (SimulationStage simulationStage : observers) {
+            for (SimulationStageOld simulationStageOld : observers) {
                 Platform.runLater(() -> {
                     try {
-                        simulationStage.renderGrid();
+                        simulationStageOld.renderGrid();
                     } finally {
                         doneLatch.countDown();
                     }
@@ -70,8 +70,8 @@ public class SimulationEngine implements IEngine, Runnable {
     }
 
     private void dispatchAnimation() {
-        for (SimulationStage simulationStage : observers) {
-            Platform.runLater(simulationStage::renderGrid);
+        for (SimulationStageOld simulationStageOld : observers) {
+            Platform.runLater(simulationStageOld::renderGrid);
         }
     }
 
