@@ -194,8 +194,6 @@ public class SimulationController implements Initializable {
         initializeMap();
     }
 
-
-
     /**
      * Main method for initializing simulation stage
      *
