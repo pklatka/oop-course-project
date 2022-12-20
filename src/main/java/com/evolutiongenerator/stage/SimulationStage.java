@@ -13,14 +13,32 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * Creates a new simulation stage
+ *
+ * @author Patryk Klatka
+ */
 public class SimulationStage extends Application {
-    private Map<ConfigurationConstant, ISimulationConfigurationValue> args;
+    private final Map<ConfigurationConstant, ISimulationConfigurationValue> args;
 
+    /**
+     * SimulationStage constructor.
+     *
+     * @param args Simulation configuration
+     * @param stage Stage
+     * @throws IOException If the fxml file is not found
+     */
     public SimulationStage(Map<ConfigurationConstant, ISimulationConfigurationValue> args, Stage stage) throws IOException {
         this.args = args;
         start(stage);
     }
 
+    /**
+     * Starts simulation stage.
+     *
+     * @param primaryStage Stage
+     * @throws IOException If the fxml file is not found
+     */
     @Override
     public void start(Stage primaryStage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("simulation-window.fxml"));
@@ -37,6 +55,11 @@ public class SimulationStage extends Application {
         primaryStage.show();
     }
 
+    /**
+     * Launches the stage.
+     *
+     * @param args Arguments
+     */
     public static void main(String[] args) {
         launch(args);
     }

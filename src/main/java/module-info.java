@@ -14,4 +14,5 @@ module com.pklatka.evolutiongenerator {
     exports com.evolutiongenerator.model.mapObject;
     exports com.evolutiongenerator.model.engine;
     exports com.evolutiongenerator.model.ui;
+    opens com.evolutiongenerator.model.ui to javafx.fxml;
 }

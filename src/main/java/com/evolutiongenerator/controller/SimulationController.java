@@ -3,6 +3,7 @@ package com.evolutiongenerator.controller;
 import com.evolutiongenerator.constant.ConfigurationConstant;
 import com.evolutiongenerator.constant.ISimulationConfigurationValue;
 import com.evolutiongenerator.constant.IntegerValue;
+import com.evolutiongenerator.model.ui.SortedListViewRecord;
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
@@ -22,7 +23,11 @@ import javafx.scene.layout.VBox;
 import java.net.URL;
 import java.util.*;
 
-
+/**
+ * Controller for simulation stage
+ *
+ * @author Patryk Klatka
+ */
 public class SimulationController implements Initializable {
 
     // ***** Simulation statistics fields *****
@@ -79,11 +84,22 @@ public class SimulationController implements Initializable {
     private double cellHeight; // = gridHeight / mapHeight;
     private Map<ConfigurationConstant, ISimulationConfigurationValue> args;
     private ObservableList<SortedListViewRecord> mostPopularGenomes = FXCollections.observableArrayList(rec -> new Observable[]{rec.priority});
+
+    // ****** Setters ******
+
+    /**
+     * Sets simulation arguments
+     *
+     * @param args Simulation arguments
+     */
     public void setArgs(Map<ConfigurationConstant, ISimulationConfigurationValue> args) {
         this.args = args;
     }
 
-    private void readArguments() {
+    /**
+     * Sets simulation options
+     */
+    private void setSimulationOptions() {
         for(ConfigurationConstant configurationConstant: args.keySet()){
             switch (configurationConstant.getType()){
                 case INTEGER -> {
@@ -101,6 +117,39 @@ public class SimulationController implements Initializable {
             }
         }}
 
+    // ****** Handlers ******
+
+    /**
+     * Handles simulation control button
+     *
+     * @param actionEvent Action event
+     */
+    private void simulationControlButtonHandler(ActionEvent actionEvent) {
+        popularGenomes.getSelectionModel().clearSelection();
+        mostPopularGenomes.add(new SortedListViewRecord(1, "Test"));
+    }
+
+    /**
+     * Handles popular genomes list view
+     *
+     * @param observable Observable
+     */
+    private void popularGenomesHandler(Observable observable) {
+        SortedListViewRecord selectedRecord = popularGenomes.getSelectionModel().getSelectedItem();
+
+        if (selectedRecord == null){
+            return;
+        }
+        System.out.println(selectedRecord);
+
+        // TODO: Select animals with selected genome
+    }
+
+    // ****** Initializers ******
+
+    /**
+     * Initializes simulation map
+     */
     private void initializeMap(){
         GridPane grid = new GridPane();
         grid.setGridLinesVisible(true);
@@ -120,10 +169,12 @@ public class SimulationController implements Initializable {
         map = grid;
     }
 
-
+    /**
+     * Initializes simulation stage
+     */
     private void initializeStage(){
         // Read arguments
-        readArguments();
+        setSimulationOptions();
 
         // Initialize properties
         gridWidth = mapContainer.getMinWidth();
@@ -144,22 +195,14 @@ public class SimulationController implements Initializable {
         initializeMap();
     }
 
-    private void simulationControlButtonHandler(ActionEvent actionEvent) {
-        popularGenomes.getSelectionModel().clearSelection();
-        mostPopularGenomes.add(new SortedListViewRecord(1, "Test"));
-    }
 
-    private void popularGenomesHandler(Observable observable) {
-        SortedListViewRecord selectedRecord = popularGenomes.getSelectionModel().getSelectedItem();
 
-        if (selectedRecord == null){
-            return;
-        }
-        System.out.println(selectedRecord);
-
-        // TODO: Select animals with selected genome
-    }
-
+    /**
+     * Main method for initializing simulation stage
+     *
+     * @param location URL
+     * @param resources Resource bundle
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Platform.runLater(this::initializeStage);
