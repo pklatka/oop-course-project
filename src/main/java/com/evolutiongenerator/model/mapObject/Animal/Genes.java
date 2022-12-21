@@ -4,11 +4,14 @@ import com.evolutiongenerator.constant.MutationVariant;
 import com.evolutiongenerator.utils.Randomize;
 
 import java.util.ArrayList;
+import java.util.List;
+
 /**
+ * A class describing the field in the animal class used for the process of movement and reproduction
  * @author Paweł Motyka
  */
 public class Genes {
-    private final ArrayList<Integer> genesList;
+    private final List<Integer> genesList;
     private int currentGenIndex = 0;
     private final int maxMutationAmount;
     private final int minMutationAmount;
@@ -17,17 +20,17 @@ public class Genes {
     public Genes(int numberOfGenes, int maxMutationAmount, int minMutationAmount, MutationVariant mutationVariant) {
         this.maxMutationAmount = maxMutationAmount;
         this.minMutationAmount = minMutationAmount;
-        this.genesList = new ArrayList<>();
-        this.generateGenes(numberOfGenes);
+        genesList = new ArrayList<>();
         this.mutationVariant = mutationVariant;
+        generateGenes(numberOfGenes);
     }
 
-    public Genes(ArrayList<Integer> genes, int maxMutationAmount, int minMutationAmount, MutationVariant mutationVariant){
-        this.genesList = genes;
+    public Genes(List<Integer> genes, int maxMutationAmount, int minMutationAmount, MutationVariant mutationVariant){
+        genesList = genes;
         this.mutationVariant = mutationVariant;
         this.maxMutationAmount = maxMutationAmount;
         this.minMutationAmount = minMutationAmount;
-        this.mutateGene();
+        mutateGene();
     }
 
     /**
@@ -41,13 +44,13 @@ public class Genes {
     }
 
     /**
-     *
+     * Generate offspring's genes
      * @param genesAmount number of genes to return
      * @param isLeftSide from which side to inherit genes
      * @return A slice of the parent's genes for the offspring
      */
-    public ArrayList<Integer> getOffspringGenes(int genesAmount, boolean isLeftSide){
-        ArrayList<Integer> offspringGenes = new ArrayList<>();
+    public List<Integer> getOffspringGenes(int genesAmount, boolean isLeftSide){
+        List<Integer> offspringGenes = new ArrayList<>();
 
         if (isLeftSide){
             for (int i = 0; i < genesAmount; i++) {
@@ -64,8 +67,6 @@ public class Genes {
 
     /**
      * If we are on the last gen the next will be the first in the array
-     * It returns current gen and move currentIndex to next
-     *
      * @return Current gen in order.
      */
     public int getGen() {

@@ -1,18 +1,16 @@
 package com.evolutiongenerator.utils;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Randomize {
-    static Random random = new Random();
-
-
 
     public static int generateInt(int max, int min){
-        return random.nextInt(max + 1 - min) + min;
+        return ThreadLocalRandom.current().nextInt(max + 1 - min) + min;
     }
 
     public static boolean generateBoolean(){
-        return random.nextBoolean();
+        return ThreadLocalRandom.current().nextBoolean();
     }
 
 }
