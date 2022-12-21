@@ -2,8 +2,11 @@ package com.evolutiongenerator.model.engine;
 
 import com.evolutiongenerator.constant.ConfigurationConstant;
 import com.evolutiongenerator.constant.ISimulationConfigurationValue;
+import com.evolutiongenerator.constant.IntegerValue;
+import com.evolutiongenerator.constant.MutationVariant;
 import com.evolutiongenerator.model.map.IWorldMap;
 import com.evolutiongenerator.model.mapObject.Animal.Animal;
+import com.evolutiongenerator.model.mapObject.Animal.Genes;
 import com.evolutiongenerator.model.mapObject.MoveDirection;
 import com.evolutiongenerator.stage.ISimulationObserver;
 import com.evolutiongenerator.stage.SimulationStageOld;
@@ -43,11 +46,16 @@ public class SimulationEngine implements IEngine, Runnable {
 
     public SimulationEngine(IWorldMap map, Vector2d[] positionArray) {
         this.map = map;
+        IntegerValue genLength =  (IntegerValue) simulationOptions.get(ConfigurationConstant.GENOTYPE_LENGTH);
+        IntegerValue maximumMutationNumber = (IntegerValue) simulationOptions.get(ConfigurationConstant.MAXIMUM_MUTATION_NUMBER);
+        IntegerValue minimumMutationNumber = (IntegerValue) simulationOptions.get(ConfigurationConstant.MINIMUM_MUTATION_NUMBER);
+        MutationVariant mutationVariant =  (MutationVariant) simulationOptions.get(ConfigurationConstant.MUTATION_VARIANT);
 
         // TODO create Gen here for each animal and pass it to constructor
         // Add animals to map
         for (Vector2d position : positionArray) {
-            Animal newAnimal = new Animal(map, position);
+            Genes genes = new Genes(genLength.getValue(),maximumMutationNumber.getValue(),minimumMutationNumber.getValue(), mutationVariant);
+            Animal newAnimal = new Animal(map, position,genes);
             if (map.place(newAnimal)) {
                 animalsOrder.add(newAnimal);
             }
