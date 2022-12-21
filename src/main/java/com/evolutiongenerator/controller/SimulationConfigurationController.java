@@ -6,6 +6,7 @@ import com.evolutiongenerator.handler.IConfigurationField;
 import com.evolutiongenerator.handler.TextFieldHandler;
 import com.evolutiongenerator.stage.SimulationStage;
 import com.evolutiongenerator.utils.FileChooser;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -333,9 +334,15 @@ public class SimulationConfigurationController implements Initializable {
             Map<ConfigurationConstant, ISimulationConfigurationValue> args = getSimulationOptions();
 
             // Send arguments to simulation stage
-            new SimulationStage(args, new Stage());
-
-        } catch (IOException | IllegalArgumentException e) {
+            Platform.runLater(() -> {
+                try {
+                    new SimulationStage(args, new Stage());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    alert(Alert.AlertType.ERROR, "Błąd pliku", "Error", e.getMessage());
+                }
+            });
+        } catch (IllegalArgumentException e) {
             e.printStackTrace();
             alert(Alert.AlertType.ERROR, "Błąd załączania symulacji", "Error", e.getMessage());
         }
