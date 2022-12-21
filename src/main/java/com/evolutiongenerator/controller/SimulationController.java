@@ -140,7 +140,6 @@ public class SimulationController implements Initializable {
         if (selectedRecord == null){
             return;
         }
-        System.out.println(selectedRecord);
 
         // TODO: Select animals with selected genome
     }
