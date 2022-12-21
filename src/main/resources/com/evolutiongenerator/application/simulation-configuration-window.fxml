@@ -11,9 +11,9 @@
 
 <AnchorPane prefHeight="842.0" prefWidth="903.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.evolutiongenerator.controller.SimulationConfigurationController">
    <children>
-      <Label layoutX="293.0" layoutY="14.0" text="Evolution Generator">
+      <Label layoutX="229.0" layoutY="20.0" text="Evolution Generator">
          <font>
-            <Font name="Mistral" size="52.0" />
+            <Font name="Arial Bold" size="52.0" />
          </font>
       </Label>
       <Button fx:id="loadConfiguration" layoutX="49.0" layoutY="114.0" mnemonicParsing="false" text="Wczytaj konfigurację">

@@ -1,0 +1,209 @@
+package com.evolutiongenerator.controller;
+
+import com.evolutiongenerator.constant.ConfigurationConstant;
+import com.evolutiongenerator.constant.ISimulationConfigurationValue;
+import com.evolutiongenerator.constant.IntegerValue;
+import com.evolutiongenerator.model.ui.SortedListViewRecord;
+import javafx.application.Platform;
+import javafx.beans.Observable;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.VBox;
+
+import java.net.URL;
+import java.util.*;
+
+/**
+ * Controller for simulation stage
+ *
+ * @author Patryk Klatka
+ */
+public class SimulationController implements Initializable {
+
+    // ***** Simulation statistics fields *****
+    @FXML
+    Label simulationTitle;
+    @FXML
+    Label day;
+    @FXML
+    Label numberOfAnimals;
+    @FXML
+    Label numberOfPlants;
+    @FXML
+    Label numberOfEmptyFields;
+    @FXML
+    Label averageAnimalEnergy;
+    @FXML
+    Label averageAnimalLifespan;
+    @FXML
+    ListView<SortedListViewRecord> popularGenomes;
+
+    // ***** Animal statistics fields *****
+    @FXML
+    Label animalStatisticsStatus;
+    @FXML
+    Label selectedAnimalGenome;
+    @FXML
+    Label selectedAnimalActiveGenome;
+    @FXML
+    Label selectedAnimalEnergy;
+    @FXML
+    Label selectedAnimalEatenPlants;
+    @FXML
+    Label selectedAnimalNumberOfChildren;
+    @FXML
+    Label selectedAnimalLifespan;
+    @FXML
+    Label selectedAnimalDeathDay;
+
+    // ***** Simulation map fields *****
+    @FXML
+    Button simulationControlButton;
+    @FXML
+    VBox mapContainer;
+    GridPane map;
+
+    // ***** Simulation map configuration *****
+    private double gridWidth; // = mapContainer.getMinWidth();
+    private double gridHeight; // = mapContainer.getMinHeight()
+
+    private double mapWidth = 10;
+    private double mapHeight = 10;
+
+    private double cellWidth; // = gridWidth / mapWidth;
+    private double cellHeight; // = gridHeight / mapHeight;
+    private Map<ConfigurationConstant, ISimulationConfigurationValue> args;
+    private ObservableList<SortedListViewRecord> mostPopularGenomes = FXCollections.observableArrayList(rec -> new Observable[]{rec.priority});
+
+    // ****** Setters ******
+
+    /**
+     * Sets simulation arguments
+     *
+     * @param args Simulation arguments
+     */
+    public void setArgs(Map<ConfigurationConstant, ISimulationConfigurationValue> args) {
+        this.args = args;
+    }
+
+    /**
+     * Sets simulation options
+     */
+    private void setSimulationOptions() {
+        for(ConfigurationConstant configurationConstant: args.keySet()){
+            switch (configurationConstant.getType()){
+                case INTEGER -> {
+                    IntegerValue integerValue = (IntegerValue) args.get(configurationConstant);
+                    switch (configurationConstant) {
+                        case MAP_WIDTH -> mapWidth = integerValue.getValue();
+                        case MAP_HEIGHT -> mapHeight = integerValue.getValue();
+                    }
+                }
+                case PATH -> {}
+                case MAP_VARIANT -> {}
+                case MUTATION_VARIANT -> {}
+                case PLANT_GROWTH_VARIANT -> {}
+                case ANIMAL_BEHAVIOUR_VARIANT -> {}
+            }
+        }}
+
+    // ****** Handlers ******
+
+    /**
+     * Handles simulation control button
+     *
+     * @param actionEvent Action event
+     */
+    private void simulationControlButtonHandler(ActionEvent actionEvent) {
+        popularGenomes.getSelectionModel().clearSelection();
+        mostPopularGenomes.add(new SortedListViewRecord(1, "Test"));
+    }
+
+    /**
+     * Handles popular genomes list view
+     *
+     * @param observable Observable
+     */
+    private void popularGenomesHandler(Observable observable) {
+        SortedListViewRecord selectedRecord = popularGenomes.getSelectionModel().getSelectedItem();
+
+        if (selectedRecord == null){
+            return;
+        }
+
+        // TODO: Select animals with selected genome
+    }
+
+    // ****** Initializers ******
+
+    /**
+     * Initializes simulation map
+     */
+    private void initializeMap(){
+        GridPane grid = new GridPane();
+        grid.setGridLinesVisible(true);
+
+        for (int i = 0; i < mapWidth; i++) {
+            ColumnConstraints column = new ColumnConstraints(cellWidth);
+            grid.getColumnConstraints().add(column);
+        }
+
+        for (int i = 0; i < mapHeight; i++) {
+            RowConstraints row = new RowConstraints(cellHeight);
+            grid.getRowConstraints().add(row);
+        }
+
+        grid.setAlignment(Pos.CENTER);
+        mapContainer.getChildren().add(grid);
+        map = grid;
+    }
+
+    /**
+     * Initializes simulation stage
+     */
+    private void initializeStage(){
+        // Read arguments
+        setSimulationOptions();
+
+        // Initialize properties
+        gridWidth = mapContainer.getMinWidth();
+        gridHeight = mapContainer.getMinHeight();
+
+        cellWidth = gridWidth / mapWidth;
+        cellHeight = gridHeight / mapHeight;
+
+        // Initialize popularGenomes ListView
+        popularGenomes.setItems(mostPopularGenomes.sorted(Comparator.comparingInt(l -> -l.priority.get())));
+
+        // Initialize listeners
+        popularGenomes.getSelectionModel().selectedItemProperty().addListener(this::popularGenomesHandler);
+
+        simulationControlButton.setOnAction(this::simulationControlButtonHandler);
+
+        // Initialize map
+        initializeMap();
+    }
+
+
+
+    /**
+     * Main method for initializing simulation stage
+     *
+     * @param location URL
+     * @param resources Resource bundle
+     */
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        Platform.runLater(this::initializeStage);
+    }
+}

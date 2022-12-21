@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.evolutiongenerator.controller.SimulationController">
+  <columnConstraints>
+    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="300.0" minWidth="300.0" prefWidth="300.0" />
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="500.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
+  </rowConstraints>
+   <children>
+      <VBox alignment="TOP_CENTER">
+         <children>
+            <ScrollPane pannable="true" style="-fx-background-color: transparent;">
+               <content>
+                  <AnchorPane>
+                     <children>
+                        <VBox alignment="CENTER" layoutX="15.0" layoutY="3.0" prefHeight="791.0" prefWidth="147.0" spacing="10.0">
+                           <children>
+                              <Label fx:id="simulationTitle" text="Symulacja nr 1">
+                                 <font>
+                                    <Font name="Arial" size="25.0" />
+                                 </font>
+                              </Label>
+                              <Line endX="138.0" startX="-125.0" />
+                              <VBox prefHeight="200.0" prefWidth="268.0" spacing="10.0">
+                                 <children>
+                                    <HBox alignment="CENTER">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="17.0" text="Dzień:" textAlignment="CENTER">
+                                             <font>
+                                                <Font name="Arial" size="15.0" />
+                                             </font>
+                                          </Label>
+                                          <Region prefHeight="17.0" prefWidth="111.0" HBox.hgrow="ALWAYS" />
+                                          <Label fx:id="day" alignment="CENTER" prefHeight="17.0" prefWidth="49.0" text="0" textAlignment="CENTER">
+                                             <font>
+                                                <Font name="Arial" size="15.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="17.0" text="Liczba wszystkich zwierząt: " textAlignment="CENTER">
+                                             <font>
+                                                <Font name="Arial" size="15.0" />
+                                             </font>
+                                          </Label>
+                                          <Region prefHeight="17.0" prefWidth="9.0" HBox.hgrow="ALWAYS" />
+                                          <Label fx:id="numberOfAnimals" alignment="CENTER" prefHeight="17.0" prefWidth="49.0" text="0" textAlignment="CENTER">
+                                             <font>
+                                                <Font name="Arial" size="15.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="17.0" text="Liczba wszystkich roślin: " textAlignment="CENTER">
+                                             <font>
+                                                <Font name="Arial" size="15.0" />
+                                             </font>
+                                          </Label>
+                                          <Region prefHeight="17.0" prefWidth="9.0" HBox.hgrow="ALWAYS" />
+                                          <Label fx:id="numberOfPlants" alignment="CENTER" prefHeight="17.0" prefWidth="49.0" text="0" textAlignment="CENTER">
+                                             <font>
+                                                <Font name="Arial" size="15.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="17.0" text="Liczba wolnych pól: " textAlignment="CENTER">
+                                             <font>
+                                                <Font name="Arial" size="15.0" />
+                                             </font>
+                                          </Label>
+                                          <Region prefHeight="17.0" prefWidth="9.0" HBox.hgrow="ALWAYS" />
+                                          <Label fx:id="numberOfEmptyFields" alignment="CENTER" prefHeight="17.0" prefWidth="49.0" text="0" textAlignment="CENTER">
+                                             <font>
+                                                <Font name="Arial" size="15.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="42.0" prefWidth="155.0" text="Średni poziom energii zwierząt:" wrapText="true">
+                                             <font>
+                                                <Font name="Arial" size="15.0" />
+                                             </font>
+                                          </Label>
+                                          <Region prefHeight="17.0" prefWidth="9.0" HBox.hgrow="ALWAYS" />
+                                          <Label fx:id="averageAnimalEnergy" alignment="CENTER" prefHeight="17.0" prefWidth="49.0" text="0" textAlignment="CENTER">
+                                             <font>
+                                                <Font name="Arial" size="15.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="42.0" prefWidth="149.0" text="Średnia długość życia zwierząt:" wrapText="true">
+                                             <font>
+                                                <Font name="Arial" size="15.0" />
+                                             </font>
+                                          </Label>
+                                          <Region prefHeight="17.0" prefWidth="9.0" HBox.hgrow="ALWAYS" />
+                                          <Label fx:id="averageAnimalLifespan" alignment="CENTER" prefHeight="17.0" prefWidth="49.0" text="0" textAlignment="CENTER">
+                                             <font>
+                                                <Font name="Arial" size="15.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets left="10.0" />
+                                 </VBox.margin>
+                              </VBox>
+                              <Group>
+                                 <children>
+                                    <Label alignment="CENTER" layoutX="31.0" prefHeight="17.0" text="Najpopularniejsze genotypy:">
+                                       <font>
+                                          <Font name="Arial" size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <ScrollPane accessibleText="Kliknij, aby zaznaczyć zwierzęta, które posiadają wybrany genotyp" layoutX="11.0" layoutY="24.0" prefHeight="123.0" prefWidth="228.0">
+                                       <content>
+                                          <ListView fx:id="popularGenomes" accessibleText="Kliknij, aby zaznaczyć zwierzęta, które posiadają wybrany genotyp" focusTraversable="false" prefHeight="120.0" prefWidth="225.0" style="-fx-background-color: transparent;" />
+                                       </content>
+                                    </ScrollPane>
+                                    <Label layoutY="147.0" prefHeight="44.0" prefWidth="251.0" text="Kliknij, aby zaznaczyć zwierzęta, które posiadają wybrany genotyp" textAlignment="CENTER" wrapText="true">
+                                       <font>
+                                          <Font name="Arial Italic" size="12.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </Group>
+                              <Line endX="138.0" startX="-125.0" />
+                              <Label fx:id="animalStatisticsStatus" prefHeight="44.0" prefWidth="187.0" text="Wybierz zwierzę, aby śledzić jego statystyki" textAlignment="CENTER" wrapText="true">
+                                 <font>
+                                    <Font name="Arial" size="15.0" />
+                                 </font>
+                              </Label>
+                              <VBox prefHeight="200.0" prefWidth="250.0" spacing="10.0">
+                                 <children>
+                                    <HBox alignment="CENTER">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="17.0" text="Genom:" textAlignment="CENTER">
+                                             <font>
+                                                <Font name="Arial" size="15.0" />
+                                             </font>
+                                          </Label>
+                                          <Region prefHeight="17.0" prefWidth="9.0" HBox.hgrow="ALWAYS" />
+                                          <Label fx:id="selectedAnimalGenome" alignment="CENTER" prefHeight="17.0" prefWidth="75.0" text="0" textAlignment="CENTER">
+                                             <font>
+                                                <Font name="Arial" size="15.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="17.0" text="Aktywna część genomu:" textAlignment="CENTER">
+                                             <font>
+                                                <Font name="Arial" size="15.0" />
+                                             </font>
+                                          </Label>
+                                          <Region prefHeight="17.0" prefWidth="9.0" HBox.hgrow="ALWAYS" />
+                                          <Label fx:id="selectedAnimalActiveGenome" alignment="CENTER" prefHeight="17.0" prefWidth="75.0" text="0" textAlignment="CENTER">
+                                             <font>
+                                                <Font name="Arial" size="15.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="17.0" text="Energia:" textAlignment="CENTER">
+                                             <font>
+                                                <Font name="Arial" size="15.0" />
+                                             </font>
+                                          </Label>
+                                          <Region prefHeight="17.0" prefWidth="9.0" HBox.hgrow="ALWAYS" />
+                                          <Label fx:id="selectedAnimalEnergy" alignment="CENTER" prefHeight="17.0" prefWidth="75.0" text="0" textAlignment="CENTER">
+                                             <font>
+                                                <Font name="Arial" size="15.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="17.0" text="Zjedzone rośliny:" textAlignment="CENTER">
+                                             <font>
+                                                <Font name="Arial" size="15.0" />
+                                             </font>
+                                          </Label>
+                                          <Region prefHeight="17.0" prefWidth="9.0" HBox.hgrow="ALWAYS" />
+                                          <Label fx:id="selectedAnimalEatenPlants" alignment="CENTER" prefHeight="17.0" prefWidth="75.0" text="0" textAlignment="CENTER">
+                                             <font>
+                                                <Font name="Arial" size="15.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="17.0" text="Liczba potomstwa:" textAlignment="CENTER">
+                                             <font>
+                                                <Font name="Arial" size="15.0" />
+                                             </font>
+                                          </Label>
+                                          <Region prefHeight="17.0" prefWidth="9.0" HBox.hgrow="ALWAYS" />
+                                          <Label fx:id="selectedAnimalNumberOfChildren" alignment="CENTER" prefHeight="17.0" prefWidth="75.0" text="0" textAlignment="CENTER">
+                                             <font>
+                                                <Font name="Arial" size="15.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="17.0" text="Liczba dni życia:" textAlignment="CENTER">
+                                             <font>
+                                                <Font name="Arial" size="15.0" />
+                                             </font>
+                                          </Label>
+                                          <Region prefHeight="17.0" prefWidth="9.0" HBox.hgrow="ALWAYS" />
+                                          <Label fx:id="selectedAnimalLifespan" alignment="CENTER" prefHeight="17.0" prefWidth="75.0" text="0" textAlignment="CENTER">
+                                             <font>
+                                                <Font name="Arial" size="15.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="17.0" text="Dzień śmierci:" textAlignment="CENTER">
+                                             <font>
+                                                <Font name="Arial" size="15.0" />
+                                             </font>
+                                          </Label>
+                                          <Region prefHeight="17.0" prefWidth="9.0" HBox.hgrow="ALWAYS" />
+                                          <Label fx:id="selectedAnimalDeathDay" alignment="CENTER" prefHeight="17.0" prefWidth="75.0" text="nie zmarło" textAlignment="CENTER">
+                                             <font>
+                                                <Font name="Arial" size="15.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets left="10.0" />
+                                 </VBox.margin>
+                              </VBox>
+                              <Button fx:id="simulationControlButton" mnemonicParsing="false" text="Start symulacji" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </AnchorPane>
+               </content>
+            </ScrollPane>
+         </children>
+      </VBox>
+      <VBox fx:id="mapContainer" alignment="CENTER" minHeight="800.0" minWidth="800.0" GridPane.columnIndex="1">
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding></VBox>
+   </children>
+</GridPane>

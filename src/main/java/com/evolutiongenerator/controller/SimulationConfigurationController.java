@@ -335,7 +335,7 @@ public class SimulationConfigurationController implements Initializable {
             // Send arguments to simulation stage
             new SimulationStage(args, new Stage());
 
-        } catch (IllegalArgumentException e) {
+        } catch (IOException | IllegalArgumentException e) {
             e.printStackTrace();
             alert(Alert.AlertType.ERROR, "Błąd załączania symulacji", "Error", e.getMessage());
         }
