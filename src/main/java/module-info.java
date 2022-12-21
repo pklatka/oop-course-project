@@ -1,4 +1,4 @@
-module com.pklatka.evolutiongenerator {
+module com.evolutiongenerator {
     requires javafx.controls;
     requires javafx.fxml;
 
@@ -15,4 +15,6 @@ module com.pklatka.evolutiongenerator {
     exports com.evolutiongenerator.model.engine;
     exports com.evolutiongenerator.model.ui;
     opens com.evolutiongenerator.model.ui to javafx.fxml;
+    exports com.evolutiongenerator.model.mapObject.Animal;
+    exports com.evolutiongenerator.constant;
 }
