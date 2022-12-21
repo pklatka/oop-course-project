@@ -1,7 +1,7 @@
 package com.evolutiongenerator.model.engine;
 
 import com.evolutiongenerator.model.map.IWorldMap;
-import com.evolutiongenerator.model.mapObject.Animal;
+import com.evolutiongenerator.model.mapObject.Animal.Animal;
 import com.evolutiongenerator.model.mapObject.MoveDirection;
 import com.evolutiongenerator.stage.SimulationStageOld;
 import com.evolutiongenerator.utils.Vector2d;
@@ -22,6 +22,7 @@ public class SimulationEngine implements IEngine, Runnable {
     public SimulationEngine(IWorldMap map, Vector2d[] positionArray) {
         this.map = map;
 
+        // TODO create Gen here for each animal and pass it to constructor
         // Add animals to map
         for (Vector2d position : positionArray) {
             Animal newAnimal = new Animal(map, position);

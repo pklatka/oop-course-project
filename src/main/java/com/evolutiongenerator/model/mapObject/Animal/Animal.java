@@ -1,8 +1,11 @@
-package com.evolutiongenerator.model.mapObject;
+package com.evolutiongenerator.model.mapObject.Animal;
 
 import com.evolutiongenerator.model.map.IPositionChangeObserver;
 import com.evolutiongenerator.model.map.IWorldMap;
 import com.evolutiongenerator.model.map.RectangularMap;
+import com.evolutiongenerator.model.mapObject.IMapElement;
+import com.evolutiongenerator.model.mapObject.MapDirection;
+import com.evolutiongenerator.model.mapObject.MoveDirection;
 import com.evolutiongenerator.utils.Vector2d;
 
 import java.util.ArrayList;

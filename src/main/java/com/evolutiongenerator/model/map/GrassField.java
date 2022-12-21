@@ -1,6 +1,6 @@
 package com.evolutiongenerator.model.map;
 
-import com.evolutiongenerator.model.mapObject.Animal;
+import com.evolutiongenerator.model.mapObject.Animal.Animal;
 import com.evolutiongenerator.model.mapObject.Grass;
 import com.evolutiongenerator.utils.Vector2d;
 
