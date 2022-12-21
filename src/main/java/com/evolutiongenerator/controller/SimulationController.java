@@ -3,7 +3,10 @@ package com.evolutiongenerator.controller;
 import com.evolutiongenerator.constant.ConfigurationConstant;
 import com.evolutiongenerator.constant.ISimulationConfigurationValue;
 import com.evolutiongenerator.constant.IntegerValue;
+import com.evolutiongenerator.model.mapObject.Animal.Animal;
+import com.evolutiongenerator.model.mapObject.IMapElement;
 import com.evolutiongenerator.model.ui.SortedListViewRecord;
+import com.evolutiongenerator.stage.ISimulationObserver;
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
@@ -28,7 +31,7 @@ import java.util.*;
  *
  * @author Patryk Klatka
  */
-public class SimulationController implements Initializable {
+public class SimulationController implements Initializable, ISimulationObserver {
 
     // ***** Simulation statistics fields *****
     @FXML
@@ -192,6 +195,10 @@ public class SimulationController implements Initializable {
 
         // Initialize map
         initializeMap();
+
+        // TODO: Add simulationEngine as thread
+        // https://stackoverflow.com/questions/61565143/how-to-pause-and-resume-a-thread-in-java
+
     }
 
     /**
@@ -203,5 +210,46 @@ public class SimulationController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Platform.runLater(this::initializeStage);
+    }
+
+    /**
+     * Render simulation grid.
+     *
+     * @param mapElements         Map elements to render on grid.
+     * @param essentialStatistics Statistics to show in GUI.
+     */
+    @Override
+    public void renderGrid(List<IMapElement> mapElements, Map<ConfigurationConstant, ISimulationConfigurationValue> essentialStatistics) {
+
+    }
+
+    /**
+     * Adds genome to ListView with popular genomes.
+     *
+     * @param animal Animal which has genome with toString method.
+     */
+    @Override
+    public void addGenomeToPopularGenomes(Animal animal) {
+
+    }
+
+    /**
+     * Removes genome from ListView with popular genomes.
+     *
+     * @param animal Animal which has genome with toString method.
+     */
+    @Override
+    public void removeGenomeFromPopularGenomes(Animal animal) {
+
+    }
+
+    /**
+     * Updates animal statistics if animal was selected when simulation was paused.
+     *
+     * @param animal Animal to show statistics.
+     */
+    @Override
+    public void updateAnimalStatistics(Animal animal) {
+
     }
 }
