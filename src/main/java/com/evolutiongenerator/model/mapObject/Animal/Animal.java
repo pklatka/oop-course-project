@@ -1,9 +1,11 @@
 package com.evolutiongenerator.model.mapObject.Animal;
 
+import com.evolutiongenerator.constant.MapObjectType;
 import com.evolutiongenerator.model.map.IPositionChangeObserver;
 import com.evolutiongenerator.model.map.IWorldMap;
 import com.evolutiongenerator.model.mapObject.IMapElement;
 import com.evolutiongenerator.model.mapObject.MapDirection;
+import com.evolutiongenerator.model.mapObject.Plant;
 import com.evolutiongenerator.utils.Randomize;
 import com.evolutiongenerator.utils.Vector2d;
 
@@ -149,8 +151,8 @@ public class Animal implements IMapElement {
     private int getGenesAmount(Animal partner){
         return Math.round((float) energy * genes.getGenesSize()/(energy + partner.energy));
     }
-    public void consume(Grass grass){
-        // TODO handle eating grass
+    public void consume(Plant plant){
+        // TODO handle eating plants
     }
 
 }
