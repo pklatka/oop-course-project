@@ -82,8 +82,7 @@ public class Animal implements IMapElement {
         for (int i = 0; i < gen; i++)
             heading = heading.next();
     }
-
-    public MapObjectType getObjectLabel() {
+    public MapObjectType getObjectType() {
         return MapObjectType.ANIMAL;
     }
 

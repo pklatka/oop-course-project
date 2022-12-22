@@ -35,7 +35,8 @@ public class GuiElementBox {
             imageView.setFitWidth(25);
             imageView.setFitHeight(25);
 
-            label = new Label(element.getObjectLabel().toString());
+            // Was element.getObjectLabel
+            label = new Label(element.getObjectType().toString());
 
             box = new VBox(1);
             box.getChildren().addAll(imageView, label);
