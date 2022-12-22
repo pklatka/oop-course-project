@@ -1,18 +1,36 @@
 package com.evolutiongenerator.model.engine;
 
+import com.evolutiongenerator.model.mapObject.Animal.Animal;
+import com.evolutiongenerator.stage.ISimulationObserver;
 /**
- * The interface responsible for managing the moves of the animals.
- * Assumes that Vector2d and MoveDirection classes are defined.
+ * Interface for simulation engine which is responsible for initializing and running simulation.
  *
- * @author apohllo
+ * @author Patryk Klatka, Paweł Motyka
  */
 public interface IEngine {
     /**
-     * Move the animal on the map according to the provided move directions. Every
-     * n-th direction should be sent to the n-th animal on the map.
+     * Pause simulation thread.
      */
-    void run();
-
     void pause();
-    void resume();
+
+    /**
+     * Add ISimulationObserver.
+     *
+     * @param observer Observer to add.
+     */
+    void addObserver(ISimulationObserver observer);
+
+    /**
+     * Remove ISimulationObserver.
+     *
+     * @param observer Observer to remove.
+     */
+    void removeObserver(ISimulationObserver observer);
+
+    /**
+     * Select animal to observe its statistics.
+     *
+     * @param animal Animal to observe. If null then no animal is selected.
+     */
+    void selectAnimalToObserve(Animal animal);
 }

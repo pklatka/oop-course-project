@@ -1,13 +1,17 @@
 package com.evolutiongenerator.model.engine;
 
+import com.evolutiongenerator.constant.ConfigurationConstant;
+import com.evolutiongenerator.constant.ISimulationConfigurationValue;
 import com.evolutiongenerator.model.map.IWorldMap;
 import com.evolutiongenerator.model.mapObject.Animal.Animal;
 import com.evolutiongenerator.model.mapObject.MoveDirection;
+import com.evolutiongenerator.stage.ISimulationObserver;
 import com.evolutiongenerator.stage.SimulationStageOld;
 import com.evolutiongenerator.utils.Vector2d;
 import javafx.application.Platform;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 public class SimulationEngine implements IEngine, Runnable {
@@ -17,7 +21,25 @@ public class SimulationEngine implements IEngine, Runnable {
     // Use ArrayList to remember initial animal order
     private final ArrayList<Animal> animalsOrder = new ArrayList<>();
     private int moveDelay = 1000;
-    private final ArrayList<SimulationStageOld> observers = new ArrayList<>();
+    private final ArrayList<ISimulationObserver> observers = new ArrayList<>();
+    private Map<ConfigurationConstant, ISimulationConfigurationValue> simulationOptions = null; // TODO: Remove null and make variable final
+    private Animal observedAnimal = null; // TODO: Remove null and make variable final
+    public SimulationEngine(Map<ConfigurationConstant, ISimulationConfigurationValue> simulationOptions){
+        this.simulationOptions = simulationOptions;
+
+        // TODO: Generate map, animals, etc. according to simulationOptions
+    }
+
+    public SimulationEngine(Map<ConfigurationConstant, ISimulationConfigurationValue> simulationOptions, int moveDelay) {
+        this(simulationOptions);
+
+        this.moveDelay = moveDelay;
+    }
+
+    public SimulationEngine(Map<ConfigurationConstant, ISimulationConfigurationValue> simulationOptions, int moveDelay, ISimulationObserver observer) {
+        this(simulationOptions, moveDelay);
+        this.observers.add(observer);
+    }
 
     public SimulationEngine(IWorldMap map, Vector2d[] positionArray) {
         this.map = map;
@@ -38,12 +60,12 @@ public class SimulationEngine implements IEngine, Runnable {
         this.directionArray = directionArray;
     }
 
-    public SimulationEngine(IWorldMap map, Vector2d[] positionArray, MoveDirection[] directionArray, SimulationStageOld observer) {
+    public SimulationEngine(IWorldMap map, Vector2d[] positionArray, MoveDirection[] directionArray, ISimulationObserver observer) {
         this(map, positionArray, directionArray);
         this.observers.add(observer);
     }
 
-    public SimulationEngine(IWorldMap map, Vector2d[] positionArray, MoveDirection[] directionArray, SimulationStageOld observer, int moveDelay) {
+    public SimulationEngine(IWorldMap map, Vector2d[] positionArray, MoveDirection[] directionArray, ISimulationObserver observer, int moveDelay) {
         this(map, positionArray, directionArray, observer);
         this.moveDelay = moveDelay;
     }
@@ -55,10 +77,10 @@ public class SimulationEngine implements IEngine, Runnable {
             // Why using CountDownLatch?
             // Rendering grid might be time-consuming, so we must be ensured, that old grid has already been rendered.
             CountDownLatch doneLatch = new CountDownLatch(observers.size());
-            for (SimulationStageOld simulationStageOld : observers) {
+            for (ISimulationObserver simulationStageOld : observers) {
                 Platform.runLater(() -> {
                     try {
-                        simulationStageOld.renderGrid();
+//                        simulationStageOld.renderGrid();
                     } finally {
                         doneLatch.countDown();
                     }
@@ -71,8 +93,8 @@ public class SimulationEngine implements IEngine, Runnable {
     }
 
     private void dispatchAnimation() {
-        for (SimulationStageOld simulationStageOld : observers) {
-            Platform.runLater(simulationStageOld::renderGrid);
+        for (ISimulationObserver simulationStageOld : observers) {
+//            Platform.runLater(simulationStageOld::renderGrid);
         }
     }
 
@@ -107,8 +129,33 @@ public class SimulationEngine implements IEngine, Runnable {
 
     }
 
+    /**
+     * Add ISimulationObserver.
+     *
+     * @param observer
+     */
     @Override
-    public void resume() {
+    public void addObserver(ISimulationObserver observer) {
+
+    }
+
+    /**
+     * Remove ISimulationObserver.
+     *
+     * @param observer
+     */
+    @Override
+    public void removeObserver(ISimulationObserver observer) {
+
+    }
+
+    /**
+     * Select animal to observe it's statistics.
+     *
+     * @param animal Animal to observe.
+     */
+    @Override
+    public void selectAnimalToObserve(Animal animal) {
 
     }
 
