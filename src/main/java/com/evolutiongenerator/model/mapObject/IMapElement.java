@@ -1,9 +1,7 @@
 package com.evolutiongenerator.model.mapObject;
 
+import com.evolutiongenerator.constant.MapObjectType;
+
 public interface IMapElement {
-    String getImageResource();
-
-    String getObjectLabel();
-
-
+    MapObjectType getObjectLabel();
 }

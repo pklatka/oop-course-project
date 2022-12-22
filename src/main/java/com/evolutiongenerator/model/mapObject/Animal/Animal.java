@@ -78,26 +78,13 @@ public class Animal implements IMapElement {
         };
     }
 
-    public String getImageResource() {
-        return switch (heading) {
-            case NORTH -> "head_north.png";
-            case WEST -> "head_west.png";
-            case SOUTH -> "head_south.png";
-            case EAST -> "head_east.png";
-            case NORTH_EAST -> "head_north_east.png";
-            case NORTH_WEST -> "head_north_west.png";
-            case SOUTH_EAST -> "head_south_east.png";
-            case SOUTH_WEST -> "head_south_west.png";
-        };
-    }
-
     public void changeDirection(int gen){
         for (int i = 0; i < gen; i++)
             heading = heading.next();
     }
 
-    public String getObjectLabel() {
-        return this.toString() + ' ' + this.position.toString();
+    public MapObjectType getObjectLabel() {
+        return MapObjectType.ANIMAL;
     }
 
     public boolean isAt(Vector2d position) {

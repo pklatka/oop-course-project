@@ -4,6 +4,7 @@ import com.evolutiongenerator.constant.ConfigurationConstant;
 import com.evolutiongenerator.constant.ISimulationConfigurationValue;
 import com.evolutiongenerator.model.mapObject.Animal.Animal;
 import com.evolutiongenerator.model.mapObject.IMapElement;
+import com.evolutiongenerator.utils.Vector2d;
 
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,7 @@ public interface ISimulationObserver {
      * @param mapElements Map elements to render on grid.
      * @param essentialStatistics Statistics to show in GUI.
      */
-    void renderGrid(List<IMapElement> mapElements, Map<ConfigurationConstant, ISimulationConfigurationValue> essentialStatistics);
+    void renderGrid(Map<Vector2d, List<IMapElement>> mapElements, Map<ConfigurationConstant, ISimulationConfigurationValue> essentialStatistics);
 
     /**
      * Adds genome to ListView with popular genomes.

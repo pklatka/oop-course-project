@@ -21,20 +21,21 @@ public class GuiElementBox {
 
     public GuiElementBox(IMapElement element) throws FileNotFoundException {
         try {
+            // Note: element.toString() was element.getImageResource(), but we won't use images in gui
             ImageView imageView;
-            if (images.containsKey(element.getImageResource())) {
-                imageView = new ImageView(images.get(element.getImageResource()));
+            if (images.containsKey(element.toString())) {
+                imageView = new ImageView(images.get(element.toString()));
             } else {
                 String filePath = new File("").getAbsolutePath();
                 filePath = filePath.concat("/src/main/resources/");
-                Image image = new Image(new FileInputStream(filePath.concat(element.getImageResource())));
-                images.put(element.getImageResource(), image);
+                Image image = new Image(new FileInputStream(filePath.concat(element.toString())));
+                images.put(element.toString(), image);
                 imageView = new ImageView(image);
             }
             imageView.setFitWidth(25);
             imageView.setFitHeight(25);
 
-            label = new Label(element.getObjectLabel());
+            label = new Label(element.getObjectLabel().toString());
 
             box = new VBox(1);
             box.getChildren().addAll(imageView, label);
