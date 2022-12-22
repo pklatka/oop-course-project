@@ -59,8 +59,16 @@ public class SimulationEngine implements IEngine, Runnable {
             if (map.place(newAnimal)) {
                 animalsOrder.add(newAnimal);
             }
-
         }
+
+        // Add plants to map
+        IntegerValue plantValue = (IntegerValue) simulationOptions.get(ConfigurationConstant.PLANT_ENERGY);
+        IntegerValue plantSpawnAmount = (IntegerValue) simulationOptions.get(ConfigurationConstant.PLANT_SPAWN_NUMBER);
+        IntegerValue initialPlantsAmount = (IntegerValue) simulationOptions.get(ConfigurationConstant.PLANT_START_NUMBER);
+        PlantGrowthVariant plantGrowthVariant = (PlantGrowthVariant) simulationOptions.get(ConfigurationConstant.PLANT_GROWTH_VARIANT);
+
+        // TODO Implement maps and the sowPlants method in them. Call that method initialPlantAmount times
+
     }
 
     public SimulationEngine(IWorldMap map, Vector2d[] positionArray, MoveDirection[] directionArray) {

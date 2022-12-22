@@ -1,7 +1,6 @@
 package com.evolutiongenerator.model.map;
 
 import com.evolutiongenerator.model.mapObject.Animal.Animal;
-import com.evolutiongenerator.model.mapObject.Grass;
 import com.evolutiongenerator.utils.Vector2d;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -28,7 +27,7 @@ public class GrassField extends AbstractWorldMap {
             );
         } while (isOccupied(grassPosition));
         mapBoundaries.addPosition(grassPosition);
-        grassHashMap.put(grassPosition, new Grass(grassPosition));
+//        grassHashMap.put(grassPosition, new Grass(grassPosition));
     }
 
     @Override
@@ -42,9 +41,10 @@ public class GrassField extends AbstractWorldMap {
             return animalHashMap.get(position);
         }
 
-        if (grassHashMap.containsKey(position)) {
-            return grassHashMap.get(position);
-        }
+        // TODO will be deleted later
+//        if (grassHashMap.containsKey(position)) {
+//            return grassHashMap.get(position);
+//        }
 
         return null;
     }
