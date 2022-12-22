@@ -1,5 +1,6 @@
 package com.evolutiongenerator.model.mapObject;
 
+import com.evolutiongenerator.constant.MapObjectType;
 import com.evolutiongenerator.constant.PlantGrowthVariant;
 import com.evolutiongenerator.model.map.IWorldMap;
 import com.evolutiongenerator.utils.Vector2d;
@@ -37,15 +38,13 @@ public class Plant implements IMapElement  {
         return energy;
     }
 
+    /**
+     * Get type of object
+     *
+     * @return type of the element
+     */
     @Override
-    public String getImageResource() {
-        return "grass.png";
+    public MapObjectType getObjectType() {
+        return MapObjectType.PLANT;
     }
-
-    @Override
-    public String getObjectLabel() {
-        return "Plant";
-    }
-
-
 }
