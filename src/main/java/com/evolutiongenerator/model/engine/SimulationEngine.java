@@ -1,9 +1,9 @@
 package com.evolutiongenerator.model.engine;
 
-import com.evolutiongenerator.constant.ConfigurationConstant;
-import com.evolutiongenerator.constant.ISimulationConfigurationValue;
+import com.evolutiongenerator.constant.*;
 import com.evolutiongenerator.model.map.IWorldMap;
 import com.evolutiongenerator.model.mapObject.Animal.Animal;
+import com.evolutiongenerator.model.mapObject.Animal.Genes;
 import com.evolutiongenerator.model.mapObject.MoveDirection;
 import com.evolutiongenerator.stage.ISimulationObserver;
 import com.evolutiongenerator.stage.SimulationStageOld;
@@ -43,11 +43,19 @@ public class SimulationEngine implements IEngine, Runnable {
 
     public SimulationEngine(IWorldMap map, Vector2d[] positionArray) {
         this.map = map;
+        IntegerValue genLength =  (IntegerValue) simulationOptions.get(ConfigurationConstant.GENOTYPE_LENGTH);
+        IntegerValue maximumMutationNumber = (IntegerValue) simulationOptions.get(ConfigurationConstant.MAXIMUM_MUTATION_NUMBER);
+        IntegerValue reproduceCost = (IntegerValue) simulationOptions.get(ConfigurationConstant.ANIMAL_REPRODUCTION_ENERGY_COST);
+        IntegerValue minimalEnergyToReproduce = (IntegerValue) simulationOptions.get(ConfigurationConstant.ANIMAL_REPRODUCTION_ENERGY);
+        IntegerValue minimumMutationNumber = (IntegerValue) simulationOptions.get(ConfigurationConstant.MINIMUM_MUTATION_NUMBER);
+        IntegerValue startAnimalEnergy = (IntegerValue) simulationOptions.get(ConfigurationConstant.ANIMAL_START_ENERGY);
+        MutationVariant mutationVariant =  (MutationVariant) simulationOptions.get(ConfigurationConstant.MUTATION_VARIANT);
+        AnimalBehaviourVariant behaviourVariant =  (AnimalBehaviourVariant) simulationOptions.get(ConfigurationConstant.ANIMAL_BEHAVIOUR_VARIANT);
 
-        // TODO create Gen here for each animal and pass it to constructor
         // Add animals to map
         for (Vector2d position : positionArray) {
-            Animal newAnimal = new Animal(map, position);
+            Genes genes = new Genes(genLength.getValue(),maximumMutationNumber.getValue(),minimumMutationNumber.getValue(), mutationVariant, behaviourVariant);
+            Animal newAnimal = new Animal(map, position,genes, startAnimalEnergy.getValue(), reproduceCost.getValue(), minimalEnergyToReproduce.getValue());
             if (map.place(newAnimal)) {
                 animalsOrder.add(newAnimal);
             }
@@ -101,27 +109,46 @@ public class SimulationEngine implements IEngine, Runnable {
     @Override
     public void run() {
         int n = animalsOrder.size();
-
-        // Run default run function when no GUI observers
-        if (observers.size() == 0) {
+        if(observers.size() == 0) {
             System.out.println(map);
-            for (int i = 0; i < directionArray.length; i++) {
-                animalsOrder.get(i % n).move(directionArray[i]);
+            for (Animal animal : animalsOrder) {
+                animal.move();
                 System.out.println(map);
             }
             return;
         }
-
         try {
             dispatchAnimation();
-            for (int i = 0; i < directionArray.length; i++) {
-                animalsOrder.get(i % n).move(directionArray[i]);
+            for (Animal animal : animalsOrder) {
+                animal.move();
                 dispatchAnimation();
                 Thread.sleep(moveDelay);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+// TODO CLEAR ?
+        // Run default run function when no GUI observers
+//        if (observers.size() == 0) {
+//            System.out.println(map);
+//            for (int i = 0; i < directionArray.length; i++) {
+//                animalsOrder.get(i % n).move(directionArray[i]);
+//                System.out.println(map);
+//            }
+//            return;
+//        }
+//
+//        try {
+//            dispatchAnimation();
+//            for (int i = 0; i < directionArray.length; i++) {
+//                animalsOrder.get(i % n).move(directionArray[i]);
+//                dispatchAnimation();
+//                Thread.sleep(moveDelay);
+//            }
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
     }
 
     @Override

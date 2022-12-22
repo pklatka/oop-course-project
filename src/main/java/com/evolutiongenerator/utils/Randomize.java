@@ -13,4 +13,12 @@ public class Randomize {
         return ThreadLocalRandom.current().nextBoolean();
     }
 
+    /**
+     *
+     * @param probabilityTrue number between 0 and 1 telling about probability of true
+     * @return boolean value from a given probability distribution
+     */
+    public static boolean generateBooleanWithProbability(double probabilityTrue) {
+        return ThreadLocalRandom.current().nextDouble() >= 1.0 - probabilityTrue;
+    }
 }
