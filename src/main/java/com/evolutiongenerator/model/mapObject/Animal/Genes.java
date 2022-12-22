@@ -1,5 +1,6 @@
 package com.evolutiongenerator.model.mapObject.Animal;
 
+import com.evolutiongenerator.constant.AnimalBehaviourVariant;
 import com.evolutiongenerator.constant.MutationVariant;
 import com.evolutiongenerator.utils.Randomize;
 
@@ -16,20 +17,23 @@ public class Genes {
     private final int maxMutationAmount;
     private final int minMutationAmount;
     private final MutationVariant mutationVariant;
+    private final AnimalBehaviourVariant behaviourVariant;
 
-    public Genes(int numberOfGenes, int maxMutationAmount, int minMutationAmount, MutationVariant mutationVariant) {
+    public Genes(int numberOfGenes, int maxMutationAmount, int minMutationAmount, MutationVariant mutationVariant, AnimalBehaviourVariant behaviourVariant) {
         this.maxMutationAmount = maxMutationAmount;
         this.minMutationAmount = minMutationAmount;
         genesList = new ArrayList<>();
         this.mutationVariant = mutationVariant;
         generateGenes(numberOfGenes);
+        this.behaviourVariant = behaviourVariant;
     }
 
-    public Genes(List<Integer> genes, int maxMutationAmount, int minMutationAmount, MutationVariant mutationVariant){
+    public Genes(List<Integer> genes, int maxMutationAmount, int minMutationAmount, MutationVariant mutationVariant, AnimalBehaviourVariant behaviourVariant){
         genesList = genes;
         this.mutationVariant = mutationVariant;
         this.maxMutationAmount = maxMutationAmount;
         this.minMutationAmount = minMutationAmount;
+        this.behaviourVariant = behaviourVariant;
         mutateGene();
     }
 
@@ -39,8 +43,12 @@ public class Genes {
      */
     public void generateGenes(int genesAmount){
         for (int i = 0; i < genesAmount; i++) {
-            this.genesList.add(Randomize.generateInt(8, 0));
+            this.genesList.add(Randomize.generateInt(7, 0));
         }
+    }
+
+    public int getGenesSize() {
+        return genesList.size();
     }
 
     /**
@@ -64,18 +72,32 @@ public class Genes {
     return offspringGenes;
     }
 
+    public Genes createOffspringGenes(List<Integer> genesList){
+        return new Genes(genesList,maxMutationAmount,minMutationAmount,mutationVariant,behaviourVariant);
+    }
+
 
     /**
+     * Returns the animal's current gene with consideration of how the animal behaves
      * If we are on the last gen the next will be the first in the array
      * @return Current gen in order.
      */
     public int getGen() {
+        boolean isNormal = Randomize.generateBooleanWithProbability(0.8);
+        if (behaviourVariant == AnimalBehaviourVariant.NORMAL || (behaviourVariant == AnimalBehaviourVariant.A_BIT_OF_MADNESS && isNormal)){
         if (this.currentGenIndex == this.genesList.size()){
             this.currentGenIndex = 0;
         }
         int currentGen = this.genesList.get(this.currentGenIndex);
         this.currentGenIndex += 1;
         return currentGen;
+        }
+
+        int currnetGen = currentGenIndex;
+        while(currnetGen == currentGenIndex){
+            currnetGen = Randomize.generateInt(this.genesList.size(),0);
+        }
+        return currnetGen;
     }
 
     /**
@@ -83,7 +105,6 @@ public class Genes {
      */
     private void mutateGene(){
         int noOfGenesToMutate = Randomize.generateInt(this.maxMutationAmount,this.minMutationAmount);
-
         for (int i = 0; i < noOfGenesToMutate; i++) {
             int geneIndexToMutate = Randomize.generateInt(this.genesList.size() - 1,0);
 
@@ -96,5 +117,10 @@ public class Genes {
                 this.genesList.set(geneIndexToMutate, newValue);
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return genesList.toString();
     }
 }

@@ -32,7 +32,7 @@ public enum MapDirection {
 
     public static MapDirection getRandomDirection() {
         MapDirection[] mapValues = values();
-        int randomIndex = Randomize.generateInt(mapValues.length, 0);
+        int randomIndex = Randomize.generateInt(mapValues.length - 1, 0);
         return mapValues[randomIndex];
     }
 
