@@ -1,12 +1,12 @@
 package com.evolutiongenerator.controller;
 
-import com.evolutiongenerator.constant.ConfigurationConstant;
-import com.evolutiongenerator.constant.ISimulationConfigurationValue;
-import com.evolutiongenerator.constant.IntegerValue;
+import com.evolutiongenerator.constant.*;
 import com.evolutiongenerator.model.mapObject.Animal.Animal;
 import com.evolutiongenerator.model.mapObject.IMapElement;
+import com.evolutiongenerator.model.ui.GuiMapElement;
 import com.evolutiongenerator.model.ui.SortedListViewRecord;
 import com.evolutiongenerator.stage.ISimulationObserver;
+import com.evolutiongenerator.utils.Vector2d;
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
@@ -18,13 +18,12 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.util.Pair;
 
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Controller for simulation stage
@@ -80,43 +79,40 @@ public class SimulationController implements Initializable, ISimulationObserver 
     private double gridWidth; // = mapContainer.getMinWidth();
     private double gridHeight; // = mapContainer.getMinHeight()
 
-    private double mapWidth = 10;
-    private double mapHeight = 10;
+    private int mapWidth = 10;
+    private int mapHeight = 10;
 
     private double cellWidth; // = gridWidth / mapWidth;
     private double cellHeight; // = gridHeight / mapHeight;
-    private Map<ConfigurationConstant, ISimulationConfigurationValue> args;
+    private Map<ConfigurationConstant, ISimulationConfigurationValue> simulationOptions;
     private ObservableList<SortedListViewRecord> mostPopularGenomes = FXCollections.observableArrayList(rec -> new Observable[]{rec.priority});
+    private final Map<String, SortedListViewRecord> genomeRecord = new HashMap<>();
+    private final Map<Vector2d, StackPane> mapFields = new HashMap<>();
+    private final Map<IMapElement, Pair<Vector2d, GuiMapElement>> elementProperties = new HashMap<>();
 
     // ****** Setters ******
 
     /**
      * Sets simulation arguments
      *
-     * @param args Simulation arguments
+     * @param simulationOptions Simulation arguments
      */
-    public void setArgs(Map<ConfigurationConstant, ISimulationConfigurationValue> args) {
-        this.args = args;
+    public void setSimulationOptions(Map<ConfigurationConstant, ISimulationConfigurationValue> simulationOptions) {
+        this.simulationOptions = simulationOptions;
     }
 
     /**
      * Sets simulation options
      */
     private void setSimulationOptions() {
-        for(ConfigurationConstant configurationConstant: args.keySet()){
-            switch (configurationConstant.getType()){
-                case INTEGER -> {
-                    IntegerValue integerValue = (IntegerValue) args.get(configurationConstant);
-                    switch (configurationConstant) {
-                        case MAP_WIDTH -> mapWidth = integerValue.getValue();
-                        case MAP_HEIGHT -> mapHeight = integerValue.getValue();
-                    }
+        for(ConfigurationConstant configurationConstant: simulationOptions.keySet()){
+            if (Objects.requireNonNull(configurationConstant.getType()) == ConfigurationConstant.ConfigurationConstantType.INTEGER) {
+                IntegerValue integerValue = (IntegerValue) simulationOptions.get(configurationConstant);
+                switch (configurationConstant) {
+                    case MAP_WIDTH -> mapWidth = integerValue.getValue();
+                    case MAP_HEIGHT -> mapHeight = integerValue.getValue();
+                    case SIMULATION_COUNTER -> simulationTitle.setText("Symulacja nr " + integerValue.getValue());
                 }
-                case PATH -> {}
-                case MAP_VARIANT -> {}
-                case MUTATION_VARIANT -> {}
-                case PLANT_GROWTH_VARIANT -> {}
-                case ANIMAL_BEHAVIOUR_VARIANT -> {}
             }
         }}
 
@@ -128,8 +124,13 @@ public class SimulationController implements Initializable, ISimulationObserver 
      * @param actionEvent Action event
      */
     private void simulationControlButtonHandler(ActionEvent actionEvent) {
-        popularGenomes.getSelectionModel().clearSelection();
-        mostPopularGenomes.add(new SortedListViewRecord(1, "Test"));
+        if (simulationControlButton.getText().equals("Start symulacji")) {
+            simulationControlButton.setText("Stop symulacji");
+//            SimulationManager.getInstance().startSimulation();
+        } else {
+            simulationControlButton.setText("Start symulacji");
+//            SimulationManager.getInstance().stopSimulation();
+        }
     }
 
     /**
@@ -154,7 +155,7 @@ public class SimulationController implements Initializable, ISimulationObserver 
      */
     private void initializeMap(){
         GridPane grid = new GridPane();
-        grid.setGridLinesVisible(true);
+//        grid.setGridLinesVisible(true);
 
         for (int i = 0; i < mapWidth; i++) {
             ColumnConstraints column = new ColumnConstraints(cellWidth);
@@ -166,6 +167,17 @@ public class SimulationController implements Initializable, ISimulationObserver 
             grid.getRowConstraints().add(row);
         }
 
+        // Initialize mapFields (hash)map
+        for (int i = 0; i < mapWidth; i++) {
+            for (int j = 0; j < mapHeight; j++) {
+                StackPane stackPane = new StackPane();
+                stackPane.setAlignment(Pos.CENTER);
+                stackPane.setStyle("-fx-background-color: #7fef7f");
+                grid.add(stackPane, i, j);
+                mapFields.put(new Vector2d(i, j), stackPane);
+            }
+        }
+
         grid.setAlignment(Pos.CENTER);
         mapContainer.getChildren().add(grid);
         map = grid;
@@ -174,7 +186,7 @@ public class SimulationController implements Initializable, ISimulationObserver 
     /**
      * Initializes simulation stage
      */
-    private void initializeStage(){
+    private void initializeStage() {
         // Read arguments
         setSimulationOptions();
 
@@ -198,9 +210,7 @@ public class SimulationController implements Initializable, ISimulationObserver 
 
         // TODO: Add simulationEngine as thread
         // https://stackoverflow.com/questions/61565143/how-to-pause-and-resume-a-thread-in-java
-
     }
-
     /**
      * Main method for initializing simulation stage
      *
@@ -212,15 +222,72 @@ public class SimulationController implements Initializable, ISimulationObserver 
         Platform.runLater(this::initializeStage);
     }
 
+    // ****** Render utils ******
+
     /**
-     * Render simulation grid.
+     * Render simulation statistics.
      *
-     * @param mapElements         Map elements to render on grid.
      * @param essentialStatistics Statistics to show in GUI.
      */
     @Override
-    public void renderGrid(List<IMapElement> mapElements, Map<ConfigurationConstant, ISimulationConfigurationValue> essentialStatistics) {
+    public void renderMainStatistics(Map<SimulationStatistics, ISimulationConfigurationValue> essentialStatistics) {
+        for(SimulationStatistics configurationConstant: essentialStatistics.keySet()){
+            ISimulationConfigurationValue value = essentialStatistics.get(configurationConstant);
+            if(value instanceof IntegerValue integerValue){
+                switch (configurationConstant) {
+                    case DAY -> day.setText(integerValue.toString());
+                    case NUMBER_OF_ANIMALS -> numberOfAnimals.setText(integerValue.toString());
+                    case NUMBER_OF_PLANTS -> numberOfPlants.setText(integerValue.toString());
+                    case NUMBER_OF_EMPTY_FIELDS -> numberOfEmptyFields.setText(integerValue.toString());
+                    case AVERAGE_ANIMAL_ENERGY -> averageAnimalEnergy.setText(integerValue.toString());
+                    case AVERAGE_ANIMAL_LIFESPAN -> averageAnimalLifespan.setText(integerValue.toString());
+                }
+            }
+        }
+    }
 
+    /**
+     * Add element to map (GridPane).
+     *
+     * @param mapElement Element to add.
+     */
+    @Override
+    public void addElementToMap(IMapElement mapElement, Vector2d position) {
+        Vector2d mapPosition = new Vector2d(position.x,  mapHeight - 1 - position.y);
+        StackPane stackPane = mapFields.get(mapPosition);
+        GuiMapElement guiMapElement = new GuiMapElement(cellWidth, cellHeight, mapElement, simulationOptions);
+        stackPane.getChildren().add(guiMapElement);
+        elementProperties.put(mapElement, new Pair<>(mapPosition, guiMapElement));
+    }
+
+    /**
+     * Remove element from map (GridPane).
+     *
+     * @param mapElement Element to remove.
+     */
+    @Override
+    public void removeElementFromMap(IMapElement mapElement) {
+        Pair<Vector2d, GuiMapElement> properties = elementProperties.get(mapElement);
+        Vector2d mapPosition = properties.getKey();
+        GuiMapElement guiMapElement = properties.getValue();
+        mapFields.get(mapPosition).getChildren().remove(guiMapElement);
+        elementProperties.remove(mapElement);
+    }
+
+    /**
+     * Change element position on map (GridPane).
+     * Note: you can only change position of the animal.
+     *
+     * @param mapElement  Element to change position.
+     * @param newPosition New position of element.
+     */
+    @Override
+    public void changeElementPositionOnMap(IMapElement mapElement, Vector2d newPosition) throws IllegalArgumentException {
+        if(!(mapElement instanceof Animal)){
+            throw new IllegalArgumentException("You can only change position of the animal.");
+        }
+        removeElementFromMap(mapElement);
+        addElementToMap(mapElement, newPosition);
     }
 
     /**
@@ -230,7 +297,14 @@ public class SimulationController implements Initializable, ISimulationObserver 
      */
     @Override
     public void addGenomeToPopularGenomes(Animal animal) {
-
+        Platform.runLater(() -> {
+            if (!genomeRecord.containsKey(animal.getGenome().toString())) {
+                genomeRecord.put(animal.getGenome().toString(), new SortedListViewRecord(1, animal.getGenome().toString()));
+                mostPopularGenomes.add(genomeRecord.get(animal.getGenome().toString()));
+            }else{
+                genomeRecord.get(animal.getGenome().toString()).priority.set(genomeRecord.get(animal.getGenome().toString()).priority.get() + 1);
+            }
+        });
     }
 
     /**
@@ -240,16 +314,45 @@ public class SimulationController implements Initializable, ISimulationObserver 
      */
     @Override
     public void removeGenomeFromPopularGenomes(Animal animal) {
+        Platform.runLater(() -> {
+            if (!genomeRecord.containsKey(animal.getGenome().toString())) {
+                return;
+            }
 
+            if (genomeRecord.get(animal.getGenome().toString()).priority.get() == 1) {
+                mostPopularGenomes.remove(genomeRecord.get(animal.getGenome().toString()));
+                genomeRecord.remove(animal.getGenome().toString());
+            }
+
+            if (genomeRecord.get(animal.getGenome().toString()).priority.get() > 1) {
+                genomeRecord.get(animal.getGenome().toString()).priority.set(genomeRecord.get(animal.getGenome().toString()).priority.get() - 1);
+            }
+        });
     }
 
     /**
      * Updates animal statistics if animal was selected when simulation was paused.
      *
-     * @param animal Animal to show statistics.
+     * @param animalStatistics Animal statistics.
      */
     @Override
-    public void updateAnimalStatistics(Animal animal) {
-
+    public void updateAnimalStatistics(Map<AnimalStatistics, ISimulationConfigurationValue> animalStatistics) {
+        for(AnimalStatistics configurationConstant: animalStatistics.keySet()){
+            ISimulationConfigurationValue value = animalStatistics.get(configurationConstant);
+            if(value instanceof IntegerValue integerValue){
+                switch (configurationConstant) {
+                    case ANIMAL_ACTIVE_GENOME -> selectedAnimalActiveGenome.setText(integerValue.toString());
+                    case ANIMAL_ENERGY -> selectedAnimalEnergy.setText(integerValue.toString());
+                    case ANIMAL_LIFESPAN -> selectedAnimalLifespan.setText(integerValue.toString());
+                    case ANIMAL_NUMBER_OF_CHILDREN -> selectedAnimalNumberOfChildren.setText(integerValue.toString());
+                    case ANIMAL_EATEN_PLANTS -> selectedAnimalEatenPlants.setText(integerValue.toString());
+                }
+            }else if (value instanceof StringValue stringValue){
+                switch (configurationConstant) {
+                    case ANIMAL_GENOME -> selectedAnimalGenome.setText(stringValue.toString());
+                    case ANIMAL_DEATH_DAY -> selectedAnimalDeathDay.setText(stringValue.toString());
+                }
+            }
+        }
     }
 }

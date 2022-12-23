@@ -1,7 +1,9 @@
 package com.evolutiongenerator.stage;
 
+import com.evolutiongenerator.constant.AnimalStatistics;
 import com.evolutiongenerator.constant.ConfigurationConstant;
 import com.evolutiongenerator.constant.ISimulationConfigurationValue;
+import com.evolutiongenerator.constant.SimulationStatistics;
 import com.evolutiongenerator.model.mapObject.Animal.Animal;
 import com.evolutiongenerator.model.mapObject.IMapElement;
 import com.evolutiongenerator.utils.Vector2d;
@@ -17,12 +19,36 @@ import java.util.Map;
 public interface ISimulationObserver {
 
     /**
-     * Render simulation grid.
+     * Render simulation statistics.
      *
-     * @param mapElements Map elements to render on grid.
      * @param essentialStatistics Statistics to show in GUI.
      */
-    void renderGrid(Map<Vector2d, List<IMapElement>> mapElements, Map<ConfigurationConstant, ISimulationConfigurationValue> essentialStatistics);
+    void renderMainStatistics(Map<SimulationStatistics, ISimulationConfigurationValue> essentialStatistics);
+
+    /**
+     * Add element to map (GridPane).
+     *
+     * @param mapElement Element to add.
+     * @param position Position of element.
+     */
+    void addElementToMap(IMapElement mapElement, Vector2d position);
+
+    /**
+     * Remove element from map (GridPane).
+     *
+     * @param mapElement Element to remove.
+     */
+    void removeElementFromMap(IMapElement mapElement);
+
+    /**
+     * Change element position on map (GridPane).
+     * Note: you can only change position of the animal.
+     *
+     * @param mapElement Element to change position.
+     * @param newPosition New position of element.
+     * @throws IllegalArgumentException If element is not an animal.
+     */
+    void changeElementPositionOnMap(IMapElement mapElement, Vector2d newPosition);
 
     /**
      * Adds genome to ListView with popular genomes.
@@ -41,7 +67,7 @@ public interface ISimulationObserver {
     /**
      * Updates animal statistics if animal was selected when simulation was paused.
      *
-     * @param animal Animal to show statistics.
+     * @param animalStatistics Animal statistics.
      */
-    void updateAnimalStatistics(Animal animal);
+    void updateAnimalStatistics(Map<AnimalStatistics, ISimulationConfigurationValue> animalStatistics);
 }

@@ -48,18 +48,17 @@ public class Animal implements IMapElement {
         };
     }
 
-    // Changing equals and hashCode methods to use HashMap
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Animal animal = (Animal) o;
-        return Objects.equals(position, animal.position) && Objects.equals(map, animal.map);
+        return energy == animal.energy && ENERGY_TO_REPRODUCE == animal.ENERGY_TO_REPRODUCE && REPRODUCE_COST == animal.REPRODUCE_COST && heading == animal.heading && Objects.equals(map, animal.map) && Objects.equals(genes, animal.genes);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(position, map);
+        return Objects.hash(heading, map, energy, genes, ENERGY_TO_REPRODUCE, REPRODUCE_COST);
     }
 
     public Vector2d getPosition() {
@@ -98,6 +97,14 @@ public class Animal implements IMapElement {
 
     public void removeObserver(IPositionChangeObserver observer) {
         observers.remove(observer);
+    }
+
+    public int getEnergy() {
+        return energy;
+    }
+
+    public Genes getGenome() {
+        return genes;
     }
 
     void positionChanged(Vector2d oldPosition, Vector2d newPosition) {

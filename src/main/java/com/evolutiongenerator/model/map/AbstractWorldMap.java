@@ -1,6 +1,7 @@
 package com.evolutiongenerator.model.map;
 
 import com.evolutiongenerator.model.mapObject.Animal.Animal;
+import com.evolutiongenerator.model.mapObject.Plant;
 import com.evolutiongenerator.model.ui.MapVisualizer;
 import com.evolutiongenerator.utils.Vector2d;
 
@@ -8,7 +9,7 @@ import java.util.HashMap;
 
 public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObserver {
     protected final HashMap<Vector2d, Animal> animalHashMap = new HashMap<>();
-    protected final HashMap<Vector2d, Grass> grassHashMap = new HashMap<>();
+    protected final HashMap<Vector2d, Plant> grassHashMap = new HashMap<>();
     protected final MapBoundary mapBoundaries = new MapBoundary();
 
     protected Vector2d topRightVector;

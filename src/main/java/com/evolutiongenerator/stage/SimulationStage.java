@@ -47,7 +47,7 @@ public class SimulationStage extends Application {
 
         // Set arguments for controller
         SimulationController controller = fxmlLoader.getController();
-        controller.setArgs(args);
+        controller.setSimulationOptions(args);
 
         Scene scene = new Scene(root);
         primaryStage.setTitle("Evolution Generator");
