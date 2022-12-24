@@ -1,6 +1,5 @@
 package com.evolutiongenerator.model.mapObject.Animal;
 
-import com.evolutiongenerator.constant.MapObjectType;
 import com.evolutiongenerator.model.map.IPositionChangeObserver;
 import com.evolutiongenerator.model.map.IWorldMap;
 import com.evolutiongenerator.model.mapObject.IMapElement;
@@ -82,9 +81,6 @@ public class Animal implements IMapElement {
     public void changeDirection(int gen){
         for (int i = 0; i < gen; i++)
             heading = heading.next();
-    }
-    public MapObjectType getObjectType() {
-        return MapObjectType.ANIMAL;
     }
 
     public boolean isAt(Vector2d position) {

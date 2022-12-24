@@ -4,8 +4,8 @@ import com.evolutiongenerator.constant.ConfigurationConstant;
 import com.evolutiongenerator.constant.ISimulationConfigurationValue;
 import com.evolutiongenerator.constant.IntegerValue;
 import com.evolutiongenerator.model.mapObject.IMapElement;
+import com.evolutiongenerator.model.mapObject.Plant;
 import javafx.geometry.Pos;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -68,32 +68,27 @@ public class GuiMapElement extends StackPane {
      * Creates map element representation
      */
     private void createMapElementRepresentation(){
-        switch (mapElement.getObjectType()) {
-            case ANIMAL -> {
-                Animal animal = (Animal) mapElement;
+        if (mapElement instanceof Animal animal){
+            // Create animal representation -> circle
+            Circle circle = new Circle(Math.min(width/2 - widthPadding, height/2 - heightPadding));
 
-                // Create animal representation -> circle
-                Circle circle = new Circle(Math.min(width/2 - widthPadding, height/2 - heightPadding));
+            // Get energy color
+            IntegerValue animalStartEnergy = (IntegerValue) simulationOptions.get(ConfigurationConstant.ANIMAL_START_ENERGY);
+            Color animalEnergyColor = getAnimalEnergyColor((double) 100 * animal.getEnergy() / animalStartEnergy.getValue());
 
-                // Get energy color
-                IntegerValue animalStartEnergy = (IntegerValue) simulationOptions.get(ConfigurationConstant.ANIMAL_START_ENERGY);
-                Color animalEnergyColor = getAnimalEnergyColor((double) 100 * animal.getEnergy() / animalStartEnergy.getValue());
+            // Set calculated color
+            circle.setFill(animalEnergyColor);
 
-                // Set calculated color
-                circle.setFill(animalEnergyColor);
+            // Add circle to stack pane
+            this.getChildren().add(circle);
+        }else if (mapElement instanceof Plant){
+            Rectangle rectangle = new Rectangle(width, height);
 
-                // Add circle to stack pane
-                this.getChildren().add(circle);
-            }
-            case PLANT -> {
-                Rectangle rectangle = new Rectangle(width, height);
+            // Set plant color
+            rectangle.setFill(Color.rgb(0, 94, 0));
 
-                // Set plant color
-                rectangle.setFill(Color.rgb(0, 94, 0));
-
-                // Add rectangle to stack pane
-                this.getChildren().add(rectangle);
-            }
+            // Add rectangle to stack pane
+            this.getChildren().add(rectangle);
         }
     }
 }
