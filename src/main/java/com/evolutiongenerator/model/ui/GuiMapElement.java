@@ -32,7 +32,7 @@ public class GuiMapElement extends StackPane {
      *
      * @param mapElement map element to be represented
      */
-    public GuiMapElement(double width, double height, IMapElement mapElement, Map<ConfigurationConstant, ISimulationConfigurationValue> simulationOptions) {
+    public GuiMapElement(double width, double height, IMapElement mapElement, Map<ConfigurationConstant, ISimulationConfigurationValue> simulationOptions) throws IllegalArgumentException {
         super();
         this.width = width;
         this.height = height;
@@ -42,7 +42,11 @@ public class GuiMapElement extends StackPane {
         this.simulationOptions = simulationOptions;
         this.setAlignment(Pos.CENTER);
 
-        createMapElementRepresentation();
+        try{
+            createMapElementRepresentation();
+        }catch (IllegalArgumentException e){
+            throw new IllegalArgumentException(e);
+        }
     }
 
     /**
@@ -67,12 +71,16 @@ public class GuiMapElement extends StackPane {
     /**
      * Creates map element representation
      */
-    private void createMapElementRepresentation(){
+    private void createMapElementRepresentation() throws IllegalArgumentException {
         if (mapElement instanceof Animal animal){
             // Create animal representation -> circle
             Circle circle = new Circle(Math.min(width/2 - widthPadding, height/2 - heightPadding));
 
             // Get energy color
+            if (!simulationOptions.containsKey(ConfigurationConstant.ANIMAL_START_ENERGY)){
+                throw new IllegalArgumentException("Nie zadano startowej energii zwierzęcia.");
+            }
+
             IntegerValue animalStartEnergy = (IntegerValue) simulationOptions.get(ConfigurationConstant.ANIMAL_START_ENERGY);
             Color animalEnergyColor = getAnimalEnergyColor((double) 100 * animal.getEnergy() / animalStartEnergy.getValue());
 

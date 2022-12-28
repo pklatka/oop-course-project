@@ -252,12 +252,16 @@ public class SimulationController implements Initializable, ISimulationObserver 
      * @param mapElement Element to add.
      */
     @Override
-    public void addElementToMap(IMapElement mapElement, Vector2d position) {
-        Vector2d mapPosition = new Vector2d(position.x,  mapHeight - 1 - position.y);
-        StackPane stackPane = mapFields.get(mapPosition);
-        GuiMapElement guiMapElement = new GuiMapElement(cellWidth, cellHeight, mapElement, simulationOptions);
-        stackPane.getChildren().add(guiMapElement);
-        elementProperties.put(mapElement, new Pair<>(mapPosition, guiMapElement));
+    public void addElementToMap(IMapElement mapElement, Vector2d position) throws IllegalArgumentException{
+        try{
+            Vector2d mapPosition = new Vector2d(position.x,  mapHeight - 1 - position.y);
+            StackPane stackPane = mapFields.get(mapPosition);
+            GuiMapElement guiMapElement = new GuiMapElement(cellWidth, cellHeight, mapElement, simulationOptions);
+            stackPane.getChildren().add(guiMapElement);
+            elementProperties.put(mapElement, new Pair<>(mapPosition, guiMapElement));
+        }catch (IllegalArgumentException e){
+            throw new IllegalArgumentException(e);
+        }
     }
 
     /**
@@ -268,6 +272,10 @@ public class SimulationController implements Initializable, ISimulationObserver 
     @Override
     public void removeElementFromMap(IMapElement mapElement) {
         Pair<Vector2d, GuiMapElement> properties = elementProperties.get(mapElement);
+        if (properties == null){
+            throw new IllegalArgumentException("Element mapy nie istnieje lub został już usunięty.");
+        }
+
         Vector2d mapPosition = properties.getKey();
         GuiMapElement guiMapElement = properties.getValue();
         mapFields.get(mapPosition).getChildren().remove(guiMapElement);
@@ -284,8 +292,9 @@ public class SimulationController implements Initializable, ISimulationObserver 
     @Override
     public void changeElementPositionOnMap(IMapElement mapElement, Vector2d newPosition) throws IllegalArgumentException {
         if(!(mapElement instanceof Animal)){
-            throw new IllegalArgumentException("You can only change position of the animal.");
+            throw new IllegalArgumentException("Można zmieniać tylko pozycję zwierzęcia.");
         }
+
         removeElementFromMap(mapElement);
         addElementToMap(mapElement, newPosition);
     }
