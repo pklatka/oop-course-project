@@ -72,8 +72,6 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
 
     @Override
     public boolean place(Animal animal) throws IllegalArgumentException {
-//        System.out.println(this.animalHashMap);
-        System.out.println(this.animalOnFields);
         if (isInsideMap(animal.getPosition())) {
             TreeSet<Animal> animalSet;
             if (animalOnFields.get(animal.getPosition()) == null) {
@@ -172,11 +170,19 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
             int tmpX = newPosition.x < bottomLeftVector.x ? topRightVector.x : newPosition.x;
             tmpX = tmpX > topRightVector.x ? bottomLeftVector.x : tmpX;
             int tmpY = Math.min(newPosition.y, topRightVector.y);
+            tmpY = Math.max(tmpY, bottomLeftVector.y);
             return  new Vector2d(tmpX,tmpY);
         }
         int tmpX = Randomize.generateInt(topRightVector.x,bottomLeftVector.x);
         int tmpY = Randomize.generateInt(topRightVector.y, bottomLeftVector.y);
         return new Vector2d(tmpX,tmpY);
+    }
+
+    public boolean isAnimalChangingDirection(Vector2d newPosition){
+        if (this.mapVariant == MapVariant.GLOBE){
+            return newPosition.y > topRightVector.y || newPosition.y < bottomLeftVector.y;
+        }
+        return false;
     }
 
     public abstract Vector2d[] getMapBounds();
@@ -188,6 +194,11 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
     @Override
     public boolean isConflictsOccurred() {
         return !this.conflictedPositions.isEmpty();
+    }
+
+    @Override
+    public MapVariant getMapVariant() {
+        return mapVariant;
     }
 
     @Override

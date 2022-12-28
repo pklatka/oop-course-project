@@ -1,7 +1,10 @@
 package com.evolutiongenerator.model.ui;
 
 import com.evolutiongenerator.model.map.IWorldMap;
+import com.evolutiongenerator.model.mapObject.Animal.Animal;
 import com.evolutiongenerator.utils.Vector2d;
+
+import java.util.TreeSet;
 
 /**
  * The map visualizer converts the {@link IWorldMap} map into a string
