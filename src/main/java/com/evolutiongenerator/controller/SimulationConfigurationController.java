@@ -20,9 +20,11 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.WindowEvent;
 
 /**
  * Controller for simulation configuration stage.
@@ -45,6 +47,7 @@ public class SimulationConfigurationController implements Initializable {
     private boolean listenForIConfigurationFieldInput = false;
     private final Map<ConfigurationConstant, IConfigurationField> simulationProperties = new EnumMap<>(ConfigurationConstant.class);
     private FileChooser fileChooser;
+    private final AtomicInteger simulationCounter = new AtomicInteger(0);
 
     // ********** Configuration fields **********
     @FXML
@@ -143,6 +146,7 @@ public class SimulationConfigurationController implements Initializable {
             Map<ConfigurationConstant, ISimulationConfigurationValue> args = new EnumMap<>(ConfigurationConstant.class);
             // ******* Additional arguments *******
             args.put(ConfigurationConstant.STATISTICS_FILE_PATH, statisticsFileLocationURL);
+            args.put(ConfigurationConstant.SIMULATION_COUNTER, new IntegerValue(simulationCounter.incrementAndGet()));
 
             for (ConfigurationConstant key : simulationProperties.keySet()) {
                 args.put(key, simulationProperties.get(key).readProperty());

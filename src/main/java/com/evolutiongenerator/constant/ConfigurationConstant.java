@@ -6,6 +6,7 @@ package com.evolutiongenerator.constant;
  * @author Patryk Klatka
  */
 public enum ConfigurationConstant {
+    SIMULATION_COUNTER,
     MAP_WIDTH,
     MAP_HEIGHT,
     ANIMAL_START_NUMBER,
@@ -74,7 +75,7 @@ public enum ConfigurationConstant {
                     ANIMAL_START_ENERGY, ANIMAL_REPRODUCTION_ENERGY,
                     ANIMAL_REPRODUCTION_ENERGY_COST, PLANT_START_NUMBER,
                     PLANT_ENERGY, PLANT_SPAWN_NUMBER, MINIMUM_MUTATION_NUMBER,
-                    MAXIMUM_MUTATION_NUMBER -> ConfigurationConstantType.INTEGER;
+                    MAXIMUM_MUTATION_NUMBER, SIMULATION_COUNTER -> ConfigurationConstantType.INTEGER;
             case STATISTICS_FILE_PATH -> ConfigurationConstantType.PATH;
             case MAP_VARIANT -> ConfigurationConstantType.MAP_VARIANT;
             case ANIMAL_BEHAVIOUR_VARIANT -> ConfigurationConstantType.ANIMAL_BEHAVIOUR_VARIANT;
