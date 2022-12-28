@@ -294,6 +294,7 @@ public class SimulationController implements Initializable, ISimulationObserver 
         if(!(mapElement instanceof Animal)){
             throw new IllegalArgumentException("Można zmieniać tylko pozycję zwierzęcia.");
         }
+
         removeElementFromMap(mapElement);
         addElementToMap(mapElement, newPosition);
     }
