@@ -96,9 +96,6 @@ public class SimulationController implements Initializable, ISimulationObserver 
     boolean isSimulationRunning = false;
     GuiMapElement selectedAnimal = null;
 
-    // TODO: Remove this
-    Animal test = null;
-
     // ****** Setters ******
 
     /**
@@ -281,23 +278,6 @@ public class SimulationController implements Initializable, ISimulationObserver 
 
         // TODO: Add simulationEngine as thread
         // https://stackoverflow.com/questions/61565143/how-to-pause-and-resume-a-thread-in-java
-
-        // TODO: Remove this
-        test();
-    }
-
-    // TODO: Remove this
-    public void test(){
-        Genes gene = new Genes(10,10,10, null,null);
-        Genes gene1 = new Genes(10,10,10, null,null);
-
-        Animal animal1 = new Animal(null, new Vector2d(2,1), gene, 100,10,10);
-        addElementToMap(animal1, new Vector2d(2,1));
-        Animal animal2 = new Animal(null, new Vector2d(2,2), gene, 100,10,10);
-        addElementToMap(animal2, new Vector2d(2,2));
-        Animal animal3 = new Animal(null, new Vector2d(5,5), gene1, 40,10,10);
-        addElementToMap(animal3, new Vector2d(5,5));
-
     }
 
     /**
