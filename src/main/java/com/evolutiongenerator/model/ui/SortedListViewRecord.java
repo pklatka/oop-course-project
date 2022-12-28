@@ -13,7 +13,7 @@ import javafx.beans.property.StringProperty;
 public class SortedListViewRecord
 {
     public final IntegerProperty priority = new SimpleIntegerProperty();
-    private final StringProperty value = new SimpleStringProperty();
+    public final StringProperty value = new SimpleStringProperty();
 
 
     /**

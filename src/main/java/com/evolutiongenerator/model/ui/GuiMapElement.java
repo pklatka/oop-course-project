@@ -99,4 +99,26 @@ public class GuiMapElement extends StackPane {
             this.getChildren().add(rectangle);
         }
     }
+
+    /**
+     * Selects map element
+     */
+    public void selectMapElement(){
+        if(this.getChildren().size() < 1){
+            return;
+        }
+
+        this.getChildren().get(0).setStyle("-fx-stroke: #c20000; -fx-stroke-width: 2px;");
+    }
+
+    /**
+     * Deselects map element
+     */
+    public void unselectMapElement(){
+        if(this.getChildren().size() < 1){
+            return;
+        }
+
+        this.getChildren().get(0).setStyle("-fx-stroke: transparent; -fx-stroke-width: 0px;");
+    }
 }
