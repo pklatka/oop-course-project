@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class Genes {
     private final List<Integer> genesList;
-    private int currentGenIndex = 0;
+    private int currentGenIndex;
     private final int maxMutationAmount;
     private final int minMutationAmount;
     private final MutationVariant mutationVariant;
@@ -24,8 +24,10 @@ public class Genes {
         this.minMutationAmount = minMutationAmount;
         genesList = new ArrayList<>();
         this.mutationVariant = mutationVariant;
-        generateGenes(numberOfGenes);
         this.behaviourVariant = behaviourVariant;
+        currentGenIndex = Randomize.generateInt(numberOfGenes - 1, 0);
+        generateGenes(numberOfGenes);
+
     }
 
     public Genes(List<Integer> genes, int maxMutationAmount, int minMutationAmount, MutationVariant mutationVariant, AnimalBehaviourVariant behaviourVariant){

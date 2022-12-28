@@ -3,10 +3,12 @@ package com.evolutiongenerator.model.map;
 import com.evolutiongenerator.model.mapObject.Animal.Animal;
 import com.evolutiongenerator.utils.Vector2d;
 
+import java.util.Comparator;
+import java.util.TreeSet;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class GrassField extends AbstractWorldMap {
-
+// TODO REMOVE
     private final int noOfGrassFields;
 
     public GrassField(int noOfGrassFields) {
@@ -30,12 +32,11 @@ public class GrassField extends AbstractWorldMap {
 //        grassHashMap.put(grassPosition, new Grass(grassPosition));
     }
 
-    @Override
-    public boolean isOccupied(Vector2d position) {
-        return animalHashMap.containsKey(position) || grassHashMap.containsKey(position);
-    }
+//    @Override
+//    public boolean isOccupied(Vector2d position) {
+//        return animalHashMap.containsKey(position) || grassHashMap.containsKey(position);
+//    }
 
-    @Override
     public Object objectAt(Vector2d position) {
         if (animalHashMap.containsKey(position)) {
             return animalHashMap.get(position);
@@ -55,7 +56,12 @@ public class GrassField extends AbstractWorldMap {
     }
 
     @Override
-    public void cleanDeathAnimals() {
+    public void cleanDeadAnimals() {
+
+    }
+
+    @Override
+    public void growGrass() {
 
     }
 
@@ -63,14 +69,14 @@ public class GrassField extends AbstractWorldMap {
     public boolean place(Animal animal) throws IllegalArgumentException {
         // Check if there is grass on animal position
         boolean wasGrassOnPosition = false;
-        if (grassHashMap.containsKey(animal.getPosition())) {
-            grassHashMap.remove(animal.getPosition());
-            mapBoundaries.removePosition(animal.getPosition());
-            wasGrassOnPosition = true;
-        }
+//        if (grassHashMap.containsKey(animal.getPosition())) {
+//            grassHashMap.remove(animal.getPosition());
+//            mapBoundaries.removePosition(animal.getPosition());
+//            wasGrassOnPosition = true;
+//        }
 
-        if (canMoveTo(animal.getPosition())) {
-            animalHashMap.put(animal.getPosition(), animal);
+        if (isInsideMap(animal.getPosition())) {
+
             mapBoundaries.addPosition(animal.getPosition());
             animal.addObserver(this);
 
@@ -83,16 +89,16 @@ public class GrassField extends AbstractWorldMap {
         throw new IllegalArgumentException("Can't move animal to position " + animal.getPosition());
     }
 
-    @Override
+//    @Override
     protected void updateAnimalPosition(Vector2d oldPosition, Vector2d newPosition) {
-        super.updateAnimalPosition(oldPosition, newPosition);
+//        super.updateAnimalPosition(oldPosition, newPosition);
 
         // Eat grass
-        if (grassHashMap.containsKey(newPosition)) {
-            grassHashMap.remove(newPosition);
-            mapBoundaries.removePosition(newPosition);
-            addGrass();
-        }
+//        if (grassHashMap.containsKey(newPosition)) {
+//            grassHashMap.remove(newPosition);
+//            mapBoundaries.removePosition(newPosition);
+//            addGrass();
+//        }
     }
 
     public Vector2d[] getMapBounds() {

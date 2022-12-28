@@ -172,7 +172,8 @@ public class SimulationStageOld extends Application {
             int xCoord = mapBounds[0].x;
             for (int x = 1; x <= mapBounds[1].x - mapBounds[0].x + 1; x++) {
                 // Translate y coord, because (0,0) is in the upper left corner
-                Object object = map.objectAt(new Vector2d(xCoord, yCoord));
+//                Object object = map.objectAt(new Vector2d(xCoord, yCoord)); // TODO gets animalsList and plant list on this position
+                Object object = null; // TODO CLEAR
                 if (object == null) {
                     label = new Label(" ");
                     label.setStyle(inlineStyle);

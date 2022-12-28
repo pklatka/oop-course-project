@@ -76,7 +76,7 @@ public class MapVisualizer {
     private String drawObject(Vector2d currentPosition) {
         String result = null;
         if (this.map.isOccupied(currentPosition)) {
-            Object object = this.map.objectAt(currentPosition);
+            Object object = this.map.getAnimalsFrom(currentPosition) == null  ? this.map.getPlantFrom(currentPosition) : this.map.getAnimalsFrom(currentPosition);
             if (object != null) {
                 result = object.toString();
             } else {
