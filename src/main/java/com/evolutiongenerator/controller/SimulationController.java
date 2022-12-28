@@ -2,6 +2,7 @@ package com.evolutiongenerator.controller;
 
 import com.evolutiongenerator.constant.*;
 import com.evolutiongenerator.model.mapObject.Animal.Animal;
+import com.evolutiongenerator.model.mapObject.Animal.Genes;
 import com.evolutiongenerator.model.mapObject.IMapElement;
 import com.evolutiongenerator.model.ui.GuiMapElement;
 import com.evolutiongenerator.model.ui.SortedListViewRecord;
@@ -9,6 +10,8 @@ import com.evolutiongenerator.stage.ISimulationObserver;
 import com.evolutiongenerator.utils.Vector2d;
 import javafx.application.Platform;
 import javafx.beans.Observable;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -18,12 +21,12 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.util.Pair;
 
 import java.net.URL;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Controller for simulation stage
@@ -87,8 +90,14 @@ public class SimulationController implements Initializable, ISimulationObserver 
     private Map<ConfigurationConstant, ISimulationConfigurationValue> simulationOptions;
     private ObservableList<SortedListViewRecord> mostPopularGenomes = FXCollections.observableArrayList(rec -> new Observable[]{rec.priority});
     private final Map<String, SortedListViewRecord> genomeRecord = new HashMap<>();
+    private final Map<String, List<GuiMapElement>> mapElementsWithSameGenome = new HashMap<>();
     private final Map<Vector2d, StackPane> mapFields = new HashMap<>();
     private final Map<IMapElement, Pair<Vector2d, GuiMapElement>> elementProperties = new HashMap<>();
+    boolean isSimulationRunning = false;
+    GuiMapElement selectedAnimal = null;
+
+    // TODO: Remove this
+    Animal test = null;
 
     // ****** Setters ******
 
@@ -126,9 +135,18 @@ public class SimulationController implements Initializable, ISimulationObserver 
     private void simulationControlButtonHandler(ActionEvent actionEvent) {
         if (simulationControlButton.getText().equals("Start symulacji")) {
             simulationControlButton.setText("Stop symulacji");
+            isSimulationRunning = true;
+            resetPopularGenomes();
+
+            // Get selected animal and send it to simulation
+            System.out.println("Selected animal: " + selectedAnimal);
+            resetSelectedAnimal();
+
 //            SimulationManager.getInstance().startSimulation();
         } else {
             simulationControlButton.setText("Start symulacji");
+            isSimulationRunning = false;
+
 //            SimulationManager.getInstance().stopSimulation();
         }
     }
@@ -138,14 +156,67 @@ public class SimulationController implements Initializable, ISimulationObserver 
      *
      * @param observable Observable
      */
-    private void popularGenomesHandler(Observable observable) {
-        SortedListViewRecord selectedRecord = popularGenomes.getSelectionModel().getSelectedItem();
-
-        if (selectedRecord == null){
+    private void popularGenomesHandler(Observable observable, SortedListViewRecord oldValue, SortedListViewRecord newValue) {
+        if(isSimulationRunning) {
             return;
         }
 
-        // TODO: Select animals with selected genome
+        if(oldValue != null){
+            mapElementsWithSameGenome.get(oldValue.value.get()).forEach(GuiMapElement::unselectMapElement);
+        }
+
+        resetSelectedAnimal();
+
+        if(newValue != null){
+            mapElementsWithSameGenome.get(newValue.value.get()).forEach(GuiMapElement::selectMapElement);
+        }
+    }
+
+    private void mapElementMouseClickHandler(MouseEvent event){
+        if(isSimulationRunning) {
+            return;
+        }
+
+        // Reset ListView
+        resetPopularGenomes();
+
+        GuiMapElement clickedElement = (GuiMapElement) event.getSource();
+        if(selectedAnimal == clickedElement){
+            resetSelectedAnimal();
+        }else{
+            if(selectedAnimal != null){
+                selectedAnimal.unselectMapElement();
+            }
+            selectedAnimal = (GuiMapElement) event.getSource();
+            selectedAnimal.selectMapElement();
+            animalStatisticsStatus.setText("Wybrano zwierzę do śledzenia");
+        }
+    }
+
+    // ****** Utils ******
+
+    /**
+     * Resets selected animals on map
+     */
+    private void resetSelectedAnimal(){
+        if (selectedAnimal != null) {
+            selectedAnimal.unselectMapElement();
+            selectedAnimal = null;
+        }
+
+        animalStatisticsStatus.setText("Wybierz zwierzę, aby śledzić jego statystyki");
+    }
+
+    /**
+     * Resets popular genomes list view
+     */
+    private void resetPopularGenomes(){
+        if(popularGenomes.getSelectionModel().getSelectedItem() == null){
+            return;
+        }
+
+        mapElementsWithSameGenome.get(popularGenomes.getSelectionModel().getSelectedItem().value.get()).forEach(GuiMapElement::unselectMapElement);
+        popularGenomes.getSelectionModel().clearSelection();
     }
 
     // ****** Initializers ******
@@ -210,7 +281,25 @@ public class SimulationController implements Initializable, ISimulationObserver 
 
         // TODO: Add simulationEngine as thread
         // https://stackoverflow.com/questions/61565143/how-to-pause-and-resume-a-thread-in-java
+
+        // TODO: Remove this
+        test();
     }
+
+    // TODO: Remove this
+    public void test(){
+        Genes gene = new Genes(10,10,10, null,null);
+        Genes gene1 = new Genes(10,10,10, null,null);
+
+        Animal animal1 = new Animal(null, new Vector2d(2,1), gene, 100,10,10);
+        addElementToMap(animal1, new Vector2d(2,1));
+        Animal animal2 = new Animal(null, new Vector2d(2,2), gene, 100,10,10);
+        addElementToMap(animal2, new Vector2d(2,2));
+        Animal animal3 = new Animal(null, new Vector2d(5,5), gene1, 40,10,10);
+        addElementToMap(animal3, new Vector2d(5,5));
+
+    }
+
     /**
      * Main method for initializing simulation stage
      *
@@ -257,8 +346,14 @@ public class SimulationController implements Initializable, ISimulationObserver 
             Vector2d mapPosition = new Vector2d(position.x,  mapHeight - 1 - position.y);
             StackPane stackPane = mapFields.get(mapPosition);
             GuiMapElement guiMapElement = new GuiMapElement(cellWidth, cellHeight, mapElement, simulationOptions);
+            guiMapElement.setOnMouseClicked(this::mapElementMouseClickHandler);
             stackPane.getChildren().add(guiMapElement);
             elementProperties.put(mapElement, new Pair<>(mapPosition, guiMapElement));
+
+            if(mapElement instanceof Animal){
+                addGenomeToPopularGenomes((Animal) mapElement);
+            }
+
         }catch (IllegalArgumentException e){
             throw new IllegalArgumentException(e);
         }
@@ -274,6 +369,10 @@ public class SimulationController implements Initializable, ISimulationObserver 
         Pair<Vector2d, GuiMapElement> properties = elementProperties.get(mapElement);
         if (properties == null){
             throw new IllegalArgumentException("Element mapy nie istnieje lub został już usunięty.");
+        }
+
+        if (mapElement instanceof Animal){
+            removeGenomeFromPopularGenomes((Animal) mapElement);
         }
 
         Vector2d mapPosition = properties.getKey();
@@ -306,14 +405,16 @@ public class SimulationController implements Initializable, ISimulationObserver 
      */
     @Override
     public void addGenomeToPopularGenomes(Animal animal) {
-        Platform.runLater(() -> {
-            if (!genomeRecord.containsKey(animal.getGenome().toString())) {
-                genomeRecord.put(animal.getGenome().toString(), new SortedListViewRecord(1, animal.getGenome().toString()));
-                mostPopularGenomes.add(genomeRecord.get(animal.getGenome().toString()));
-            }else{
-                genomeRecord.get(animal.getGenome().toString()).priority.set(genomeRecord.get(animal.getGenome().toString()).priority.get() + 1);
-            }
-        });
+        if (!genomeRecord.containsKey(animal.getGenome().toString())) {
+            genomeRecord.put(animal.getGenome().toString(), new SortedListViewRecord(1, animal.getGenome().toString()));
+            List<GuiMapElement> list = new ArrayList<>();
+            list.add(elementProperties.get(animal).getValue());
+            mapElementsWithSameGenome.put(animal.getGenome().toString(), list);
+            mostPopularGenomes.add(genomeRecord.get(animal.getGenome().toString()));
+        }else{
+            genomeRecord.get(animal.getGenome().toString()).priority.set(genomeRecord.get(animal.getGenome().toString()).priority.get() + 1);
+            mapElementsWithSameGenome.get(animal.getGenome().toString()).add(elementProperties.get(animal).getValue());
+        }
     }
 
     /**
@@ -323,20 +424,20 @@ public class SimulationController implements Initializable, ISimulationObserver 
      */
     @Override
     public void removeGenomeFromPopularGenomes(Animal animal) {
-        Platform.runLater(() -> {
-            if (!genomeRecord.containsKey(animal.getGenome().toString())) {
-                return;
-            }
+        if (!genomeRecord.containsKey(animal.getGenome().toString())) {
+            return;
+        }
 
-            if (genomeRecord.get(animal.getGenome().toString()).priority.get() == 1) {
-                mostPopularGenomes.remove(genomeRecord.get(animal.getGenome().toString()));
-                genomeRecord.remove(animal.getGenome().toString());
-            }
+        if (genomeRecord.get(animal.getGenome().toString()).priority.get() == 1) {
+            mostPopularGenomes.remove(genomeRecord.get(animal.getGenome().toString()));
+            genomeRecord.remove(animal.getGenome().toString());
+            mapElementsWithSameGenome.remove(animal.getGenome().toString());
+        }
 
-            if (genomeRecord.get(animal.getGenome().toString()).priority.get() > 1) {
-                genomeRecord.get(animal.getGenome().toString()).priority.set(genomeRecord.get(animal.getGenome().toString()).priority.get() - 1);
-            }
-        });
+        if (genomeRecord.get(animal.getGenome().toString()).priority.get() > 1) {
+            genomeRecord.get(animal.getGenome().toString()).priority.set(genomeRecord.get(animal.getGenome().toString()).priority.get() - 1);
+            mapElementsWithSameGenome.get(animal.getGenome().toString()).remove(elementProperties.get(animal).getValue());
+        }
     }
 
     /**
