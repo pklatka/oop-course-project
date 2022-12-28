@@ -280,6 +280,7 @@ public class SimulationController implements Initializable, ISimulationObserver 
         // https://stackoverflow.com/questions/61565143/how-to-pause-and-resume-a-thread-in-java
     }
 
+
     /**
      * Main method for initializing simulation stage
      *

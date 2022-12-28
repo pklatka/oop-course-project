@@ -11,7 +11,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import com.evolutiongenerator.model.mapObject.Animal.Animal;
-import javafx.scene.shape.Shape;
 
 import java.util.Map;
 
@@ -122,5 +121,4 @@ public class GuiMapElement extends StackPane {
 
         this.getChildren().get(0).setStyle("-fx-stroke: transparent; -fx-stroke-width: 0px;");
     }
-
 }
