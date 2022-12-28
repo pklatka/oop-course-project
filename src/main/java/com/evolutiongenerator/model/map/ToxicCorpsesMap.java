@@ -13,7 +13,7 @@ public class ToxicCorpsesMap extends AbstractWorldMap implements  IWorldMap{
         this.width = width;
         this.bottomLeftVector = new Vector2d(Integer.MIN_VALUE,0);
         this.topRightVector = new Vector2d(Integer.MAX_VALUE,height);
-        this.availableGrassFields = (width * height);
+        this.availableGrassFields = width * height;
         this.plantValue = plantValue;
     }
 

@@ -5,6 +5,7 @@ import com.evolutiongenerator.model.mapObject.IMapElement;
 import com.evolutiongenerator.model.mapObject.Plant;
 import com.evolutiongenerator.utils.Vector2d;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeSet;
 
@@ -67,5 +68,17 @@ public interface IWorldMap {
 
     void growGrass();
 
+    void addConflictedPosition(Vector2d position);
+
+    /**
+     * Detection of conflicts arising
+     * @return Information on whether there was a conflict
+     */
+    boolean isConflictsOccurred();
+
+    /**
+     * @return a list of conflicts that have arisen
+     */
+    ArrayList<Vector2d> getConflictedPositions();
 
 }

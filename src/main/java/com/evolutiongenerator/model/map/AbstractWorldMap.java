@@ -15,6 +15,7 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
     protected final HashMap<Animal, Vector2d> animalHashMap= new HashMap<>();
     protected final HashMap<Vector2d, Plant> plantHashMap = new HashMap<>();
     protected final HashMap<Vector2d, Animal> deadAnimalsHashMap = new HashMap<>();
+    protected final ArrayList<Vector2d> conflictedPositions = new ArrayList<>();
 
     protected final MapBoundary mapBoundaries = new MapBoundary();
 
@@ -71,8 +72,15 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
 
     @Override
     public boolean place(Animal animal) throws IllegalArgumentException {
+//        System.out.println(this.animalHashMap);
+        System.out.println(this.animalOnFields);
         if (isInsideMap(animal.getPosition())) {
-            TreeSet<Animal> animalSet = new TreeSet<>(Comparator.comparing(Animal::getEnergy));
+            TreeSet<Animal> animalSet;
+            if (animalOnFields.get(animal.getPosition()) == null) {
+                animalSet = new TreeSet<>(Comparator.comparing(Animal::getEnergy));
+            }else {
+                animalSet = animalOnFields.get(animal.getPosition());
+            }
             animalOnFields.put(animal.getPosition(),animalSet);
             animalHashMap.put(animal,animal.getPosition());
             animalSet.add(animal);
@@ -124,7 +132,7 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
     public Animal resolveConflicts(Vector2d position){
         TreeSet<Animal> animals = getAnimalsFrom(position);
 
-        Iterator<Animal> it = animals.iterator();
+        Iterator<Animal> it = animals.descendingIterator();
         Animal animal1 = it.next();
         Animal animal2 = it.next();
 
@@ -173,6 +181,19 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
 
     public abstract Vector2d[] getMapBounds();
 
+    public void addConflictedPosition(Vector2d position){
+        this.conflictedPositions.add(position);
+    }
+
+    @Override
+    public boolean isConflictsOccurred() {
+        return !this.conflictedPositions.isEmpty();
+    }
+
+    @Override
+    public ArrayList<Vector2d> getConflictedPositions() {
+        return this.conflictedPositions;
+    }
 
     @Override
     public String toString() {

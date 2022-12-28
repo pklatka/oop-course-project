@@ -9,9 +9,9 @@ public class ForestedEquatorMap extends AbstractWorldMap implements IWorldMap{
     public ForestedEquatorMap(int width, int height, int plantValue) {
         this.height = height;
         this.width = width;
-        this.bottomLeftVector = new Vector2d(Integer.MIN_VALUE,0); // TODO NEED TO KNOW HOW BIG CELL IS
-        this.topRightVector = new Vector2d(Integer.MAX_VALUE,height/ 10); // TODO NEED TO KNOW HOW BIG CELL IS (now 10)
-        this.availableGrassFields = (width * height) / 10;  // TODO NEED TO KNOW HOW BIG CELL IS (now 10)
+        this.bottomLeftVector = new Vector2d(Integer.MIN_VALUE,0);
+        this.topRightVector = new Vector2d(Integer.MAX_VALUE,height);
+        this.availableGrassFields = width * height;
         this.plantValue = plantValue;
     }
 
@@ -56,7 +56,7 @@ public class ForestedEquatorMap extends AbstractWorldMap implements IWorldMap{
 
 
     private int getEquatorCellAmount(){
-        int totalCells = topRightVector.y / 10; // TODO NEED TO KNOW HOW BIG CELL IS
+        int totalCells = topRightVector.y;
         return  (int) Math.floor( totalCells * 0.2);
     }
 

@@ -1,5 +1,6 @@
 package com.evolutiongenerator.model.mapObject.Animal;
 
+import com.evolutiongenerator.model.map.AbstractWorldMap;
 import com.evolutiongenerator.model.map.IPositionChangeObserver;
 import com.evolutiongenerator.model.map.IWorldMap;
 import com.evolutiongenerator.model.mapObject.IMapElement;
@@ -11,6 +12,7 @@ import com.evolutiongenerator.utils.Vector2d;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.TreeSet;
 
 public class Animal implements IMapElement {
     private MapDirection heading = MapDirection.getRandomDirection();
@@ -39,14 +41,14 @@ public class Animal implements IMapElement {
     @Override
     public String toString() {
         return switch (heading){
-            case NORTH -> "N";
-            case SOUTH -> "S";
-            case EAST -> "E";
-            case WEST-> "W";
-            case NORTH_EAST -> "NE";
-            case NORTH_WEST -> "NW";
-            case SOUTH_EAST -> "SE";
-            case SOUTH_WEST -> "SW";
+            case NORTH -> "N " + energy + "  " + position;
+            case SOUTH -> "S " + energy + "  " + position;
+            case EAST -> "E " + energy + "  " + position;
+            case WEST-> "W " + energy + "  " + position;
+            case NORTH_EAST -> "NE " + energy + "  " + position;
+            case NORTH_WEST -> "NW " + energy + "  " + position;
+            case SOUTH_EAST -> "SE " + energy + "  " + position;
+            case SOUTH_WEST -> "SW " + energy + "  " + position;
         };
     }
 
@@ -124,10 +126,23 @@ public class Animal implements IMapElement {
         changeDirection(currentGen);
         Vector2d oldPosition = new Vector2d(position.x, position.y);
         Vector2d unitVector = heading.toUnitVector();
+
+        if (map.isOccupied(position.add(unitVector))){
+            TreeSet<Animal> animals = map.getAnimalsFrom(position.add(unitVector));
+
+            if ( animals != null && !animals.isEmpty()){
+                animals.add(this);
+                this.map.addConflictedPosition(position.add(unitVector));
+            }
+        }
+
         position = position.add(unitVector);
-        positionChanged(oldPosition,position);
+        positionChanged(oldPosition, position);
 
         // TODO after implementing map variances, write their handlers
+
+
+
     }
 
     /**
