@@ -6,6 +6,8 @@ public class RectangularMap extends AbstractWorldMap {
     public RectangularMap(int width, int height) {
         this.topRightVector = new Vector2d(width, height);
         this.bottomLeftVector = new Vector2d(0, 0);
+        this.width = width; // TODO clear
+        this.height = height; // TODO clear
     }
 
     @Override
@@ -13,7 +15,6 @@ public class RectangularMap extends AbstractWorldMap {
         return animalHashMap.containsKey(position);
     }
 
-    @Override
     public Object objectAt(Vector2d position) {
         return animalHashMap.get(position);
     }
@@ -24,7 +25,12 @@ public class RectangularMap extends AbstractWorldMap {
     }
 
     @Override
-    public void cleanDeathAnimals() {
+    public void cleanDeadAnimals() {
+
+    }
+
+    @Override
+    public void growGrass() {
 
     }
 

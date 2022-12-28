@@ -15,6 +15,8 @@ import java.util.Objects;
 public class Animal implements IMapElement {
     private MapDirection heading = MapDirection.getRandomDirection();
     private Vector2d position;
+    private int days ;
+    private int childrenAmount;
     private IWorldMap map;
     private int energy;
     private Genes genes;
@@ -28,9 +30,10 @@ public class Animal implements IMapElement {
         this.position = initialPosition;
         this.genes = genes;
         this.energy = energy;
+        days = 0;
+        childrenAmount = 0;
         ENERGY_TO_REPRODUCE = minimalValueToReproduce;
         REPRODUCE_COST = reproduceCost;
-
     }
 
     @Override
@@ -53,6 +56,14 @@ public class Animal implements IMapElement {
         if (o == null || getClass() != o.getClass()) return false;
         Animal animal = (Animal) o;
         return energy == animal.energy && ENERGY_TO_REPRODUCE == animal.ENERGY_TO_REPRODUCE && REPRODUCE_COST == animal.REPRODUCE_COST && heading == animal.heading && Objects.equals(map, animal.map) && Objects.equals(genes, animal.genes);
+    }
+
+    public int getDays() {
+        return days;
+    }
+
+    public int getChildrenAmount() {
+        return childrenAmount;
     }
 
     @Override
@@ -105,7 +116,7 @@ public class Animal implements IMapElement {
 
     void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
         for (IPositionChangeObserver observer : observers) {
-            observer.positionChanged(oldPosition, newPosition);
+            observer.positionChanged(this,oldPosition, newPosition);
         }
     }
     public void move() {
@@ -146,6 +157,8 @@ public class Animal implements IMapElement {
             }
             energy -= REPRODUCE_COST;
             parnter.energy -= REPRODUCE_COST;
+            childrenAmount += 1;
+            parnter.childrenAmount += 1;
             return new Animal(map,new Vector2d(position.x,position.y),genes.createOffspringGenes(offspringGenes),descendantEnergy,REPRODUCE_COST, ENERGY_TO_REPRODUCE);
         }
         return null;
@@ -155,7 +168,7 @@ public class Animal implements IMapElement {
         return Math.round((float) energy * genes.getGenesSize()/(energy + partner.energy));
     }
     public void consume(Plant plant){
-        // TODO handle eating plants
+        this.energy += plant.getEnergy();
     }
 
 }

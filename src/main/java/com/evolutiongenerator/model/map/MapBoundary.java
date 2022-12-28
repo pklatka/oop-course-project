@@ -1,5 +1,6 @@
 package com.evolutiongenerator.model.map;
 
+import com.evolutiongenerator.model.mapObject.Animal.Animal;
 import com.evolutiongenerator.utils.Vector2d;
 
 import java.util.Comparator;
@@ -44,11 +45,12 @@ public class MapBoundary implements IPositionChangeObserver {
     }
 
     @Override
-    public boolean positionChanged(Vector2d oldPosition, Vector2d newPosition) {
+    public boolean positionChanged(Animal animal, Vector2d oldPosition, Vector2d newPosition) {
         removePosition(oldPosition);
         addPosition(newPosition);
         return true;
     }
+
 
     public Vector2d[] getMapBounds() {
         return new Vector2d[]{new Vector2d(oxAxis.firstKey().x, oyAxis.firstKey().y), new Vector2d(oxAxis.lastKey().x, oyAxis.lastKey().y)};
