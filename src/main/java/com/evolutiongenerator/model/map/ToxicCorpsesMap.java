@@ -11,9 +11,9 @@ public class ToxicCorpsesMap extends AbstractWorldMap implements  IWorldMap{
     public ToxicCorpsesMap(int width, int height, int plantValue) {
         this.height = height;
         this.width = width;
-        this.bottomLeftVector = new Vector2d(Integer.MIN_VALUE,0); // TODO NEED TO KNOW HOW BIG CELL IS
-        this.topRightVector = new Vector2d(Integer.MAX_VALUE,height/ 10); // TODO NEED TO KNOW HOW BIG CELL IS (now 10)
-        this.availableGrassFields = (width * height) / 10;  // TODO NEED TO KNOW HOW BIG CELL IS (now 10)
+        this.bottomLeftVector = new Vector2d(Integer.MIN_VALUE,0);
+        this.topRightVector = new Vector2d(Integer.MAX_VALUE,height);
+        this.availableGrassFields = (width * height);
         this.plantValue = plantValue;
     }
 
