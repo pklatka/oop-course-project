@@ -48,4 +48,17 @@ public enum MapDirection {
             default -> new Vector2d(-1, -1);
         };
     }
+
+    public MapDirection getOppositeDirection() {
+        return switch (this) {
+            case NORTH -> MapDirection.SOUTH;
+            case WEST -> MapDirection.EAST;
+            case SOUTH -> MapDirection.NORTH;
+            case EAST -> MapDirection.WEST;
+            case NORTH_EAST -> MapDirection.SOUTH_WEST;
+            case NORTH_WEST -> MapDirection.SOUTH_EAST;
+            case SOUTH_EAST -> MapDirection.NORTH_WEST;
+            default -> MapDirection.NORTH_EAST;
+        };
+    }
 }

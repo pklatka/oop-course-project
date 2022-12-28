@@ -1,18 +1,20 @@
 package com.evolutiongenerator.model.map;
 
+import com.evolutiongenerator.constant.MapVariant;
 import com.evolutiongenerator.model.mapObject.Plant;
 import com.evolutiongenerator.utils.Randomize;
 import com.evolutiongenerator.utils.Vector2d;
 
 public class ForestedEquatorMap extends AbstractWorldMap implements IWorldMap{
 
-    public ForestedEquatorMap(int width, int height, int plantValue) {
+    public ForestedEquatorMap(int width, int height, int plantValue, MapVariant mapVariant) {
         this.height = height;
         this.width = width;
-        this.bottomLeftVector = new Vector2d(Integer.MIN_VALUE,0);
-        this.topRightVector = new Vector2d(Integer.MAX_VALUE,height);
+        this.bottomLeftVector = new Vector2d(-width,0);
+        this.topRightVector = new Vector2d(width,height);
         this.availableGrassFields = width * height;
         this.plantValue = plantValue;
+        this.mapVariant = mapVariant;
     }
 
     @Override

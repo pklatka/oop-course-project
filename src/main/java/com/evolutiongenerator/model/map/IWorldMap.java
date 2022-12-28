@@ -1,5 +1,6 @@
 package com.evolutiongenerator.model.map;
 
+import com.evolutiongenerator.constant.MapVariant;
 import com.evolutiongenerator.model.mapObject.Animal.Animal;
 import com.evolutiongenerator.model.mapObject.IMapElement;
 import com.evolutiongenerator.model.mapObject.Plant;
@@ -80,5 +81,18 @@ public interface IWorldMap {
      * @return a list of conflicts that have arisen
      */
     ArrayList<Vector2d> getConflictedPositions();
+
+    /**
+     *
+     * @return Returns a variant of the map
+     */
+    MapVariant getMapVariant();
+
+    /**
+     *
+     * @param newPosition new position that should be checked
+     * @return Returns information on whether the animal should change its direction
+     */
+    boolean isAnimalChangingDirection(Vector2d newPosition);
 
 }

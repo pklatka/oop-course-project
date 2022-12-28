@@ -1,5 +1,6 @@
 package com.evolutiongenerator.model.mapObject.Animal;
 
+import com.evolutiongenerator.constant.MapVariant;
 import com.evolutiongenerator.model.map.AbstractWorldMap;
 import com.evolutiongenerator.model.map.IPositionChangeObserver;
 import com.evolutiongenerator.model.map.IWorldMap;
@@ -91,9 +92,12 @@ public class Animal implements IMapElement {
         };
     }
 
-    public void changeDirection(int gen){
+    public MapDirection changeDirection(int gen){
+        MapDirection direction = heading;
         for (int i = 0; i < gen; i++)
-            heading = heading.next();
+            direction = direction.next();
+
+        return direction;
     }
 
     public boolean isAt(Vector2d position) {
@@ -123,26 +127,35 @@ public class Animal implements IMapElement {
     }
     public void move() {
         int currentGen = genes.getGen();
-        changeDirection(currentGen);
+        MapDirection direction = changeDirection(currentGen);
         Vector2d oldPosition = new Vector2d(position.x, position.y);
-        Vector2d unitVector = heading.toUnitVector();
+        Vector2d unitVector = direction.toUnitVector();
 
-        if (map.isOccupied(position.add(unitVector))){
-            TreeSet<Animal> animals = map.getAnimalsFrom(position.add(unitVector));
+        if (!map.isInsideMap(position.add(unitVector))){
+            Vector2d preferredPosition = position.add(unitVector);
+            Vector2d newPosition = map.getRelativePositionToMapVariant(preferredPosition);
+            if (map.getMapVariant() == MapVariant.GLOBE){
+                heading = map.isAnimalChangingDirection(preferredPosition) ? heading.getOppositeDirection() : direction;
+            }
+            else if (map.getMapVariant() == MapVariant.INFERNAL_PORTAL){
+                energy -= REPRODUCE_COST;
+            }
+            position = newPosition;
+        }else{
+            position = position.add(unitVector);
+            heading = direction;
+        }
 
-            if ( animals != null && !animals.isEmpty()){
+        if (map.isOccupied(position)){
+            TreeSet<Animal> animals = map.getAnimalsFrom(position);
+
+            if (animals != null && !animals.isEmpty()){
                 animals.add(this);
-                this.map.addConflictedPosition(position.add(unitVector));
+                this.map.addConflictedPosition(position);
             }
         }
 
-        position = position.add(unitVector);
         positionChanged(oldPosition, position);
-
-        // TODO after implementing map variances, write their handlers
-
-
-
     }
 
     /**
