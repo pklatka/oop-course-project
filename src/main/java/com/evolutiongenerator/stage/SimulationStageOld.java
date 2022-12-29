@@ -48,10 +48,9 @@ public class SimulationStageOld extends Application {
 
     public void init(String[] args) throws IllegalArgumentException {
         try {
-            MoveDirection[] directions = new StringOptionParser().parse(args);
-            this.mapElementPositions = new Vector2d[]{new Vector2d(2, 2), new Vector2d(3, 4)};
-            this.map = new ForestedEquatorMap(20,20,20, MapVariant.GLOBE);
-            this.simulationEngine = new SimulationEngine(map, mapElementPositions, directions, (ISimulationObserver) this, 1000);
+//            MoveDirection[] directions = new StringOptionParser().parse(args);
+//            this.mapElementPositions = new Vector2d[]{new Vector2d(2, 2), new Vector2d(3, 4)};
+            this.simulationEngine = new SimulationEngine();
 
         } catch (IllegalArgumentException e) {
             e.printStackTrace();

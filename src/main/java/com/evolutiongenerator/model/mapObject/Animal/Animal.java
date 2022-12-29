@@ -1,7 +1,6 @@
 package com.evolutiongenerator.model.mapObject.Animal;
 
 import com.evolutiongenerator.constant.MapVariant;
-import com.evolutiongenerator.model.map.AbstractWorldMap;
 import com.evolutiongenerator.model.map.IPositionChangeObserver;
 import com.evolutiongenerator.model.map.IWorldMap;
 import com.evolutiongenerator.model.mapObject.IMapElement;
@@ -10,12 +9,9 @@ import com.evolutiongenerator.model.mapObject.Plant;
 import com.evolutiongenerator.utils.Randomize;
 import com.evolutiongenerator.utils.Vector2d;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.TreeSet;
+import java.util.*;
 
-public class Animal implements IMapElement {
+public class Animal implements IMapElement, Comparable<Animal> {
     private MapDirection heading = MapDirection.getRandomDirection();
     private Vector2d position;
     private int days;
@@ -42,24 +38,18 @@ public class Animal implements IMapElement {
     @Override
     public String toString() {
         return switch (heading) {
-            case NORTH -> "N " + energy + "  " + position;
-            case SOUTH -> "S " + energy + "  " + position;
-            case EAST -> "E " + energy + "  " + position;
-            case WEST -> "W " + energy + "  " + position;
-            case NORTH_EAST -> "NE " + energy + "  " + position;
-            case NORTH_WEST -> "NW " + energy + "  " + position;
-            case SOUTH_EAST -> "SE " + energy + "  " + position;
-            case SOUTH_WEST -> "SW " + energy + "  " + position;
+            case NORTH -> "N " + energy + "  " + position + " DNI " + getDays() + " dzieci " + getChildrenAmount();
+            case SOUTH -> "S " + energy + "  " + position + " DNI " + getDays() + " dzieci " + getChildrenAmount();
+            case EAST -> "E " + energy + "  " + position + " DNI " + getDays() + " dzieci " + getChildrenAmount();
+            case WEST -> "W " + energy + "  " + position + " DNI " + getDays() + " dzieci " + getChildrenAmount();
+            case NORTH_EAST -> "NE " + energy + "  " + position + " DNI " + getDays() + " dzieci " + getChildrenAmount();
+            case NORTH_WEST -> "NW " + energy + "  " + position + " DNI " + getDays() + " dzieci " + getChildrenAmount();
+            case SOUTH_EAST -> "SE " + energy + "  " + position + " DNI " + getDays() + " dzieci " + getChildrenAmount();
+            case SOUTH_WEST -> "SW " + energy + "  " + position + " DNI " + getDays() + " dzieci " + getChildrenAmount();
         };
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Animal animal = (Animal) o;
-        return energy == animal.energy && ENERGY_TO_REPRODUCE == animal.ENERGY_TO_REPRODUCE && REPRODUCE_COST == animal.REPRODUCE_COST && heading == animal.heading && Objects.equals(map, animal.map) && Objects.equals(genes, animal.genes);
-    }
+
 
     public int getDays() {
         return days;
@@ -69,13 +59,21 @@ public class Animal implements IMapElement {
         return childrenAmount;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(heading, map, energy, genes, ENERGY_TO_REPRODUCE, REPRODUCE_COST);
-    }
-
     public Vector2d getPosition() {
         return new Vector2d(position.x, position.y);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Animal animal = (Animal) o;
+        return days == animal.days && childrenAmount == animal.childrenAmount && energy == animal.energy && ENERGY_TO_REPRODUCE == animal.ENERGY_TO_REPRODUCE && REPRODUCE_COST == animal.REPRODUCE_COST && heading == animal.heading && position.equals(animal.position) && genes.equals(animal.genes);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(heading, position, days, childrenAmount, energy, genes, ENERGY_TO_REPRODUCE, REPRODUCE_COST);
     }
 
     public MapDirection changeDirection(int gen) {
@@ -137,8 +135,12 @@ public class Animal implements IMapElement {
 
             if (animals != null && !animals.isEmpty()) {
                 animals.add(this);
-                this.map.addConflictedPosition(position);
+                this.map.addReproduceConflictedPosition(position);
             }
+        }
+
+        if (map.isPlantAt(position)){
+            map.addPlantToConsume(position);
         }
 
         positionChanged(oldPosition, position);
@@ -185,10 +187,20 @@ public class Animal implements IMapElement {
 
     public void consume(Plant plant) {
         this.energy += plant.getEnergy();
+        this.map.removePlant(plant.getPosition());
     }
 
     public void increaseLivedDays() {
         days++;
+    }
+
+    @Override
+    public int compareTo(Animal animal) {
+        return Comparator.comparing(Animal::getEnergy)
+                        .thenComparing(Animal::getDays)
+                        .thenComparingInt(Animal::getChildrenAmount)
+                        .thenComparing(Animal::hashCode)
+                        .compare(this, animal);
     }
 
 }
