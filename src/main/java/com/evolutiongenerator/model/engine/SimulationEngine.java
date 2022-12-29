@@ -13,6 +13,10 @@ import com.evolutiongenerator.stage.SimulationStageOld;
 import com.evolutiongenerator.utils.Vector2d;
 import javafx.application.Platform;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
@@ -26,8 +30,15 @@ public class SimulationEngine implements IEngine, Runnable {
     private boolean isRunning = false;
     private boolean isPaused = true;
     private final List<ISimulationObserver> observers = new ArrayList<>();
-    private Map<ConfigurationConstant, ISimulationConfigurationValue> simulationOptions = null; // TODO: Remove null and make variable final
-    private Animal observedAnimal = null; // TODO: Remove null and make variable final
+    private final Map<ConfigurationConstant, ISimulationConfigurationValue> simulationOptions;
+    private Animal observedAnimal = null;
+    private final Map<SimulationStatistics, ISimulationConfigurationValue> simulationStatistics;
+    int totalDeadAnimals = 0;
+    int totalSumOfAnimalLifespan = 0;
+    int countPlants = 0;
+    int mapWidth = 0;
+    int mapHeight = 0;
+    int day = 0;
 
     public SimulationEngine(Map<ConfigurationConstant, ISimulationConfigurationValue> simulationOptions, ISimulationObserver observer) {
         this.simulationOptions = simulationOptions;
@@ -35,7 +46,9 @@ public class SimulationEngine implements IEngine, Runnable {
 
         PlantGrowthVariant mapPlantVariant = (PlantGrowthVariant) simulationOptions.get(ConfigurationConstant.PLANT_GROWTH_VARIANT);
         IntegerValue mapWidth = (IntegerValue) simulationOptions.get(ConfigurationConstant.MAP_WIDTH);
+        this.mapWidth = mapWidth.getValue();
         IntegerValue mapHeight = (IntegerValue) simulationOptions.get(ConfigurationConstant.MAP_HEIGHT);
+        this.mapHeight = mapHeight.getValue();
         MapVariant mapVariant = (MapVariant) simulationOptions.get(ConfigurationConstant.MAP_VARIANT);
         IntegerValue plantValue = (IntegerValue) simulationOptions.get(ConfigurationConstant.PLANT_ENERGY);
 
@@ -81,6 +94,25 @@ public class SimulationEngine implements IEngine, Runnable {
             });
         }
 
+        countPlants = initialPlantsAmount.getValue();
+
+        // Initialize simulation statistics
+        simulationStatistics = new HashMap<>();
+        simulationStatistics.put(SimulationStatistics.DAY, new IntegerValue(0));
+        simulationStatistics.put(SimulationStatistics.NUMBER_OF_ANIMALS, new IntegerValue(initialAmountOfAnimals.getValue()));
+        simulationStatistics.put(SimulationStatistics.NUMBER_OF_PLANTS, new IntegerValue(initialPlantsAmount.getValue()));
+        simulationStatistics.put(SimulationStatistics.NUMBER_OF_EMPTY_FIELDS, new IntegerValue(mapWidth.getValue() * mapHeight.getValue() - initialPlantsAmount.getValue()));
+        simulationStatistics.put(SimulationStatistics.AVERAGE_ANIMAL_ENERGY, new IntegerValue(startAnimalEnergy.getValue()));
+        simulationStatistics.put(SimulationStatistics.AVERAGE_ANIMAL_LIFESPAN, new IntegerValue(0));
+
+        Platform.runLater(() -> observers.forEach(ob -> ob.renderMainStatistics(simulationStatistics)));
+
+        try{
+            initializeStatisticsFile();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
     }
 
     /**
@@ -90,6 +122,8 @@ public class SimulationEngine implements IEngine, Runnable {
         // TODO handle map
         // TODO handle positionArray
         this.directionArray = directionArray;
+        this.simulationStatistics = new HashMap<>();
+        this.simulationOptions = new HashMap<>();
     }
 
     /**
@@ -145,6 +179,15 @@ public class SimulationEngine implements IEngine, Runnable {
                     List<Animal> animalsToRemove = map.cleanDeadAnimals();
                     animalsOrder.removeAll(animalsToRemove);
 
+                    animalsToRemove.forEach(System.out::println);
+
+                    // Update average animal life span
+                    totalDeadAnimals += animalsToRemove.size();
+                    totalSumOfAnimalLifespan += animalsToRemove.stream().mapToInt(Animal::getDays).sum();
+                    if(totalDeadAnimals != 0){
+                        simulationStatistics.put(SimulationStatistics.AVERAGE_ANIMAL_LIFESPAN, new DoubleValue((double) (totalSumOfAnimalLifespan/totalDeadAnimals)));
+                    }
+
                     observers.forEach(observer -> {
                         Platform.runLater(() ->animalsToRemove.forEach(observer::removeElementFromMap));
                     });
@@ -161,6 +204,15 @@ public class SimulationEngine implements IEngine, Runnable {
                     });
                     }
 
+                    // Update animal number
+                    simulationStatistics.put(SimulationStatistics.NUMBER_OF_ANIMALS, new IntegerValue(animalsOrder.size()));
+
+                    // Update average animal energy
+                    if(animalsOrder.size() != 0){
+                        int sumOfAnimalEnergy = animalsOrder.stream().mapToInt(Animal::getEnergy).sum();
+                        simulationStatistics.put(SimulationStatistics.AVERAGE_ANIMAL_ENERGY, new DoubleValue((double) (sumOfAnimalEnergy/animalsOrder.size())));
+                    }
+
                     // Eat plants
                     Thread.sleep(200);
                     Set<Vector2d> plantsToConsume = map.getPlantToConsume();
@@ -169,6 +221,7 @@ public class SimulationEngine implements IEngine, Runnable {
                         if (animals.size() > 1) {
                             Animal bestAnimal = map.resolveConflicts(vector2d, null);
                             Plant eatenPlant = bestAnimal.consume(map.getPlantFrom(vector2d));
+                            countPlants--;
                             observers.forEach(observer -> {
                                 Platform.runLater(() -> {
                                     observer.removeElementFromMap(eatenPlant);
@@ -182,6 +235,7 @@ public class SimulationEngine implements IEngine, Runnable {
                                     observer.removeElementFromMap(eatenPlant);
                                 });
                             });
+                            countPlants--;
                         }
                     }
 
@@ -217,12 +271,26 @@ public class SimulationEngine implements IEngine, Runnable {
                         Plant plant = map.growPlant();
                         if (plant == null) continue;
                         observers.forEach(observer->{
-                            Platform.runLater(() ->observer.addElementToMap(plant, plant.getPosition()));
+                            Platform.runLater(() -> observer.addElementToMap(plant, plant.getPosition()));
                         });
+                        countPlants++;
                     }
+
+                    // Update plant number
+                    simulationStatistics.put(SimulationStatistics.NUMBER_OF_PLANTS, new IntegerValue(countPlants));
+                    simulationStatistics.put(SimulationStatistics.NUMBER_OF_EMPTY_FIELDS, new IntegerValue(mapWidth * mapHeight - countPlants - animalsOrder.size()));
+
+                    // Update day number
+                    simulationStatistics.put(SimulationStatistics.DAY, new IntegerValue(++day));
 
                     // Decrease energy
                     map.decreaseAnimalsEnergy();
+
+                    // Write to statistics file
+                    saveStatisticsToFile();
+
+                    // Update statistics
+                    Platform.runLater(() -> observers.forEach(ob -> ob.renderMainStatistics(simulationStatistics)));
 
                     // Delay simulation
                     Thread.sleep(moveDelay);
@@ -230,6 +298,8 @@ public class SimulationEngine implements IEngine, Runnable {
             }
         } catch (InterruptedException e) {
             throw new RuntimeException("Symulacja została przerwana.");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -281,4 +351,64 @@ public class SimulationEngine implements IEngine, Runnable {
         this.directionArray = directionArray;
     }
 
+
+    private void initializeStatisticsFile() throws IOException {
+        try {
+            PathValue filePath = (PathValue) simulationOptions.get(ConfigurationConstant.STATISTICS_FILE_PATH);
+
+            // If path is not specified - do not initialize file
+            if(filePath == null){
+                return;
+            }
+
+            ArrayList<String> lines = new ArrayList<>();
+            StringBuilder line = new StringBuilder();
+            for (SimulationStatistics statistic : SimulationStatistics.values()) {
+                if(simulationStatistics.containsKey(statistic)){
+                    line.append(statistic.toString()).append(',');
+                }
+            }
+            line.deleteCharAt(line.length() - 1);
+            lines.add(line.toString());
+
+            Charset utf8 = StandardCharsets.UTF_8;
+            Path path = Paths.get(filePath.getValue());
+            Files.write(path, lines, utf8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        }catch (InvalidPathException e){
+            throw new IOException("Błędna ścieżka do pliku z zapisem danych", e);
+        }
+        catch (IOException | IllegalArgumentException e) {
+            throw new IOException(e);
+        }
+    }
+
+    public void saveStatisticsToFile() throws IOException {
+        try {
+            PathValue filePath = (PathValue) simulationOptions.get(ConfigurationConstant.STATISTICS_FILE_PATH);
+
+            // If path is not specified - do not save statistics
+            if(filePath == null){
+                return;
+            }
+
+            ArrayList<String> lines = new ArrayList<>();
+            StringBuilder line = new StringBuilder();
+            for (SimulationStatistics statistic : SimulationStatistics.values()) {
+                if(simulationStatistics.containsKey(statistic)){
+                    line.append(simulationStatistics.get(statistic).toString()).append(',');
+                }
+            }
+            line.deleteCharAt(line.length() - 1);
+            lines.add(line.toString());
+
+            Charset utf8 = StandardCharsets.UTF_8;
+            Path path = Paths.get(filePath.getValue());
+            Files.write(path, lines, utf8, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        }catch (InvalidPathException e){
+            throw new IOException("Błędna ścieżka do pliku z zapisem danych", e);
+        }
+        catch (IOException | IllegalArgumentException e) {
+            throw new IOException(e);
+        }
+    }
 }

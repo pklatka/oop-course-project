@@ -330,8 +330,11 @@ public class SimulationController implements Initializable, ISimulationObserver 
                     case NUMBER_OF_ANIMALS -> numberOfAnimals.setText(integerValue.toString());
                     case NUMBER_OF_PLANTS -> numberOfPlants.setText(integerValue.toString());
                     case NUMBER_OF_EMPTY_FIELDS -> numberOfEmptyFields.setText(integerValue.toString());
-                    case AVERAGE_ANIMAL_ENERGY -> averageAnimalEnergy.setText(integerValue.toString());
-                    case AVERAGE_ANIMAL_LIFESPAN -> averageAnimalLifespan.setText(integerValue.toString());
+                }
+            }else if (value instanceof DoubleValue doubleValue) {
+                switch (configurationConstant) {
+                    case AVERAGE_ANIMAL_LIFESPAN -> averageAnimalLifespan.setText(doubleValue.toString());
+                    case AVERAGE_ANIMAL_ENERGY -> averageAnimalEnergy.setText(doubleValue.toString());
                 }
             }
         }
