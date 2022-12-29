@@ -23,7 +23,8 @@ public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
     private final int ENERGY_TO_REPRODUCE;
     private final int REPRODUCE_COST;
     private final ArrayList<IPositionChangeObserver> observers = new ArrayList<>();
-
+    private int eatenPlants = 0;
+    private boolean isAlive = true;
 
     public Animal(IWorldMap map, Vector2d initialPosition, Genes genes, int energy, int reproduceCost, int minimalValueToReproduce) {
         this.map = map;
@@ -151,7 +152,7 @@ public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
     /**
      * We assume that in order for an animal to reproduce it needs the share of energy required for parenting to be less or equal than half of its current enrgy
      *
-     * @param parnter Reproduction partner
+     * @param partner Reproduction partner
      * @return Descendant of parents (new Animal) if parents doesn't have enough energy returns null
      */
     public Animal reproduce(Animal partner) throws IllegalStateException {
@@ -222,5 +223,17 @@ public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
     @Override
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
+    }
+
+    public int getEatenPlants(){
+        return eatenPlants;
+    }
+
+    public void makeDead(){
+        isAlive = false;
+    }
+
+    public boolean isAlive(){
+        return isAlive;
     }
 }

@@ -178,8 +178,7 @@ public class SimulationEngine implements IEngine, Runnable {
 
                     List<Animal> animalsToRemove = map.cleanDeadAnimals();
                     animalsOrder.removeAll(animalsToRemove);
-
-                    animalsToRemove.forEach(System.out::println);
+                    animalsToRemove.forEach(Animal::makeDead);
 
                     // Update average animal life span
                     totalDeadAnimals += animalsToRemove.size();
@@ -291,6 +290,19 @@ public class SimulationEngine implements IEngine, Runnable {
 
                     // Update statistics
                     Platform.runLater(() -> observers.forEach(ob -> ob.renderMainStatistics(simulationStatistics)));
+
+                    // Update animal statistics
+                    if(observedAnimal != null){
+                        Map<AnimalStatistics, ISimulationConfigurationValue> animalStatistics = new HashMap<>();
+                        animalStatistics.put(AnimalStatistics.ANIMAL_GENOME, new StringValue(observedAnimal.getGenome().toString()));
+                        animalStatistics.put(AnimalStatistics.ANIMAL_ACTIVE_GENOME, new IntegerValue(observedAnimal.getGenome().getCurrentGen()));
+                        animalStatistics.put(AnimalStatistics.ANIMAL_ENERGY, new IntegerValue(observedAnimal.getEnergy()));
+                        animalStatistics.put(AnimalStatistics.ANIMAL_NUMBER_OF_CHILDREN, new IntegerValue(observedAnimal.getChildrenAmount()));
+                        animalStatistics.put(AnimalStatistics.ANIMAL_LIFESPAN, new IntegerValue(observedAnimal.getDays()));
+                        animalStatistics.put(AnimalStatistics.ANIMAL_EATEN_PLANTS, new IntegerValue(observedAnimal.getEatenPlants()));
+                        animalStatistics.put(AnimalStatistics.ANIMAL_DEATH_DAY, new StringValue(observedAnimal.isAlive() ? "Alive" : "Death"));
+                        Platform.runLater(() -> observers.forEach(ob -> ob.updateAnimalStatistics(animalStatistics)));
+                    }
 
                     // Delay simulation
                     Thread.sleep(moveDelay);

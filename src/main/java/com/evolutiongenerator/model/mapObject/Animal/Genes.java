@@ -19,6 +19,7 @@ public class Genes {
     private final int minMutationAmount;
     private final MutationVariant mutationVariant;
     private final AnimalBehaviourVariant behaviourVariant;
+    private int currentGen = -1;
 
     public Genes(int numberOfGenes, int maxMutationAmount, int minMutationAmount, MutationVariant mutationVariant, AnimalBehaviourVariant behaviourVariant) {
         this.maxMutationAmount = maxMutationAmount;
@@ -81,6 +82,15 @@ public class Genes {
         return new Genes(genesList, maxMutationAmount, minMutationAmount, mutationVariant, behaviourVariant);
     }
 
+    /**
+     * Get currently active gene
+     *
+     * @return currently active gene
+     */
+    public int getCurrentGen() {
+        return currentGen;
+    }
+
 
     /**
      * Returns the animal's current gene with consideration of how the animal behaves
@@ -96,6 +106,7 @@ public class Genes {
             }
             int currentGen = this.genesList.get(this.currentGenIndex);
             this.currentGenIndex += 1;
+            this.currentGen = currentGen;
             return currentGen;
         }
 
