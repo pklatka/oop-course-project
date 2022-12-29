@@ -6,9 +6,7 @@ import com.evolutiongenerator.model.mapObject.IMapElement;
 import com.evolutiongenerator.model.mapObject.Plant;
 import com.evolutiongenerator.utils.Vector2d;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * The interface responsible for interacting with the map of the world.
@@ -76,7 +74,31 @@ public interface IWorldMap {
     /**
      * It is used to grow plants on the map on different variants of the map should be handled differently
      */
-    void growGrass();
+    void growPlant();
+
+    /**
+     * Used to remove a plant from a given position
+     * @param position position from which the plant is to be removed
+     */
+    void removePlant(Vector2d position);
+
+    /**
+     * @param position to see if there is a plant
+     * @return information about whether there is a plant in a given position
+     */
+    boolean isPlantAt(Vector2d position);
+
+    /**
+     * is used to record the locations on which the plant is to be consumed
+     * @param position Position on which the plant will be eaten
+     */
+    void addPlantToConsumeArray(Vector2d position);
+
+    /**
+     * is used to return a list of plants to eat
+     * @return List with items of plants to eat
+     */
+    Set<Vector2d> getPlantToConsumeArray();
 
     /**
      * It is used to add an item on which there is an animal conflict that will need to be resolved.
@@ -101,6 +123,12 @@ public interface IWorldMap {
      * @return Returns a variant of the map
      */
     MapVariant getMapVariant();
+
+    /**
+     * Used to generate a random position in the middle of the map
+     * @return random Vector2D position inside the map
+     */
+    Vector2d generateRandomPosition();
 
     /**
      * @param newPosition new position that should be checked

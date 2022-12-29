@@ -1,7 +1,9 @@
 package com.evolutiongenerator.model.engine;
 
 import com.evolutiongenerator.constant.*;
+import com.evolutiongenerator.model.map.ForestedEquatorMap;
 import com.evolutiongenerator.model.map.IWorldMap;
+import com.evolutiongenerator.model.map.ToxicCorpsesMap;
 import com.evolutiongenerator.model.mapObject.Animal.Animal;
 import com.evolutiongenerator.model.mapObject.Animal.Genes;
 import com.evolutiongenerator.model.mapObject.MoveDirection;
@@ -45,20 +47,36 @@ public class SimulationEngine implements IEngine, Runnable {
         this.observers.add(observer);
     }
 
-    public SimulationEngine(IWorldMap map, Vector2d[] positionArray) {
-        this.map = map;
+    public SimulationEngine() {
+        PlantGrowthVariant mapPlantVariant = (PlantGrowthVariant) simulationOptions.get(ConfigurationConstant.PLANT_GROWTH_VARIANT);
+        IntegerValue mapWidth = (IntegerValue) simulationOptions.get(ConfigurationConstant.MAP_WIDTH);
+        IntegerValue mapHeight = (IntegerValue) simulationOptions.get(ConfigurationConstant.MAP_HEIGHT);
+        MapVariant mapVariant = (MapVariant) simulationOptions.get(ConfigurationConstant.MAP_VARIANT);
+        IntegerValue plantValue = (IntegerValue) simulationOptions.get(ConfigurationConstant.PLANT_ENERGY);
+
+
         IntegerValue genLength = (IntegerValue) simulationOptions.get(ConfigurationConstant.GENOTYPE_LENGTH);
         IntegerValue maximumMutationNumber = (IntegerValue) simulationOptions.get(ConfigurationConstant.MAXIMUM_MUTATION_NUMBER);
         IntegerValue reproduceCost = (IntegerValue) simulationOptions.get(ConfigurationConstant.ANIMAL_REPRODUCTION_ENERGY_COST);
         IntegerValue minimalEnergyToReproduce = (IntegerValue) simulationOptions.get(ConfigurationConstant.ANIMAL_REPRODUCTION_ENERGY);
         IntegerValue minimumMutationNumber = (IntegerValue) simulationOptions.get(ConfigurationConstant.MINIMUM_MUTATION_NUMBER);
         IntegerValue startAnimalEnergy = (IntegerValue) simulationOptions.get(ConfigurationConstant.ANIMAL_START_ENERGY);
+        IntegerValue initialAmountOfAnimals = (IntegerValue) simulationOptions.get(ConfigurationConstant.ANIMAL_START_NUMBER);
         MutationVariant mutationVariant = (MutationVariant) simulationOptions.get(ConfigurationConstant.MUTATION_VARIANT);
         AnimalBehaviourVariant behaviourVariant = (AnimalBehaviourVariant) simulationOptions.get(ConfigurationConstant.ANIMAL_BEHAVIOUR_VARIANT);
 
+        if (mapPlantVariant == PlantGrowthVariant.FORESTED_EQUATOR){
+            this.map = new ForestedEquatorMap(mapWidth.getValue(),mapHeight.getValue(),plantValue.getValue(),mapVariant);
+        }
+        this.map = switch (mapPlantVariant){
+            case FORESTED_EQUATOR ->  new ForestedEquatorMap(mapWidth.getValue(),mapHeight.getValue(),plantValue.getValue(),mapVariant);
+            case TOXIC_CORPSES -> new ToxicCorpsesMap(mapWidth.getValue(),mapHeight.getValue(),plantValue.getValue(),mapVariant);
+        };
+
         // Add animals to map
-        for (Vector2d position : positionArray) {
+        for (int i = 0; i < initialAmountOfAnimals.getValue(); i++) {
             Genes genes = new Genes(genLength.getValue(), maximumMutationNumber.getValue(), minimumMutationNumber.getValue(), mutationVariant, behaviourVariant);
+            Vector2d position = map.generateRandomPosition();
             Animal newAnimal = new Animal(map, position, genes, startAnimalEnergy.getValue(), reproduceCost.getValue(), minimalEnergyToReproduce.getValue());
             if (map.place(newAnimal)) {
                 animalsOrder.add(newAnimal);
@@ -66,12 +84,11 @@ public class SimulationEngine implements IEngine, Runnable {
         }
 
         // Add plants to map
-        IntegerValue plantValue = (IntegerValue) simulationOptions.get(ConfigurationConstant.PLANT_ENERGY);
-        IntegerValue plantSpawnAmount = (IntegerValue) simulationOptions.get(ConfigurationConstant.PLANT_SPAWN_NUMBER);
         IntegerValue initialPlantsAmount = (IntegerValue) simulationOptions.get(ConfigurationConstant.PLANT_START_NUMBER);
-        PlantGrowthVariant plantGrowthVariant = (PlantGrowthVariant) simulationOptions.get(ConfigurationConstant.PLANT_GROWTH_VARIANT);
 
-        // TODO Implement maps and the sowPlants method in them. Call that method initialPlantAmount times
+        for (int i = 0; i < initialPlantsAmount.getValue(); i++) {
+            map.growPlant();
+        }
 
     }
 
@@ -80,7 +97,9 @@ public class SimulationEngine implements IEngine, Runnable {
      * TODO: Remove in the future
      */
     public SimulationEngine(IWorldMap map, Vector2d[] positionArray, MoveDirection[] directionArray) {
-        this(map, positionArray);
+        this();
+        // TODO handle map
+        // TODO handle positionArray
         this.directionArray = directionArray;
     }
 
@@ -126,6 +145,7 @@ public class SimulationEngine implements IEngine, Runnable {
 
     @Override
     public void run() {
+<<<<<<< HEAD
         try{
             isRunning = true;
             while (isRunning){
@@ -144,6 +164,12 @@ public class SimulationEngine implements IEngine, Runnable {
         }
 
         // TODO: Move this to try-catch above
+=======
+        IntegerValue plantSpawnAmount = (IntegerValue) simulationOptions.get(ConfigurationConstant.PLANT_SPAWN_NUMBER);
+
+        map.cleanDeadAnimals();
+
+>>>>>>> d978375 (Init simulationEngine instance)
         int n = animalsOrder.size();
         if (observers.size() == 0) {
             System.out.println(map);
@@ -163,6 +189,15 @@ public class SimulationEngine implements IEngine, Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+<<<<<<< HEAD
+=======
+
+        // TODO eat plants
+
+        // TODO reproduce animals
+
+        // TODO grow new plants
+>>>>>>> d978375 (Init simulationEngine instance)
     }
 
     @Override

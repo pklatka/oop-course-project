@@ -17,6 +17,8 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
     protected final HashMap<Vector2d, Plant> plantHashMap = new HashMap<>();
     protected final HashMap<Vector2d, Animal> deadAnimalsHashMap = new HashMap<>();
     protected final ArrayList<Vector2d> conflictedPositions = new ArrayList<>();
+    Set<Vector2d> plantPositionsToConsume = new LinkedHashSet<>();
+
 
     protected final MapBoundary mapBoundaries = new MapBoundary();
 
@@ -119,14 +121,20 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
     }
 
     @Override
+    public void addPlantToConsumeArray(Vector2d position) {
+        plantPositionsToConsume.add(position);
+    }
+
+    @Override
+    public Set<Vector2d> getPlantToConsumeArray() {
+        return plantPositionsToConsume;
+    }
+
+    @Override
     public TreeSet<Animal> getAnimalsFrom(Vector2d position) {
         return animalOnFields.get(position);
     }
 
-    /**
-     * @param position to see if there is a plant
-     * @return information about whether there is a plant in a given position
-     */
     public boolean isPlantAt(Vector2d position) {
         return plantHashMap.get(position) != null;
     }
@@ -167,10 +175,9 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
 
     /**
      * Used to remove plants from the map
-     *
      * @param position from which the plant is to be removed
      */
-    public void removeGrass(Vector2d position) {
+    public void removePlant(Vector2d position) {
         this.plantHashMap.remove(position);
         this.availableGrassFields++;
     }
@@ -194,6 +201,19 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
             return newPosition.y > topRightVector.y || newPosition.y < bottomLeftVector.y;
         }
         return false;
+    }
+
+    @Override
+    public Vector2d generateRandomPosition() {
+        int tmpX = Randomize.generateInt(width, -width);
+        int tmpY = Randomize.generateInt(height, 0);
+        Vector2d position = new Vector2d(tmpX,tmpY);
+        while (!isInsideMap(position)){
+            tmpX = Randomize.generateInt(width, -width);
+            tmpY = Randomize.generateInt(height, 0);
+            position = new Vector2d(tmpX,tmpY);
+        };
+        return position;
     }
 
     public abstract Vector2d[] getMapBounds();

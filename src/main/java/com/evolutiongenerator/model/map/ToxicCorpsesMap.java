@@ -25,9 +25,11 @@ public class ToxicCorpsesMap extends AbstractWorldMap implements IWorldMap {
     }
 
     @Override
-    public void growGrass() {
+    public void growPlant() {
         LinkedHashMap<Vector2d, Integer> sortedMap = new LinkedHashMap<>();
         ArrayList<Integer> list = new ArrayList<>();
+
+        if (availableGrassFields <= 0) return;
 
         for (Map.Entry<Vector2d, Integer> entry : mapDeathStat.entrySet()) {
             list.add(entry.getValue());
@@ -47,6 +49,7 @@ public class ToxicCorpsesMap extends AbstractWorldMap implements IWorldMap {
             for (Vector2d vector2d : sortedMap.keySet()) {
                 if (!isPlantAt(vector2d)) {
                     this.plantHashMap.put(vector2d, new Plant(vector2d, plantValue));
+                    this.availableGrassFields--;
                     return;
                 }
             }
@@ -57,6 +60,7 @@ public class ToxicCorpsesMap extends AbstractWorldMap implements IWorldMap {
                 tmpX = Randomize.generateInt(this.topRightVector.x, this.bottomLeftVector.x);
                 tmpY = Randomize.generateInt(topRightVector.y, bottomLeftVector.y);
             }
+            this.availableGrassFields--;
         }
 
 

@@ -23,7 +23,7 @@ public class ForestedEquatorMap extends AbstractWorldMap implements IWorldMap {
     }
 
     @Override
-    public void growGrass() {
+    public void growPlant() {
 
         if (availableGrassFields <= 0) return;
 

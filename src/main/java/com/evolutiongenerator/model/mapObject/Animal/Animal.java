@@ -141,6 +141,10 @@ public class Animal implements IMapElement {
             }
         }
 
+        if (map.isPlantAt(position)){
+            map.addPlantToConsumeArray(position);
+        }
+
         positionChanged(oldPosition, position);
     }
 
@@ -185,6 +189,7 @@ public class Animal implements IMapElement {
 
     public void consume(Plant plant) {
         this.energy += plant.getEnergy();
+        this.map.removePlant(plant.getPosition());
     }
 
     public void increaseLivedDays() {
