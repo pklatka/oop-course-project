@@ -147,4 +147,13 @@ public interface IWorldMap {
      */
     Animal resolveConflicts(Vector2d position, Animal animalToIgnore);
 
+    /**
+     * is used to reduce the energy of animals after surviving the day
+     */
+    void decreaseAnimalsEnergy();
+
+    void cleanPlantsToConsume();
+
+    void clearReproduceConflictedPositions();
+
 }

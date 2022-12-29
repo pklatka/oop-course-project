@@ -68,6 +68,7 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
         List<Animal> animalsToRemove = new ArrayList<>();
         for (Vector2d vector2d : deadAnimalsHashMap.keySet()) {
             Animal animal = deadAnimalsHashMap.get(vector2d);
+            mapDeathStat.put(animal.getPosition(),mapDeathStat.get(animal.getPosition()) + 1);
             animalsToRemove.add(animal);
             animalHashMap.remove(animal);
             animalOnFields.get(vector2d).remove(animal);
@@ -208,15 +209,28 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
 
     @Override
     public Vector2d generateRandomPosition() {
-        int tmpX = Randomize.generateInt(width, -width);
+        int tmpX = Randomize.generateInt(width, 0);
         int tmpY = Randomize.generateInt(height, 0);
         Vector2d position = new Vector2d(tmpX,tmpY);
         while (!isInsideMap(position)){
-            tmpX = Randomize.generateInt(width, -width);
+            tmpX = Randomize.generateInt(width, 0);
             tmpY = Randomize.generateInt(height, 0);
             position = new Vector2d(tmpX,tmpY);
         };
         return position;
+    }
+    public void decreaseAnimalsEnergy(){
+        for (Animal animal: animalHashMap.keySet()){
+            if (animal.getEnergy() > 0) {
+                animal.decreaseEnergy(1);
+                animal.increaseLivedDays();
+            }
+
+            if (animal.getEnergy() <= 0) {
+                deadAnimalsHashMap.put(animal.getPosition(),animal);
+            }
+
+        }
     }
 
     public abstract Vector2d[] getMapBounds();
@@ -238,6 +252,14 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
     @Override
     public ArrayList<Vector2d> getReproduceConflictedPositions() {
         return this.conflictedPositions;
+    }
+
+    public void cleanPlantsToConsume(){
+        this.plantPositionsToConsume.clear();
+    }
+
+    public void clearReproduceConflictedPositions(){
+        this.conflictedPositions.clear();
     }
 
     @Override

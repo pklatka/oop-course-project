@@ -70,12 +70,12 @@ public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Animal animal = (Animal) o;
-        return days == animal.days && childrenAmount == animal.childrenAmount && energy == animal.energy && ENERGY_TO_REPRODUCE == animal.ENERGY_TO_REPRODUCE && REPRODUCE_COST == animal.REPRODUCE_COST && heading == animal.heading &&  genes.equals(animal.genes);
+        return System.identityHashCode(animal) == System.identityHashCode(this) && ENERGY_TO_REPRODUCE == animal.ENERGY_TO_REPRODUCE && REPRODUCE_COST == animal.REPRODUCE_COST &&  genes.equals(animal.genes);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(heading, days, childrenAmount, energy, genes, ENERGY_TO_REPRODUCE, REPRODUCE_COST);
+        return Objects.hash(genes, ENERGY_TO_REPRODUCE, REPRODUCE_COST) + System.identityHashCode(this);
     }
 
     public MapDirection changeDirection(int gen) {
@@ -142,6 +142,7 @@ public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
         }
 
         if (map.isPlantAt(position)){
+            System.out.println("dodaje do zjedzenia pozycje");
             map.addPlantToConsume(position);
         }
 
@@ -174,8 +175,9 @@ public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
                 offspringGenes = parnter.genes.getOffspringGenes(partnerGenesForOffspringAmount, isLeftSideGenes);
                 offspringGenes.addAll(genes.getOffspringGenes(thisGenesForOffspringAmount, !isLeftSideGenes));
             }
-            energy -= REPRODUCE_COST;
-            parnter.energy -= REPRODUCE_COST;
+
+            decreaseEnergy(REPRODUCE_COST);
+            parnter.decreaseEnergy(REPRODUCE_COST);
             childrenAmount += 1;
             parnter.childrenAmount += 1;
             return new Animal(map, new Vector2d(position.x, position.y), genes.createOffspringGenes(offspringGenes), descendantEnergy, REPRODUCE_COST, ENERGY_TO_REPRODUCE);
@@ -187,10 +189,11 @@ public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
         return Math.round((float) energy * genes.getGenesSize() / (energy + partner.energy));
     }
 
-    public void consume(Plant plant) {
+    public Plant consume(Plant plant) {
         this.energy += plant.getEnergy();
         eatenPlants++;
         this.map.removePlant(plant.getPosition());
+        return plant;
     }
 
     public int getEatenPlantsAmount(){
@@ -199,6 +202,10 @@ public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
 
     public void increaseLivedDays() {
         days++;
+    }
+
+    public void decreaseEnergy(int value){
+        this.energy -= value;
     }
 
     @Override

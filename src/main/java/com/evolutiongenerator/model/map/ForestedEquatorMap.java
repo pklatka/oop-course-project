@@ -10,7 +10,7 @@ public class ForestedEquatorMap extends AbstractWorldMap implements IWorldMap {
     public ForestedEquatorMap(int width, int height, int plantValue, MapVariant mapVariant) {
         this.height = height;
         this.width = width;
-        this.bottomLeftVector = new Vector2d(-width, 0);
+        this.bottomLeftVector = new Vector2d(0, 0);
         this.topRightVector = new Vector2d(width, height);
         this.availableGrassFields = width * height;
         this.plantValue = plantValue;
@@ -34,8 +34,10 @@ public class ForestedEquatorMap extends AbstractWorldMap implements IWorldMap {
         if (Randomize.generateBooleanWithProbability(0.8)) {
             tmpX = Randomize.generateInt(equatorTopRight.x, equatorBottomLeft.x);
             tmpY = Randomize.generateInt(equatorTopRight.y, equatorBottomLeft.y);
+            int i = 0; // TODO tmp solution probably will be fixed later
 
-            while (isPlantAt(new Vector2d(tmpX, tmpY))) {
+            while (isPlantAt(new Vector2d(tmpX, tmpY)) && i < getEquatorCellAmount()) {
+                i += 1;
                 tmpX = Randomize.generateInt(equatorTopRight.x, equatorBottomLeft.x);
                 tmpY = Randomize.generateInt(equatorTopRight.y, equatorBottomLeft.y);
             }

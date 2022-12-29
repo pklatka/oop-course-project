@@ -79,8 +79,8 @@ public class SimulationEngine implements IEngine, Runnable {
             observers.forEach(ob->{
                 Platform.runLater(() ->ob.addElementToMap(plant, plant.getPosition()));
             });
-
         }
+
     }
 
     /**
@@ -141,6 +141,7 @@ public class SimulationEngine implements IEngine, Runnable {
                 } else {
                     // Simulation executes default procedure
                     IntegerValue plantSpawnAmount = (IntegerValue) simulationOptions.get(ConfigurationConstant.PLANT_SPAWN_NUMBER);
+
                     List<Animal> animalsToRemove = map.cleanDeadAnimals();
                     observers.forEach(observer -> {
                         Platform.runLater(() ->animalsToRemove.forEach(observer::removeElementFromMap));
@@ -160,18 +161,19 @@ public class SimulationEngine implements IEngine, Runnable {
 
                     // Eat plants
                     Set<Vector2d> plantsToConsume = map.getPlantToConsume();
-
                     for (Vector2d vector2d : plantsToConsume) {
                         TreeSet<Animal> animals = map.getAnimalsFrom(vector2d);
-
                         if (animals.size() > 1) {
                             Animal bestAnimal = map.resolveConflicts(vector2d, null);
-                            bestAnimal.consume(map.getPlantFrom(vector2d));
-                        } else {
+                            Plant eatenPlant = bestAnimal.consume(map.getPlantFrom(vector2d));
+                        } else if (animals.size() == 1) {
                             Animal animal = animals.descendingSet().first();
-                            animal.consume(map.getPlantFrom(vector2d));
+                            Plant eatenPlant = animal.consume(map.getPlantFrom(vector2d));
                         }
                     }
+
+                    // Clear hashmap of plants to consume
+                    map.cleanPlantsToConsume();
 
                     // Reproduce animals
                     ArrayList<Vector2d> positions = map.getReproduceConflictedPositions();
@@ -191,6 +193,8 @@ public class SimulationEngine implements IEngine, Runnable {
                         }
                     }
 
+                    map.clearReproduceConflictedPositions();
+
                     // Grow new plants
                     for (int i = 0; i < plantSpawnAmount.getValue(); i++) {
                         Plant plant = map.growPlant();
@@ -199,6 +203,10 @@ public class SimulationEngine implements IEngine, Runnable {
                             Platform.runLater(() ->observer.addElementToMap(plant, plant.getPosition()));
                         });
                     }
+
+                    // Decrease energy
+                    map.decreaseAnimalsEnergy();
+
 
                     // Delay simulation
                     Thread.sleep(moveDelay);
