@@ -64,14 +64,18 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
     }
 
     @Override
-    public void cleanDeadAnimals() {
+    public List<Animal> cleanDeadAnimals() {
+        List<Animal> animalsToRemove = new ArrayList<>();
         for (Vector2d vector2d : deadAnimalsHashMap.keySet()) {
             Animal animal = deadAnimalsHashMap.get(vector2d);
+            animalsToRemove.add(animal);
             animalHashMap.remove(animal);
             animalOnFields.get(vector2d).remove(animal);
             mapBoundaries.removePosition(vector2d);
         }
         deadAnimalsHashMap.clear();
+
+        return animalsToRemove;
     }
 
 

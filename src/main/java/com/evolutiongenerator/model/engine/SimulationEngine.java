@@ -7,6 +7,7 @@ import com.evolutiongenerator.model.map.ToxicCorpsesMap;
 import com.evolutiongenerator.model.mapObject.Animal.Animal;
 import com.evolutiongenerator.model.mapObject.Animal.Genes;
 import com.evolutiongenerator.model.mapObject.MoveDirection;
+import com.evolutiongenerator.model.mapObject.Plant;
 import com.evolutiongenerator.stage.ISimulationObserver;
 import com.evolutiongenerator.stage.SimulationStageOld;
 import com.evolutiongenerator.utils.Vector2d;
@@ -28,24 +29,10 @@ public class SimulationEngine implements IEngine, Runnable {
     private Map<ConfigurationConstant, ISimulationConfigurationValue> simulationOptions = null; // TODO: Remove null and make variable final
     private Animal observedAnimal = null; // TODO: Remove null and make variable final
 
-    public SimulationEngine(Map<ConfigurationConstant, ISimulationConfigurationValue> simulationOptions) {
+    public SimulationEngine(Map<ConfigurationConstant, ISimulationConfigurationValue> simulationOptions, ISimulationObserver observer) {
         this.simulationOptions = simulationOptions;
-
-        // TODO: Generate map, animals, etc. according to simulationOptions
-    }
-
-    public SimulationEngine(Map<ConfigurationConstant, ISimulationConfigurationValue> simulationOptions, int moveDelay) {
-        this(simulationOptions);
-
-        this.moveDelay = moveDelay;
-    }
-
-    public SimulationEngine(Map<ConfigurationConstant, ISimulationConfigurationValue> simulationOptions, int moveDelay, ISimulationObserver observer) {
-        this(simulationOptions, moveDelay);
         this.observers.add(observer);
-    }
 
-    public SimulationEngine() {
         PlantGrowthVariant mapPlantVariant = (PlantGrowthVariant) simulationOptions.get(ConfigurationConstant.PLANT_GROWTH_VARIANT);
         IntegerValue mapWidth = (IntegerValue) simulationOptions.get(ConfigurationConstant.MAP_WIDTH);
         IntegerValue mapHeight = (IntegerValue) simulationOptions.get(ConfigurationConstant.MAP_HEIGHT);
@@ -80,6 +67,7 @@ public class SimulationEngine implements IEngine, Runnable {
             Animal newAnimal = new Animal(map, position, genes, startAnimalEnergy.getValue(), reproduceCost.getValue(), minimalEnergyToReproduce.getValue());
             if (map.place(newAnimal)) {
                 animalsOrder.add(newAnimal);
+                observers.forEach(ob -> Platform.runLater(() -> ob.addElementToMap(newAnimal, newAnimal.getPosition())));
             }
         }
 
@@ -87,16 +75,18 @@ public class SimulationEngine implements IEngine, Runnable {
         IntegerValue initialPlantsAmount = (IntegerValue) simulationOptions.get(ConfigurationConstant.PLANT_START_NUMBER);
 
         for (int i = 0; i < initialPlantsAmount.getValue(); i++) {
-            map.growPlant();
-        }
+            Plant plant = map.growPlant();
+            observers.forEach(ob->{
+                Platform.runLater(() ->ob.addElementToMap(plant, plant.getPosition()));
+            });
 
+        }
     }
 
     /**
      * @deprecated TODO: Remove in the future
      */
     public SimulationEngine(IWorldMap map, Vector2d[] positionArray, MoveDirection[] directionArray) {
-        this();
         // TODO handle map
         // TODO handle positionArray
         this.directionArray = directionArray;
@@ -147,78 +137,76 @@ public class SimulationEngine implements IEngine, Runnable {
             while (isRunning) {
                 if (isPaused) {
                     // Simulation is paused
-                    System.out.println("paused!");
                     Thread.sleep(300);
                 } else {
                     // Simulation executes default procedure
-                    System.out.println("running");
+                    IntegerValue plantSpawnAmount = (IntegerValue) simulationOptions.get(ConfigurationConstant.PLANT_SPAWN_NUMBER);
+                    List<Animal> animalsToRemove = map.cleanDeadAnimals();
+                    observers.forEach(observer -> {
+                        Platform.runLater(() ->animalsToRemove.forEach(observer::removeElementFromMap));
+                    });
+
+                    for (Animal animal : animalsOrder) {
+                        Platform.runLater(() -> {
+                            for(ISimulationObserver observer: observers){
+                                observer.removeElementFromMap(animal);
+                            }
+                            animal.move();
+                            for(ISimulationObserver observer: observers){
+                                observer.addElementToMap(animal, animal.getPosition());
+                            }
+                    });
+                    }
+
+                    // Eat plants
+                    Set<Vector2d> plantsToConsume = map.getPlantToConsume();
+
+                    for (Vector2d vector2d : plantsToConsume) {
+                        TreeSet<Animal> animals = map.getAnimalsFrom(vector2d);
+
+                        if (animals.size() > 1) {
+                            Animal bestAnimal = map.resolveConflicts(vector2d, null);
+                            bestAnimal.consume(map.getPlantFrom(vector2d));
+                        } else {
+                            Animal animal = animals.descendingSet().first();
+                            animal.consume(map.getPlantFrom(vector2d));
+                        }
+                    }
+
+                    // Reproduce animals
+                    ArrayList<Vector2d> positions = map.getReproduceConflictedPositions();
+
+                    for (Vector2d position : positions) {
+                        TreeSet<Animal> animals = map.getAnimalsFrom(position);
+                        Animal bestAnimal = animals.descendingSet().first();
+                        Animal partnerAnimal = map.resolveConflicts(position, bestAnimal);
+
+                        Animal offspringAnimal = bestAnimal.reproduce(partnerAnimal);
+
+                        if (offspringAnimal != null) {
+                            map.place(offspringAnimal);
+                            observers.forEach(observer->{
+                                Platform.runLater(() -> observer.addElementToMap(offspringAnimal, offspringAnimal.getPosition()));
+                            });
+                        }
+                    }
+
+                    // Grow new plants
+                    for (int i = 0; i < plantSpawnAmount.getValue(); i++) {
+                        Plant plant = map.growPlant();
+                        if (plant == null) continue;
+                        observers.forEach(observer->{
+                            Platform.runLater(() ->observer.addElementToMap(plant, plant.getPosition()));
+                        });
+                    }
+
+                    // Delay simulation
                     Thread.sleep(moveDelay);
                 }
             }
         } catch (InterruptedException e) {
             throw new RuntimeException("Symulacja została przerwana.");
         }
-
-        // TODO: Move this to try-catch above
-
-        IntegerValue plantSpawnAmount = (IntegerValue) simulationOptions.get(ConfigurationConstant.PLANT_SPAWN_NUMBER);
-        map.cleanDeadAnimals();
-
-        int n = animalsOrder.size();
-        if (observers.size() == 0) {
-            System.out.println(map);
-            for (Animal animal : animalsOrder) {
-                animal.move();
-                System.out.println(map);
-            }
-            return;
-        }
-        try {
-//            dispatchAnimation();
-            for (Animal animal : animalsOrder) {
-                animal.move();
-//                dispatchAnimation();
-                Thread.sleep(moveDelay);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        // Eat plants
-        Set<Vector2d> plantsToConsume = map.getPlantToConsume();
-
-        for (Vector2d vector2d : plantsToConsume) {
-            TreeSet<Animal> animals = map.getAnimalsFrom(vector2d);
-
-            if (animals.size() > 1) {
-                Animal bestAnimal = map.resolveConflicts(vector2d, null);
-                bestAnimal.consume(map.getPlantFrom(vector2d));
-            } else {
-                Animal animal = animals.descendingSet().first();
-                animal.consume(map.getPlantFrom(vector2d));
-            }
-        }
-        // Reproduce animals
-        ArrayList<Vector2d> positions = map.getReproduceConflictedPositions();
-
-        for (Vector2d position : positions) {
-            TreeSet<Animal> animals = map.getAnimalsFrom(position);
-            Animal bestAnimal = animals.descendingSet().first();
-            Animal partnerAnimal = map.resolveConflicts(position, bestAnimal);
-
-            Animal offspringAnimal = bestAnimal.reproduce(partnerAnimal);
-
-            if (offspringAnimal != null) {
-                map.place(offspringAnimal);
-            }
-        }
-
-        // Grow new plants
-        for (int i = 0; i < plantSpawnAmount.getValue(); i++) {
-            map.growPlant();
-        }
-
-
     }
 
     @Override

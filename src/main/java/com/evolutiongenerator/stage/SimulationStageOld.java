@@ -50,7 +50,7 @@ public class SimulationStageOld extends Application {
         try {
 //            MoveDirection[] directions = new StringOptionParser().parse(args);
 //            this.mapElementPositions = new Vector2d[]{new Vector2d(2, 2), new Vector2d(3, 4)};
-            this.simulationEngine = new SimulationEngine();
+            this.simulationEngine = new SimulationEngine(null, null);
 
         } catch (IllegalArgumentException e) {
             e.printStackTrace();

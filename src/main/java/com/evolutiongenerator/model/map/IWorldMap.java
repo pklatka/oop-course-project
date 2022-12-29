@@ -69,12 +69,14 @@ public interface IWorldMap {
     /**
      * Used to remove dead animals from the map and hashmap
      */
-    void cleanDeadAnimals();
+    List<Animal> cleanDeadAnimals();
 
     /**
      * It is used to grow plants on the map on different variants of the map should be handled differently
+     *
+     * @return Plant that was grown on the map
      */
-    void growPlant();
+    Plant growPlant();
 
     /**
      * Used to remove a plant from a given position

@@ -284,8 +284,7 @@ public class SimulationController implements Initializable, ISimulationObserver 
         initializeMap();
 
         // Initialize engine
-        SimulationEngine engineToRun = new SimulationEngine(simulationOptions);
-        engineToRun.addObserver(this);
+        SimulationEngine engineToRun = new SimulationEngine(simulationOptions, this);
         engine = engineToRun;
 
         // Start engine thread
@@ -347,6 +346,12 @@ public class SimulationController implements Initializable, ISimulationObserver 
         try {
             Vector2d mapPosition = new Vector2d(position.x, mapHeight - 1 - position.y);
             StackPane stackPane = mapFields.get(mapPosition);
+            if(stackPane == null){
+                System.out.println("StackPane is null");
+//                throw new IllegalArgumentException("Pozycja jest poza mapą");
+                return;
+            }
+
             GuiMapElement guiMapElement = new GuiMapElement(cellWidth, cellHeight, mapElement, simulationOptions);
             guiMapElement.setOnMouseClicked(this::mapElementMouseClickHandler);
             stackPane.getChildren().add(guiMapElement);
@@ -370,7 +375,15 @@ public class SimulationController implements Initializable, ISimulationObserver 
     public void removeElementFromMap(IMapElement mapElement) {
         Pair<Vector2d, GuiMapElement> properties = elementProperties.get(mapElement);
         if (properties == null) {
-            throw new IllegalArgumentException("Element mapy nie istnieje lub został już usunięty.");
+//            for(Pair<Vector2d, GuiMapElement> pair : elementProperties.values()){
+//                System.out.println(pair.getKey());
+//            }
+//            for(IMapElement el : elementProperties.keySet()){
+//                System.out.println(el + " " + elementProperties.get(el));
+//            }
+            System.out.println("Nie znaleziono elementu na mapie");
+            return;
+//            throw new IllegalArgumentException("Element mapy nie istnieje lub został już usunięty.");
         }
 
         if (mapElement instanceof Animal) {
@@ -434,11 +447,13 @@ public class SimulationController implements Initializable, ISimulationObserver 
             mostPopularGenomes.remove(genomeRecord.get(animal.getGenome().toString()));
             genomeRecord.remove(animal.getGenome().toString());
             mapElementsWithSameGenome.remove(animal.getGenome().toString());
+            return;
         }
 
         if (genomeRecord.get(animal.getGenome().toString()).priority.get() > 1) {
             genomeRecord.get(animal.getGenome().toString()).priority.set(genomeRecord.get(animal.getGenome().toString()).priority.get() - 1);
             mapElementsWithSameGenome.get(animal.getGenome().toString()).remove(elementProperties.get(animal).getValue());
+            return;
         }
     }
 

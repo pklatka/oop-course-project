@@ -11,7 +11,7 @@ import com.evolutiongenerator.utils.Vector2d;
 
 import java.util.*;
 
-public class Animal implements IMapElement, Comparable<Animal> {
+public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
     private MapDirection heading = MapDirection.getRandomDirection();
     private Vector2d position;
     private int days;
@@ -70,12 +70,12 @@ public class Animal implements IMapElement, Comparable<Animal> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Animal animal = (Animal) o;
-        return days == animal.days && childrenAmount == animal.childrenAmount && energy == animal.energy && ENERGY_TO_REPRODUCE == animal.ENERGY_TO_REPRODUCE && REPRODUCE_COST == animal.REPRODUCE_COST && heading == animal.heading && position.equals(animal.position) && genes.equals(animal.genes);
+        return days == animal.days && childrenAmount == animal.childrenAmount && energy == animal.energy && ENERGY_TO_REPRODUCE == animal.ENERGY_TO_REPRODUCE && REPRODUCE_COST == animal.REPRODUCE_COST && heading == animal.heading &&  genes.equals(animal.genes);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(heading, position, days, childrenAmount, energy, genes, ENERGY_TO_REPRODUCE, REPRODUCE_COST);
+        return Objects.hash(heading, days, childrenAmount, energy, genes, ENERGY_TO_REPRODUCE, REPRODUCE_COST);
     }
 
     public MapDirection changeDirection(int gen) {
@@ -210,4 +210,9 @@ public class Animal implements IMapElement, Comparable<Animal> {
                         .compare(this, animal);
     }
 
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 }

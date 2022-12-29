@@ -23,9 +23,9 @@ public class ForestedEquatorMap extends AbstractWorldMap implements IWorldMap {
     }
 
     @Override
-    public void growPlant() {
+    public Plant growPlant() {
 
-        if (availableGrassFields <= 0) return;
+        if (availableGrassFields <= 0) return null;
 
         Vector2d equatorTopRight = getEquatorTopRight();
         Vector2d equatorBottomLeft = getEquatorBottomLeft();
@@ -51,9 +51,11 @@ public class ForestedEquatorMap extends AbstractWorldMap implements IWorldMap {
         }
 
         Vector2d plantPosition = new Vector2d(tmpX, tmpY);
-        plantHashMap.put(plantPosition, new Plant(plantPosition, this.plantValue));
+        Plant plantToGrow = new Plant(plantPosition, this.plantValue);
+        plantHashMap.put(plantPosition, plantToGrow);
         this.availableGrassFields--;
 
+        return plantToGrow;
     }
 
 
