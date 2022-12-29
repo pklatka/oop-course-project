@@ -113,6 +113,7 @@ public class SimulationEngine implements IEngine, Runnable {
 
     }
 
+
     // Use it when you need to wait for thread
     private void runAndWait() throws InterruptedException {
         try {
@@ -141,20 +142,6 @@ public class SimulationEngine implements IEngine, Runnable {
             while (isRunning) {
                 if (isPaused) {
                     // Simulation is paused
-//                    if(observedAnimal != null){
-//                        for(ISimulationObserver observer: observers){
-//                            observer.removeElementFromMap(observedAnimal);
-//                        }
-//
-//                        for(ISimulationObserver observer: observers){
-//
-//                            observer.addElementToMap(observedAnimal, observedAnimal.getPosition(),false);
-//
-//                        }
-//
-//                        observedAnimal = null;
-//
-//                    }
                     Thread.sleep(300);
                 } else {
                     // Simulation executes default procedure
