@@ -1,10 +1,8 @@
 package com.evolutiongenerator.model.ui;
 
 import com.evolutiongenerator.model.map.IWorldMap;
-import com.evolutiongenerator.model.mapObject.Animal.Animal;
 import com.evolutiongenerator.utils.Vector2d;
 
-import java.util.TreeSet;
 
 /**
  * The map visualizer converts the {@link IWorldMap} map into a string
@@ -79,7 +77,7 @@ public class MapVisualizer {
     private String drawObject(Vector2d currentPosition) {
         String result = null;
         if (this.map.isOccupied(currentPosition)) {
-            Object object = this.map.getAnimalsFrom(currentPosition) == null  ? this.map.getPlantFrom(currentPosition) : this.map.getAnimalsFrom(currentPosition);
+            Object object = this.map.getAnimalsFrom(currentPosition) == null ? this.map.getPlantFrom(currentPosition) : this.map.getAnimalsFrom(currentPosition);
             if (object != null) {
                 result = object.toString();
             } else {

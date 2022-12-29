@@ -3,10 +3,8 @@ package com.evolutiongenerator.model.mapObject;
 import com.evolutiongenerator.utils.Randomize;
 import com.evolutiongenerator.utils.Vector2d;
 
-import java.util.Random;
-
 public enum MapDirection {
-    NORTH, NORTH_EAST, EAST, SOUTH_EAST, SOUTH,SOUTH_WEST, WEST , NORTH_WEST;
+    NORTH, NORTH_EAST, EAST, SOUTH_EAST, SOUTH, SOUTH_WEST, WEST, NORTH_WEST;
 
     public String toString() {
         return switch (this) {

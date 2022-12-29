@@ -115,7 +115,7 @@ public class SimulationController implements Initializable, ISimulationObserver 
      * Sets simulation options
      */
     private void setSimulationOptions() {
-        for(ConfigurationConstant configurationConstant: simulationOptions.keySet()){
+        for (ConfigurationConstant configurationConstant : simulationOptions.keySet()) {
             if (Objects.requireNonNull(configurationConstant.getType()) == ConfigurationConstant.ConfigurationConstantType.INTEGER) {
                 IntegerValue integerValue = (IntegerValue) simulationOptions.get(configurationConstant);
                 switch (configurationConstant) {
@@ -124,7 +124,8 @@ public class SimulationController implements Initializable, ISimulationObserver 
                     case SIMULATION_COUNTER -> simulationTitle.setText("Symulacja nr " + integerValue.getValue());
                 }
             }
-        }}
+        }
+    }
 
     // ****** Handlers ******
 
@@ -160,23 +161,23 @@ public class SimulationController implements Initializable, ISimulationObserver 
      * @param observable Observable
      */
     private void popularGenomesHandler(Observable observable, SortedListViewRecord oldValue, SortedListViewRecord newValue) {
-        if(isSimulationRunning) {
+        if (isSimulationRunning) {
             return;
         }
 
-        if(oldValue != null){
+        if (oldValue != null) {
             mapElementsWithSameGenome.get(oldValue.value.get()).forEach(GuiMapElement::unselectMapElement);
         }
 
         resetSelectedAnimal();
 
-        if(newValue != null){
+        if (newValue != null) {
             mapElementsWithSameGenome.get(newValue.value.get()).forEach(GuiMapElement::selectMapElement);
         }
     }
 
-    private void mapElementMouseClickHandler(MouseEvent event){
-        if(isSimulationRunning) {
+    private void mapElementMouseClickHandler(MouseEvent event) {
+        if (isSimulationRunning) {
             return;
         }
 
@@ -184,10 +185,10 @@ public class SimulationController implements Initializable, ISimulationObserver 
         resetPopularGenomes();
 
         GuiMapElement clickedElement = (GuiMapElement) event.getSource();
-        if(selectedAnimal == clickedElement){
+        if (selectedAnimal == clickedElement) {
             resetSelectedAnimal();
-        }else{
-            if(selectedAnimal != null){
+        } else {
+            if (selectedAnimal != null) {
                 selectedAnimal.unselectMapElement();
             }
             selectedAnimal = (GuiMapElement) event.getSource();
@@ -201,7 +202,7 @@ public class SimulationController implements Initializable, ISimulationObserver 
     /**
      * Resets selected animals on map
      */
-    private void resetSelectedAnimal(){
+    private void resetSelectedAnimal() {
         if (selectedAnimal != null) {
             selectedAnimal.unselectMapElement();
             selectedAnimal = null;
@@ -213,8 +214,8 @@ public class SimulationController implements Initializable, ISimulationObserver 
     /**
      * Resets popular genomes list view
      */
-    private void resetPopularGenomes(){
-        if(popularGenomes.getSelectionModel().getSelectedItem() == null){
+    private void resetPopularGenomes() {
+        if (popularGenomes.getSelectionModel().getSelectedItem() == null) {
             return;
         }
 
@@ -227,7 +228,7 @@ public class SimulationController implements Initializable, ISimulationObserver 
     /**
      * Initializes simulation map
      */
-    private void initializeMap(){
+    private void initializeMap() {
         GridPane grid = new GridPane();
 //        grid.setGridLinesVisible(true);
 
@@ -296,7 +297,7 @@ public class SimulationController implements Initializable, ISimulationObserver 
     /**
      * Main method for initializing simulation stage
      *
-     * @param location URL
+     * @param location  URL
      * @param resources Resource bundle
      */
     @Override
@@ -321,9 +322,9 @@ public class SimulationController implements Initializable, ISimulationObserver 
      */
     @Override
     public void renderMainStatistics(Map<SimulationStatistics, ISimulationConfigurationValue> essentialStatistics) {
-        for(SimulationStatistics configurationConstant: essentialStatistics.keySet()){
+        for (SimulationStatistics configurationConstant : essentialStatistics.keySet()) {
             ISimulationConfigurationValue value = essentialStatistics.get(configurationConstant);
-            if(value instanceof IntegerValue integerValue){
+            if (value instanceof IntegerValue integerValue) {
                 switch (configurationConstant) {
                     case DAY -> day.setText(integerValue.toString());
                     case NUMBER_OF_ANIMALS -> numberOfAnimals.setText(integerValue.toString());
@@ -342,20 +343,20 @@ public class SimulationController implements Initializable, ISimulationObserver 
      * @param mapElement Element to add.
      */
     @Override
-    public void addElementToMap(IMapElement mapElement, Vector2d position) throws IllegalArgumentException{
-        try{
-            Vector2d mapPosition = new Vector2d(position.x,  mapHeight - 1 - position.y);
+    public void addElementToMap(IMapElement mapElement, Vector2d position) throws IllegalArgumentException {
+        try {
+            Vector2d mapPosition = new Vector2d(position.x, mapHeight - 1 - position.y);
             StackPane stackPane = mapFields.get(mapPosition);
             GuiMapElement guiMapElement = new GuiMapElement(cellWidth, cellHeight, mapElement, simulationOptions);
             guiMapElement.setOnMouseClicked(this::mapElementMouseClickHandler);
             stackPane.getChildren().add(guiMapElement);
             elementProperties.put(mapElement, new Pair<>(mapPosition, guiMapElement));
 
-            if(mapElement instanceof Animal){
+            if (mapElement instanceof Animal) {
                 addGenomeToPopularGenomes((Animal) mapElement);
             }
 
-        }catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(e);
         }
     }
@@ -368,11 +369,11 @@ public class SimulationController implements Initializable, ISimulationObserver 
     @Override
     public void removeElementFromMap(IMapElement mapElement) {
         Pair<Vector2d, GuiMapElement> properties = elementProperties.get(mapElement);
-        if (properties == null){
+        if (properties == null) {
             throw new IllegalArgumentException("Element mapy nie istnieje lub został już usunięty.");
         }
 
-        if (mapElement instanceof Animal){
+        if (mapElement instanceof Animal) {
             removeGenomeFromPopularGenomes((Animal) mapElement);
         }
 
@@ -391,7 +392,7 @@ public class SimulationController implements Initializable, ISimulationObserver 
      */
     @Override
     public void changeElementPositionOnMap(IMapElement mapElement, Vector2d newPosition) throws IllegalArgumentException {
-        if(!(mapElement instanceof Animal)){
+        if (!(mapElement instanceof Animal)) {
             throw new IllegalArgumentException("Można zmieniać tylko pozycję zwierzęcia.");
         }
 
@@ -412,7 +413,7 @@ public class SimulationController implements Initializable, ISimulationObserver 
             list.add(elementProperties.get(animal).getValue());
             mapElementsWithSameGenome.put(animal.getGenome().toString(), list);
             mostPopularGenomes.add(genomeRecord.get(animal.getGenome().toString()));
-        }else{
+        } else {
             genomeRecord.get(animal.getGenome().toString()).priority.set(genomeRecord.get(animal.getGenome().toString()).priority.get() + 1);
             mapElementsWithSameGenome.get(animal.getGenome().toString()).add(elementProperties.get(animal).getValue());
         }
@@ -448,9 +449,9 @@ public class SimulationController implements Initializable, ISimulationObserver 
      */
     @Override
     public void updateAnimalStatistics(Map<AnimalStatistics, ISimulationConfigurationValue> animalStatistics) {
-        for(AnimalStatistics configurationConstant: animalStatistics.keySet()){
+        for (AnimalStatistics configurationConstant : animalStatistics.keySet()) {
             ISimulationConfigurationValue value = animalStatistics.get(configurationConstant);
-            if(value instanceof IntegerValue integerValue){
+            if (value instanceof IntegerValue integerValue) {
                 switch (configurationConstant) {
                     case ANIMAL_ACTIVE_GENOME -> selectedAnimalActiveGenome.setText(integerValue.toString());
                     case ANIMAL_ENERGY -> selectedAnimalEnergy.setText(integerValue.toString());
@@ -458,7 +459,7 @@ public class SimulationController implements Initializable, ISimulationObserver 
                     case ANIMAL_NUMBER_OF_CHILDREN -> selectedAnimalNumberOfChildren.setText(integerValue.toString());
                     case ANIMAL_EATEN_PLANTS -> selectedAnimalEatenPlants.setText(integerValue.toString());
                 }
-            }else if (value instanceof StringValue stringValue){
+            } else if (value instanceof StringValue stringValue) {
                 switch (configurationConstant) {
                     case ANIMAL_GENOME -> selectedAnimalGenome.setText(stringValue.toString());
                     case ANIMAL_DEATH_DAY -> selectedAnimalDeathDay.setText(stringValue.toString());

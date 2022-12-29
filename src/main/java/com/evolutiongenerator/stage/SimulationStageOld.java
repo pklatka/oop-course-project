@@ -2,10 +2,10 @@ package com.evolutiongenerator.stage;
 
 import com.evolutiongenerator.constant.ConfigurationConstant;
 import com.evolutiongenerator.constant.ISimulationConfigurationValue;
+import com.evolutiongenerator.constant.MapVariant;
 import com.evolutiongenerator.model.engine.SimulationEngine;
 import com.evolutiongenerator.model.map.AbstractWorldMap;
-import com.evolutiongenerator.model.map.GrassField;
-import com.evolutiongenerator.model.map.IWorldMap;
+import com.evolutiongenerator.model.map.ForestedEquatorMap;
 import com.evolutiongenerator.model.mapObject.IMapElement;
 import com.evolutiongenerator.model.mapObject.MoveDirection;
 import com.evolutiongenerator.model.ui.GuiElementBox;
@@ -50,7 +50,7 @@ public class SimulationStageOld extends Application {
         try {
             MoveDirection[] directions = new StringOptionParser().parse(args);
             this.mapElementPositions = new Vector2d[]{new Vector2d(2, 2), new Vector2d(3, 4)};
-            this.map = new GrassField(10);
+            this.map = new ForestedEquatorMap(20,20,20, MapVariant.GLOBE);
             this.simulationEngine = new SimulationEngine(map, mapElementPositions, directions, (ISimulationObserver) this, 1000);
 
         } catch (IllegalArgumentException e) {

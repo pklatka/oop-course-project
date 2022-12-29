@@ -27,7 +27,8 @@ public class SimulationEngine implements IEngine, Runnable {
     private final List<ISimulationObserver> observers = new ArrayList<>();
     private Map<ConfigurationConstant, ISimulationConfigurationValue> simulationOptions = null; // TODO: Remove null and make variable final
     private Animal observedAnimal = null; // TODO: Remove null and make variable final
-    public SimulationEngine(Map<ConfigurationConstant, ISimulationConfigurationValue> simulationOptions){
+
+    public SimulationEngine(Map<ConfigurationConstant, ISimulationConfigurationValue> simulationOptions) {
         this.simulationOptions = simulationOptions;
 
         // TODO: Generate map, animals, etc. according to simulationOptions
@@ -46,19 +47,19 @@ public class SimulationEngine implements IEngine, Runnable {
 
     public SimulationEngine(IWorldMap map, Vector2d[] positionArray) {
         this.map = map;
-        IntegerValue genLength =  (IntegerValue) simulationOptions.get(ConfigurationConstant.GENOTYPE_LENGTH);
+        IntegerValue genLength = (IntegerValue) simulationOptions.get(ConfigurationConstant.GENOTYPE_LENGTH);
         IntegerValue maximumMutationNumber = (IntegerValue) simulationOptions.get(ConfigurationConstant.MAXIMUM_MUTATION_NUMBER);
         IntegerValue reproduceCost = (IntegerValue) simulationOptions.get(ConfigurationConstant.ANIMAL_REPRODUCTION_ENERGY_COST);
         IntegerValue minimalEnergyToReproduce = (IntegerValue) simulationOptions.get(ConfigurationConstant.ANIMAL_REPRODUCTION_ENERGY);
         IntegerValue minimumMutationNumber = (IntegerValue) simulationOptions.get(ConfigurationConstant.MINIMUM_MUTATION_NUMBER);
         IntegerValue startAnimalEnergy = (IntegerValue) simulationOptions.get(ConfigurationConstant.ANIMAL_START_ENERGY);
-        MutationVariant mutationVariant =  (MutationVariant) simulationOptions.get(ConfigurationConstant.MUTATION_VARIANT);
-        AnimalBehaviourVariant behaviourVariant =  (AnimalBehaviourVariant) simulationOptions.get(ConfigurationConstant.ANIMAL_BEHAVIOUR_VARIANT);
+        MutationVariant mutationVariant = (MutationVariant) simulationOptions.get(ConfigurationConstant.MUTATION_VARIANT);
+        AnimalBehaviourVariant behaviourVariant = (AnimalBehaviourVariant) simulationOptions.get(ConfigurationConstant.ANIMAL_BEHAVIOUR_VARIANT);
 
         // Add animals to map
         for (Vector2d position : positionArray) {
-            Genes genes = new Genes(genLength.getValue(),maximumMutationNumber.getValue(),minimumMutationNumber.getValue(), mutationVariant, behaviourVariant);
-            Animal newAnimal = new Animal(map, position,genes, startAnimalEnergy.getValue(), reproduceCost.getValue(), minimalEnergyToReproduce.getValue());
+            Genes genes = new Genes(genLength.getValue(), maximumMutationNumber.getValue(), minimumMutationNumber.getValue(), mutationVariant, behaviourVariant);
+            Animal newAnimal = new Animal(map, position, genes, startAnimalEnergy.getValue(), reproduceCost.getValue(), minimalEnergyToReproduce.getValue());
             if (map.place(newAnimal)) {
                 animalsOrder.add(newAnimal);
             }
@@ -144,7 +145,7 @@ public class SimulationEngine implements IEngine, Runnable {
 
         // TODO: Move this to try-catch above
         int n = animalsOrder.size();
-        if(observers.size() == 0) {
+        if (observers.size() == 0) {
             System.out.println(map);
             for (Animal animal : animalsOrder) {
                 animal.move();

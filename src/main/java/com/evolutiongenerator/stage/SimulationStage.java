@@ -25,7 +25,7 @@ public class SimulationStage extends Application {
     /**
      * SimulationStage constructor.
      *
-     * @param args Simulation configuration
+     * @param args  Simulation configuration
      * @param stage Stage
      * @throws IOException If the fxml file is not found
      */

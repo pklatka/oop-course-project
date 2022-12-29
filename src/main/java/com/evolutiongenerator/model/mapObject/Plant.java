@@ -4,7 +4,7 @@ import com.evolutiongenerator.utils.Vector2d;
 
 import java.util.Objects;
 
-public class Plant implements IMapElement  {
+public class Plant implements IMapElement {
     private Vector2d position;
     private int energy;
 
