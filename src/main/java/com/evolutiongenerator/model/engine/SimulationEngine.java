@@ -149,6 +149,7 @@ public class SimulationEngine implements IEngine, Runnable {
 
                     List<Animal> animalsToRemove = map.cleanDeadAnimals();
                     animalsOrder.removeAll(animalsToRemove);
+
                     animalsToRemove.forEach((animal) -> {
                         animal.makeDead(day);
                     });
@@ -284,7 +285,6 @@ public class SimulationEngine implements IEngine, Runnable {
 
                     // Decrease energy
                     map.decreaseAnimalsEnergy();
-
 
                     // Delay simulation
                     Thread.sleep(moveDelay);
