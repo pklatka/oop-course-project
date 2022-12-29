@@ -9,6 +9,7 @@ import com.evolutiongenerator.utils.Randomize;
 import com.evolutiongenerator.utils.Vector2d;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObserver {
     protected final HashMap<Vector2d, TreeSet<Animal>> animalOnFields = new HashMap<>();
@@ -44,7 +45,7 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
         animalHashMap.remove(animal);
 
         if (newAnimalTreeSet == null) {
-            newAnimalTreeSet = new TreeSet<>(Comparator.comparing(Animal::getEnergy));
+            newAnimalTreeSet = new TreeSet<>();
             animalOnFields.put(newPosition, newAnimalTreeSet);
         }
 
@@ -85,7 +86,7 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
         if (isInsideMap(animal.getPosition())) {
             TreeSet<Animal> animalSet;
             if (animalOnFields.get(animal.getPosition()) == null) {
-                animalSet = new TreeSet<>(Comparator.comparing(Animal::getEnergy));
+                animalSet = new TreeSet<>();
             } else {
                 animalSet = animalOnFields.get(animal.getPosition());
             }
@@ -121,12 +122,12 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
     }
 
     @Override
-    public void addPlantToConsumeArray(Vector2d position) {
+    public void addPlantToConsume(Vector2d position) {
         plantPositionsToConsume.add(position);
     }
 
     @Override
-    public Set<Vector2d> getPlantToConsumeArray() {
+    public Set<Vector2d> getPlantToConsume() {
         return plantPositionsToConsume;
     }
 
@@ -139,14 +140,12 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
         return plantHashMap.get(position) != null;
     }
 
-    /**
-     * Resolves conflict of priority to do surgery between animals
-     *
-     * @param position Position on which the conflict occurred
-     * @return The animal that has priority to eat the plant/reproduction
-     */
-    public Animal resolveConflicts(Vector2d position) {
-        TreeSet<Animal> animals = getAnimalsFrom(position);
+    public Animal resolveConflicts(Vector2d position, Animal animalToIgnore) {
+        TreeSet<Animal> animals = getAnimalsFrom(position).stream().filter(a -> !a.equals(animalToIgnore)).collect(Collectors.toCollection(TreeSet::new));
+
+        if (animals.size() == 1){
+            return animals.first();
+        }
 
         Iterator<Animal> it = animals.descendingIterator();
         Animal animal1 = it.next();
@@ -218,12 +217,12 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
 
     public abstract Vector2d[] getMapBounds();
 
-    public void addConflictedPosition(Vector2d position) {
+    public void addReproduceConflictedPosition(Vector2d position) {
         this.conflictedPositions.add(position);
     }
 
     @Override
-    public boolean isConflictsOccurred() {
+    public boolean isReproduceConflictsOccurred() {
         return !this.conflictedPositions.isEmpty();
     }
 
@@ -233,7 +232,7 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
     }
 
     @Override
-    public ArrayList<Vector2d> getConflictedPositions() {
+    public ArrayList<Vector2d> getReproduceConflictedPositions() {
         return this.conflictedPositions;
     }
 
