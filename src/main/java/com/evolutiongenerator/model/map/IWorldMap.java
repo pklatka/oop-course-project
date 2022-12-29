@@ -119,7 +119,7 @@ public interface IWorldMap {
     /**
      * @return a list of conflicts that have arisen
      */
-    ArrayList<Vector2d> getReproduceConflictedPositions();
+    Set<Vector2d> getReproduceConflictedPositions();
 
     /**
      * @return Returns a variant of the map

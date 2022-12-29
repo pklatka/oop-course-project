@@ -160,6 +160,7 @@ public class SimulationEngine implements IEngine, Runnable {
                     }
 
                     // Eat plants
+                    Thread.sleep(200);
                     Set<Vector2d> plantsToConsume = map.getPlantToConsume();
                     for (Vector2d vector2d : plantsToConsume) {
                         TreeSet<Animal> animals = map.getAnimalsFrom(vector2d);
@@ -176,12 +177,16 @@ public class SimulationEngine implements IEngine, Runnable {
                     map.cleanPlantsToConsume();
 
                     // Reproduce animals
-                    ArrayList<Vector2d> positions = map.getReproduceConflictedPositions();
+                    Thread.sleep(200);
+                    Set<Vector2d> positions = map.getReproduceConflictedPositions();
 
                     for (Vector2d position : positions) {
                         TreeSet<Animal> animals = map.getAnimalsFrom(position);
                         Animal bestAnimal = animals.descendingSet().first();
                         Animal partnerAnimal = map.resolveConflicts(position, bestAnimal);
+
+                        if (partnerAnimal == null)
+                            continue;
 
                         Animal offspringAnimal = bestAnimal.reproduce(partnerAnimal);
 

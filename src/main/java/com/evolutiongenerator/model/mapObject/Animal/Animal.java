@@ -142,7 +142,6 @@ public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
         }
 
         if (map.isPlantAt(position)){
-            System.out.println("dodaje do zjedzenia pozycje");
             map.addPlantToConsume(position);
         }
 
@@ -155,31 +154,34 @@ public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
      * @param parnter Reproduction partner
      * @return Descendant of parents (new Animal) if parents doesn't have enough energy returns null
      */
-    public Animal reproduce(Animal parnter) throws IllegalStateException {
+    public Animal reproduce(Animal partner) throws IllegalStateException {
 
-        if (!position.equals(parnter.position)) {
-            throw new IllegalStateException("Animals are not at the same field!");
+        if (!position.equals(partner.position)) {
+            return null; // TODO naprawić to. Czemu tu są animale z inna pozycją?
+//            throw new IllegalStateException("Animals are not at the same field!");
         }
 
-        if (energy >= ENERGY_TO_REPRODUCE && parnter.energy >= ENERGY_TO_REPRODUCE) {
+        System.out.println("Reproduce się wykonuje ");
+
+        if (energy >= ENERGY_TO_REPRODUCE && partner.energy >= ENERGY_TO_REPRODUCE) {
             int descendantEnergy = REPRODUCE_COST * 2;
-            int thisGenesForOffspringAmount = getGenesAmount(parnter);
+            int thisGenesForOffspringAmount = getGenesAmount(partner);
             int partnerGenesForOffspringAmount = genes.getGenesSize() - thisGenesForOffspringAmount;
             boolean isLeftSideGenes = Randomize.generateBoolean();
 
             List<Integer> offspringGenes;
-            if (energy > parnter.energy) {
+            if (energy > partner.energy) {
                 offspringGenes = genes.getOffspringGenes(thisGenesForOffspringAmount, isLeftSideGenes);
-                offspringGenes.addAll(parnter.genes.getOffspringGenes(partnerGenesForOffspringAmount, !isLeftSideGenes));
+                offspringGenes.addAll(partner.genes.getOffspringGenes(partnerGenesForOffspringAmount, !isLeftSideGenes));
             } else {
-                offspringGenes = parnter.genes.getOffspringGenes(partnerGenesForOffspringAmount, isLeftSideGenes);
+                offspringGenes = partner.genes.getOffspringGenes(partnerGenesForOffspringAmount, isLeftSideGenes);
                 offspringGenes.addAll(genes.getOffspringGenes(thisGenesForOffspringAmount, !isLeftSideGenes));
             }
 
             decreaseEnergy(REPRODUCE_COST);
-            parnter.decreaseEnergy(REPRODUCE_COST);
+            partner.decreaseEnergy(REPRODUCE_COST);
             childrenAmount += 1;
-            parnter.childrenAmount += 1;
+            partner.childrenAmount += 1;
             return new Animal(map, new Vector2d(position.x, position.y), genes.createOffspringGenes(offspringGenes), descendantEnergy, REPRODUCE_COST, ENERGY_TO_REPRODUCE);
         }
         return null;
@@ -216,7 +218,6 @@ public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
                         .thenComparing(Animal::hashCode)
                         .compare(this, animal);
     }
-
 
     @Override
     public Object clone() throws CloneNotSupportedException {
