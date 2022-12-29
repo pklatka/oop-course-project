@@ -143,6 +143,8 @@ public class SimulationEngine implements IEngine, Runnable {
                     IntegerValue plantSpawnAmount = (IntegerValue) simulationOptions.get(ConfigurationConstant.PLANT_SPAWN_NUMBER);
 
                     List<Animal> animalsToRemove = map.cleanDeadAnimals();
+                    animalsOrder.removeAll(animalsToRemove);
+
                     observers.forEach(observer -> {
                         Platform.runLater(() ->animalsToRemove.forEach(observer::removeElementFromMap));
                     });
@@ -167,9 +169,19 @@ public class SimulationEngine implements IEngine, Runnable {
                         if (animals.size() > 1) {
                             Animal bestAnimal = map.resolveConflicts(vector2d, null);
                             Plant eatenPlant = bestAnimal.consume(map.getPlantFrom(vector2d));
+                            observers.forEach(observer -> {
+                                Platform.runLater(() -> {
+                                    observer.removeElementFromMap(eatenPlant);
+                                });
+                            });
                         } else if (animals.size() == 1) {
                             Animal animal = animals.descendingSet().first();
                             Plant eatenPlant = animal.consume(map.getPlantFrom(vector2d));
+                            observers.forEach(observer -> {
+                                Platform.runLater(() -> {
+                                    observer.removeElementFromMap(eatenPlant);
+                                });
+                            });
                         }
                     }
 
@@ -211,7 +223,6 @@ public class SimulationEngine implements IEngine, Runnable {
 
                     // Decrease energy
                     map.decreaseAnimalsEnergy();
-
 
                     // Delay simulation
                     Thread.sleep(moveDelay);

@@ -6,6 +6,7 @@ import com.evolutiongenerator.model.engine.SimulationEngine;
 import com.evolutiongenerator.model.mapObject.Animal.Animal;
 import com.evolutiongenerator.model.mapObject.Animal.Genes;
 import com.evolutiongenerator.model.mapObject.IMapElement;
+import com.evolutiongenerator.model.mapObject.Plant;
 import com.evolutiongenerator.model.ui.GuiMapElement;
 import com.evolutiongenerator.model.ui.SortedListViewRecord;
 import com.evolutiongenerator.stage.ISimulationObserver;
@@ -354,7 +355,11 @@ public class SimulationController implements Initializable, ISimulationObserver 
 
             GuiMapElement guiMapElement = new GuiMapElement(cellWidth, cellHeight, mapElement, simulationOptions);
             guiMapElement.setOnMouseClicked(this::mapElementMouseClickHandler);
-            stackPane.getChildren().add(guiMapElement);
+            if(mapElement instanceof Plant){
+                stackPane.getChildren().add(0, guiMapElement);
+            }else{
+                stackPane.getChildren().add(guiMapElement);
+            }
             elementProperties.put(mapElement, new Pair<>(mapPosition, guiMapElement));
 
             if (mapElement instanceof Animal) {
