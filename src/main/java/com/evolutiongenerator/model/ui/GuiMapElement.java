@@ -121,4 +121,11 @@ public class GuiMapElement extends StackPane {
 
         this.getChildren().get(0).setStyle("-fx-stroke: transparent; -fx-stroke-width: 0px;");
     }
+
+    /**
+     * Gets map element
+     */
+    public IMapElement getMapElement() {
+        return mapElement;
+    }
 }

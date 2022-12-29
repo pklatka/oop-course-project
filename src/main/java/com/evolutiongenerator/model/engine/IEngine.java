@@ -14,6 +14,16 @@ public interface IEngine {
     void pause();
 
     /**
+     * Resume simulation thread.
+     */
+    void resume();
+
+    /**
+     * Stop simulation thread.
+     */
+    void kill();
+
+    /**
      * Add ISimulationObserver.
      *
      * @param observer Observer to add.

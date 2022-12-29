@@ -1,6 +1,8 @@
 package com.evolutiongenerator.controller;
 
 import com.evolutiongenerator.constant.*;
+import com.evolutiongenerator.model.engine.IEngine;
+import com.evolutiongenerator.model.engine.SimulationEngine;
 import com.evolutiongenerator.model.mapObject.Animal.Animal;
 import com.evolutiongenerator.model.mapObject.Animal.Genes;
 import com.evolutiongenerator.model.mapObject.IMapElement;
@@ -23,6 +25,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.stage.WindowEvent;
 import javafx.util.Pair;
 
 import java.net.URL;
@@ -84,7 +87,6 @@ public class SimulationController implements Initializable, ISimulationObserver 
 
     private int mapWidth = 10;
     private int mapHeight = 10;
-
     private double cellWidth; // = gridWidth / mapWidth;
     private double cellHeight; // = gridHeight / mapHeight;
     private Map<ConfigurationConstant, ISimulationConfigurationValue> simulationOptions;
@@ -95,6 +97,8 @@ public class SimulationController implements Initializable, ISimulationObserver 
     private final Map<IMapElement, Pair<Vector2d, GuiMapElement>> elementProperties = new HashMap<>();
     boolean isSimulationRunning = false;
     GuiMapElement selectedAnimal = null;
+    IEngine engine;
+    Thread simulationThread;
 
     // ****** Setters ******
 
@@ -136,15 +140,17 @@ public class SimulationController implements Initializable, ISimulationObserver 
             resetPopularGenomes();
 
             // Get selected animal and send it to simulation
-            System.out.println("Selected animal: " + selectedAnimal);
+            if(selectedAnimal != null && selectedAnimal.getMapElement() instanceof Animal animal){
+                engine.selectAnimalToObserve(animal);
+            }
             resetSelectedAnimal();
 
-//            SimulationManager.getInstance().startSimulation();
+            engine.resume();
         } else {
             simulationControlButton.setText("Start symulacji");
             isSimulationRunning = false;
 
-//            SimulationManager.getInstance().stopSimulation();
+            engine.pause();
         }
     }
 
@@ -276,8 +282,14 @@ public class SimulationController implements Initializable, ISimulationObserver 
         // Initialize map
         initializeMap();
 
-        // TODO: Add simulationEngine as thread
-        // https://stackoverflow.com/questions/61565143/how-to-pause-and-resume-a-thread-in-java
+        // Initialize engine
+        SimulationEngine engineToRun = new SimulationEngine(simulationOptions);
+        engineToRun.addObserver(this);
+        engine = engineToRun;
+
+        // Start engine thread
+        simulationThread = new Thread(engineToRun);
+        simulationThread.start();
     }
 
 
@@ -290,6 +302,14 @@ public class SimulationController implements Initializable, ISimulationObserver 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Platform.runLater(this::initializeStage);
+    }
+
+    /**
+     * Closes simulation stage
+     */
+    public void exit(WindowEvent event){
+        engine.kill();
+//        simulationThread.interrupt();
     }
 
     // ****** Render utils ******

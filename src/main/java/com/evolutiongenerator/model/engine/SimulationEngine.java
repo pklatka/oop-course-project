@@ -11,6 +11,7 @@ import com.evolutiongenerator.utils.Vector2d;
 import javafx.application.Platform;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
@@ -21,7 +22,9 @@ public class SimulationEngine implements IEngine, Runnable {
     // Use ArrayList to remember initial animal order
     private final ArrayList<Animal> animalsOrder = new ArrayList<>();
     private int moveDelay = 1000;
-    private final ArrayList<ISimulationObserver> observers = new ArrayList<>();
+    private boolean isRunning = false;
+    private boolean isPaused = true;
+    private final List<ISimulationObserver> observers = new ArrayList<>();
     private Map<ConfigurationConstant, ISimulationConfigurationValue> simulationOptions = null; // TODO: Remove null and make variable final
     private Animal observedAnimal = null; // TODO: Remove null and make variable final
     public SimulationEngine(Map<ConfigurationConstant, ISimulationConfigurationValue> simulationOptions){
@@ -71,16 +74,28 @@ public class SimulationEngine implements IEngine, Runnable {
 
     }
 
+    /**
+     * @deprecated
+     * TODO: Remove in the future
+     */
     public SimulationEngine(IWorldMap map, Vector2d[] positionArray, MoveDirection[] directionArray) {
         this(map, positionArray);
         this.directionArray = directionArray;
     }
 
+    /**
+     * @deprecated
+     * TODO: Remove in the future
+     */
     public SimulationEngine(IWorldMap map, Vector2d[] positionArray, MoveDirection[] directionArray, ISimulationObserver observer) {
         this(map, positionArray, directionArray);
         this.observers.add(observer);
     }
 
+    /**
+     * @deprecated
+     * TODO: Remove in the future
+     */
     public SimulationEngine(IWorldMap map, Vector2d[] positionArray, MoveDirection[] directionArray, ISimulationObserver observer, int moveDelay) {
         this(map, positionArray, directionArray, observer);
         this.moveDelay = moveDelay;
@@ -108,14 +123,26 @@ public class SimulationEngine implements IEngine, Runnable {
         }
     }
 
-    private void dispatchAnimation() {
-        for (ISimulationObserver simulationStageOld : observers) {
-//            Platform.runLater(simulationStageOld::renderGrid);
-        }
-    }
-
     @Override
     public void run() {
+        try{
+            isRunning = true;
+            while (isRunning){
+                if(isPaused){
+                    // Simulation is paused
+                    System.out.println("paused!");
+                    Thread.sleep(300);
+                }else{
+                    // Simulation executes default procedure
+                    System.out.println("running");
+                    Thread.sleep(moveDelay);
+                }
+            }
+        }catch (InterruptedException e){
+            throw new RuntimeException("Symulacja została przerwana.");
+        }
+
+        // TODO: Move this to try-catch above
         int n = animalsOrder.size();
         if(observers.size() == 0) {
             System.out.println(map);
@@ -126,42 +153,29 @@ public class SimulationEngine implements IEngine, Runnable {
             return;
         }
         try {
-            dispatchAnimation();
+//            dispatchAnimation();
             for (Animal animal : animalsOrder) {
                 animal.move();
-                dispatchAnimation();
+//                dispatchAnimation();
                 Thread.sleep(moveDelay);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-// TODO CLEAR ?
-        // Run default run function when no GUI observers
-//        if (observers.size() == 0) {
-//            System.out.println(map);
-//            for (int i = 0; i < directionArray.length; i++) {
-//                animalsOrder.get(i % n).move(directionArray[i]);
-//                System.out.println(map);
-//            }
-//            return;
-//        }
-//
-//        try {
-//            dispatchAnimation();
-//            for (int i = 0; i < directionArray.length; i++) {
-//                animalsOrder.get(i % n).move(directionArray[i]);
-//                dispatchAnimation();
-//                Thread.sleep(moveDelay);
-//            }
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
     }
 
     @Override
     public void pause() {
+        isPaused = true;
+    }
 
+    @Override
+    public void resume() {
+        isPaused = false;
+    }
+
+    public void kill(){
+        isRunning = false;
     }
 
     /**
@@ -171,7 +185,7 @@ public class SimulationEngine implements IEngine, Runnable {
      */
     @Override
     public void addObserver(ISimulationObserver observer) {
-
+        observers.add(observer);
     }
 
     /**
@@ -181,17 +195,17 @@ public class SimulationEngine implements IEngine, Runnable {
      */
     @Override
     public void removeObserver(ISimulationObserver observer) {
-
+        observers.remove(observer);
     }
 
     /**
-     * Select animal to observe it's statistics.
+     * Select animal to observe its statistics.
      *
      * @param animal Animal to observe.
      */
     @Override
     public void selectAnimalToObserve(Animal animal) {
-
+        observedAnimal = animal;
     }
 
     public void setDirectionArray(MoveDirection[] directionArray) {
