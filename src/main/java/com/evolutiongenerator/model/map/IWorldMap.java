@@ -15,7 +15,6 @@ import java.util.TreeSet;
  * Assumes that Vector2d and MoveDirection classes are defined.
  */
 public interface IWorldMap {
-    HashMap<Vector2d, Integer> mapDeathStat = new HashMap<>();
 
     /**
      * Used to verify the correctness of positions

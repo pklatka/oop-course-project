@@ -12,6 +12,7 @@ import java.util.*;
 
 public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObserver {
     protected final HashMap<Vector2d, TreeSet<Animal>> animalOnFields = new HashMap<>();
+    protected final Map<Vector2d, Integer> mapDeathStat = new HashMap<>();
     protected final HashMap<Animal, Vector2d> animalHashMap = new HashMap<>();
     protected final HashMap<Vector2d, Plant> plantHashMap = new HashMap<>();
     protected final HashMap<Vector2d, Animal> deadAnimalsHashMap = new HashMap<>();
