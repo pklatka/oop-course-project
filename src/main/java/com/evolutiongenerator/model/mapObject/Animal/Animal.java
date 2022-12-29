@@ -143,6 +143,7 @@ public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
         }
 
         if (map.isPlantAt(position)){
+            System.out.println("dodaje do zjedzenia pozycje");
             map.addPlantToConsume(position);
         }
 

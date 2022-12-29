@@ -282,6 +282,10 @@ public class SimulationEngine implements IEngine, Runnable {
                         Platform.runLater(() -> observers.forEach(ob -> ob.updateAnimalStatistics(animalStatistics)));
                     }
 
+                    // Decrease energy
+                    map.decreaseAnimalsEnergy();
+
+
                     // Delay simulation
                     Thread.sleep(moveDelay);
                 }
