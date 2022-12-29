@@ -42,9 +42,9 @@ public class GuiMapElement extends StackPane {
         this.simulationOptions = simulationOptions;
         this.setAlignment(Pos.CENTER);
 
-        try{
+        try {
             createMapElementRepresentation();
-        }catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(e);
         }
     }
@@ -60,8 +60,8 @@ public class GuiMapElement extends StackPane {
         if (percentage > 100) {
             hue = 80.0;
         } else if (percentage > 0) {
-            hue = 0.5*percentage + 30; // Linear function from points (0, 30) and (100, 80)
-        }else{
+            hue = 0.5 * percentage + 30; // Linear function from points (0, 30) and (100, 80)
+        } else {
             hue = 0.0;
         }
 
@@ -72,12 +72,12 @@ public class GuiMapElement extends StackPane {
      * Creates map element representation
      */
     private void createMapElementRepresentation() throws IllegalArgumentException {
-        if (mapElement instanceof Animal animal){
+        if (mapElement instanceof Animal animal) {
             // Create animal representation -> circle
-            Circle circle = new Circle(Math.min(width/2 - widthPadding, height/2 - heightPadding));
+            Circle circle = new Circle(Math.min(width / 2 - widthPadding, height / 2 - heightPadding));
 
             // Get energy color
-            if (!simulationOptions.containsKey(ConfigurationConstant.ANIMAL_START_ENERGY)){
+            if (!simulationOptions.containsKey(ConfigurationConstant.ANIMAL_START_ENERGY)) {
                 throw new IllegalArgumentException("Nie zadano startowej energii zwierzęcia.");
             }
 
@@ -89,7 +89,7 @@ public class GuiMapElement extends StackPane {
 
             // Add circle to stack pane
             this.getChildren().add(circle);
-        }else if (mapElement instanceof Plant){
+        } else if (mapElement instanceof Plant) {
             Rectangle rectangle = new Rectangle(width, height);
 
             // Set plant color
@@ -103,8 +103,8 @@ public class GuiMapElement extends StackPane {
     /**
      * Selects map element
      */
-    public void selectMapElement(){
-        if(this.getChildren().size() < 1){
+    public void selectMapElement() {
+        if (this.getChildren().size() < 1) {
             return;
         }
 
@@ -114,8 +114,8 @@ public class GuiMapElement extends StackPane {
     /**
      * Deselects map element
      */
-    public void unselectMapElement(){
-        if(this.getChildren().size() < 1){
+    public void unselectMapElement() {
+        if (this.getChildren().size() < 1) {
             return;
         }
 

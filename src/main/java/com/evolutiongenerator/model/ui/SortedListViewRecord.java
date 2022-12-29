@@ -10,8 +10,7 @@ import javafx.beans.property.StringProperty;
  *
  * @author Patryk Klatka
  */
-public class SortedListViewRecord
-{
+public class SortedListViewRecord {
     public final IntegerProperty priority = new SimpleIntegerProperty();
     public final StringProperty value = new SimpleStringProperty();
 
@@ -20,14 +19,14 @@ public class SortedListViewRecord
      * SortedListViewRecord constructor.
      *
      * @param priority Priority (the smaller the value, the higher the priority)
-     * @param value Value
+     * @param value    Value
      */
     public SortedListViewRecord(int priority, String value) {
         this.priority.set(priority);
         this.value.set(value);
     }
 
-/**
+    /**
      * Gets record as string.
      *
      * @return String representation of record

@@ -29,7 +29,7 @@ public interface ISimulationObserver {
      * Add element to map (GridPane).
      *
      * @param mapElement Element to add.
-     * @param position Position of element.
+     * @param position   Position of element.
      */
     void addElementToMap(IMapElement mapElement, Vector2d position);
 
@@ -44,7 +44,7 @@ public interface ISimulationObserver {
      * Change element position on map (GridPane).
      * Note: you can only change position of the animal.
      *
-     * @param mapElement Element to change position.
+     * @param mapElement  Element to change position.
      * @param newPosition New position of element.
      * @throws IllegalArgumentException If element is not an animal.
      */
