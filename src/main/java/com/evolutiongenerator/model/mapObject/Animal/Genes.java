@@ -138,6 +138,6 @@ public class Genes {
 
     @Override
     public String toString() {
-        return genesList.toString();
+        return genesList.stream().map(String::valueOf).reduce("", (a, b) -> a + b);
     }
 }

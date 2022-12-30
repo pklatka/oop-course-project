@@ -9,7 +9,6 @@ import com.evolutiongenerator.model.mapObject.Animal.Genes;
 import com.evolutiongenerator.model.mapObject.MoveDirection;
 import com.evolutiongenerator.model.mapObject.Plant;
 import com.evolutiongenerator.stage.ISimulationObserver;
-import com.evolutiongenerator.stage.SimulationStageOld;
 import com.evolutiongenerator.utils.Vector2d;
 import javafx.application.Platform;
 
@@ -80,7 +79,7 @@ public class SimulationEngine implements IEngine, Runnable {
             Animal newAnimal = new Animal(map, position, genes, startAnimalEnergy.getValue(), reproduceCost.getValue(), minimalEnergyToReproduce.getValue());
             if (map.place(newAnimal)) {
                 animalsOrder.add(newAnimal);
-                observers.forEach(ob -> Platform.runLater(() -> ob.addElementToMap(newAnimal, newAnimal.getPosition())));
+                observers.forEach(ob -> Platform.runLater(() -> ob.addElementToMap(newAnimal, newAnimal.getPosition(), false)));
             }
         }
 
@@ -90,7 +89,7 @@ public class SimulationEngine implements IEngine, Runnable {
         for (int i = 0; i < initialPlantsAmount.getValue(); i++) {
             Plant plant = map.growPlant();
             observers.forEach(ob->{
-                Platform.runLater(() ->ob.addElementToMap(plant, plant.getPosition()));
+                Platform.runLater(() ->ob.addElementToMap(plant, plant.getPosition(), false));
             });
         }
 
@@ -114,34 +113,6 @@ public class SimulationEngine implements IEngine, Runnable {
         }
 
     }
-
-    /**
-     * @deprecated TODO: Remove in the future
-     */
-    public SimulationEngine(IWorldMap map, Vector2d[] positionArray, MoveDirection[] directionArray) {
-        // TODO handle map
-        // TODO handle positionArray
-        this.directionArray = directionArray;
-        this.simulationStatistics = new HashMap<>();
-        this.simulationOptions = new HashMap<>();
-    }
-
-    /**
-     * @deprecated TODO: Remove in the future
-     */
-    public SimulationEngine(IWorldMap map, Vector2d[] positionArray, MoveDirection[] directionArray, ISimulationObserver observer) {
-        this(map, positionArray, directionArray);
-        this.observers.add(observer);
-    }
-
-    /**
-     * @deprecated TODO: Remove in the future
-     */
-    public SimulationEngine(IWorldMap map, Vector2d[] positionArray, MoveDirection[] directionArray, ISimulationObserver observer, int moveDelay) {
-        this(map, positionArray, directionArray, observer);
-        this.moveDelay = moveDelay;
-    }
-
 
     // Use it when you need to wait for thread
     private void runAndWait() throws InterruptedException {
@@ -171,6 +142,20 @@ public class SimulationEngine implements IEngine, Runnable {
             while (isRunning) {
                 if (isPaused) {
                     // Simulation is paused
+//                    if(observedAnimal != null){
+//                        for(ISimulationObserver observer: observers){
+//                            observer.removeElementFromMap(observedAnimal);
+//                        }
+//
+//                        for(ISimulationObserver observer: observers){
+//
+//                            observer.addElementToMap(observedAnimal, observedAnimal.getPosition(),false);
+//
+//                        }
+//
+//                        observedAnimal = null;
+//
+//                    }
                     Thread.sleep(300);
                 } else {
                     // Simulation executes default procedure
@@ -198,7 +183,11 @@ public class SimulationEngine implements IEngine, Runnable {
                             }
                             animal.move();
                             for(ISimulationObserver observer: observers){
-                                observer.addElementToMap(animal, animal.getPosition());
+                                if(animal == observedAnimal){
+                                    observer.addElementToMap(animal, animal.getPosition(), true);
+                                }else{
+                                    observer.addElementToMap(animal, animal.getPosition(),false);
+                                }
                             }
                     });
                     }
@@ -258,7 +247,7 @@ public class SimulationEngine implements IEngine, Runnable {
                         if (offspringAnimal != null) {
                             map.place(offspringAnimal);
                             observers.forEach(observer->{
-                                Platform.runLater(() -> observer.addElementToMap(offspringAnimal, offspringAnimal.getPosition()));
+                                Platform.runLater(() -> observer.addElementToMap(offspringAnimal, offspringAnimal.getPosition(),false));
                             });
                         }
                     }
@@ -270,7 +259,7 @@ public class SimulationEngine implements IEngine, Runnable {
                         Plant plant = map.growPlant();
                         if (plant == null) continue;
                         observers.forEach(observer->{
-                            Platform.runLater(() -> observer.addElementToMap(plant, plant.getPosition()));
+                            Platform.runLater(() -> observer.addElementToMap(plant, plant.getPosition(),false));
                         });
                         countPlants++;
                     }
@@ -299,8 +288,8 @@ public class SimulationEngine implements IEngine, Runnable {
                         animalStatistics.put(AnimalStatistics.ANIMAL_ENERGY, new IntegerValue(observedAnimal.getEnergy()));
                         animalStatistics.put(AnimalStatistics.ANIMAL_NUMBER_OF_CHILDREN, new IntegerValue(observedAnimal.getChildrenAmount()));
                         animalStatistics.put(AnimalStatistics.ANIMAL_LIFESPAN, new IntegerValue(observedAnimal.getDays()));
-                        animalStatistics.put(AnimalStatistics.ANIMAL_EATEN_PLANTS, new IntegerValue(observedAnimal.getEatenPlants()));
-                        animalStatistics.put(AnimalStatistics.ANIMAL_DEATH_DAY, new StringValue(observedAnimal.isAlive() ? "Alive" : "Death"));
+                        animalStatistics.put(AnimalStatistics.ANIMAL_EATEN_PLANTS, new IntegerValue(observedAnimal.getEatenPlantsAmount()));
+                        animalStatistics.put(AnimalStatistics.ANIMAL_DEATH_DAY, new StringValue(observedAnimal.isAlive() ? "Jeszcze żyje" : "Death"));
                         Platform.runLater(() -> observers.forEach(ob -> ob.updateAnimalStatistics(animalStatistics)));
                     }
 
@@ -356,13 +345,18 @@ public class SimulationEngine implements IEngine, Runnable {
      */
     @Override
     public void selectAnimalToObserve(Animal animal) {
-        observedAnimal = animal;
+        Platform.runLater(() -> observers.forEach(ob -> {
+            if(observedAnimal != null){
+                ob.removeElementFromMap(observedAnimal);
+                ob.addElementToMap(observedAnimal, observedAnimal.getPosition(), false);
+            }
+            observedAnimal = animal;
+        }));
     }
 
     public void setDirectionArray(MoveDirection[] directionArray) {
         this.directionArray = directionArray;
     }
-
 
     private void initializeStatisticsFile() throws IOException {
         try {

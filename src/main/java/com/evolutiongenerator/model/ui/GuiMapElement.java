@@ -119,7 +119,7 @@ public class GuiMapElement extends StackPane {
             return;
         }
 
-        this.getChildren().get(0).setStyle("-fx-stroke: transparent; -fx-stroke-width: 0px;");
+        this.getChildren().get(0).setStyle("-fx-stroke: none; -fx-stroke-width: 0px;");
     }
 
     /**

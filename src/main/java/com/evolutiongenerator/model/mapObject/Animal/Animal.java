@@ -225,7 +225,7 @@ public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
         return super.clone();
     }
 
-    public int getEatenPlants(){
+    public int getEatenPlantsAmount(){
         return eatenPlants;
     }
 

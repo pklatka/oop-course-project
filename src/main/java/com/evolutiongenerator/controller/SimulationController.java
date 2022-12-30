@@ -144,13 +144,17 @@ public class SimulationController implements Initializable, ISimulationObserver 
             // Get selected animal and send it to simulation
             if(selectedAnimal != null && selectedAnimal.getMapElement() instanceof Animal animal){
                 engine.selectAnimalToObserve(animal);
+                selectedAnimal.selectMapElement();
+            }else{
+                resetSelectedAnimal();
             }
-            resetSelectedAnimal();
 
             engine.resume();
         } else {
             simulationControlButton.setText("Start symulacji");
             isSimulationRunning = false;
+
+            resetSelectedAnimal();
 
             engine.pause();
         }
@@ -206,7 +210,11 @@ public class SimulationController implements Initializable, ISimulationObserver 
     private void resetSelectedAnimal() {
         if (selectedAnimal != null) {
             selectedAnimal.unselectMapElement();
+            engine.selectAnimalToObserve(null);
             selectedAnimal = null;
+
+            // Reset animal statistics
+            resetAnimalStatistics();
         }
 
         animalStatisticsStatus.setText("Wybierz zwierzę, aby śledzić jego statystyki");
@@ -346,18 +354,24 @@ public class SimulationController implements Initializable, ISimulationObserver 
      * @param mapElement Element to add.
      */
     @Override
-    public void addElementToMap(IMapElement mapElement, Vector2d position) throws IllegalArgumentException {
+    public void addElementToMap(IMapElement mapElement, Vector2d position, boolean selectMapElement) throws IllegalArgumentException {
         try {
             Vector2d mapPosition = new Vector2d(position.x, mapHeight - 1 - position.y);
             StackPane stackPane = mapFields.get(mapPosition);
             if(stackPane == null){
                 System.out.println("StackPane is null");
-//                throw new IllegalArgumentException("Pozycja jest poza mapą");
                 return;
+//                throw new IllegalArgumentException("Pozycja jest poza mapą");
             }
 
             GuiMapElement guiMapElement = new GuiMapElement(cellWidth, cellHeight, mapElement, simulationOptions);
             guiMapElement.setOnMouseClicked(this::mapElementMouseClickHandler);
+
+            if(selectMapElement){
+                System.out.println("jeszcze?");
+                guiMapElement.selectMapElement();
+            }
+
             if(mapElement instanceof Plant){
                 stackPane.getChildren().add(0, guiMapElement);
             }else{
@@ -383,12 +397,6 @@ public class SimulationController implements Initializable, ISimulationObserver 
     public void removeElementFromMap(IMapElement mapElement) {
         Pair<Vector2d, GuiMapElement> properties = elementProperties.get(mapElement);
         if (properties == null) {
-//            for(Pair<Vector2d, GuiMapElement> pair : elementProperties.values()){
-//                System.out.println(pair.getKey());
-//            }
-//            for(IMapElement el : elementProperties.keySet()){
-//                System.out.println(el + " " + elementProperties.get(el));
-//            }
             System.out.println("Nie znaleziono elementu na mapie");
             return;
 //            throw new IllegalArgumentException("Element mapy nie istnieje lub został już usunięty.");
@@ -418,7 +426,7 @@ public class SimulationController implements Initializable, ISimulationObserver 
         }
 
         removeElementFromMap(mapElement);
-        addElementToMap(mapElement, newPosition);
+        addElementToMap(mapElement, newPosition, false);
     }
 
     /**
@@ -489,5 +497,17 @@ public class SimulationController implements Initializable, ISimulationObserver 
                 }
             }
         }
+    }
+
+    public void resetAnimalStatistics(){
+        Map<AnimalStatistics, ISimulationConfigurationValue> animalStatistics = new HashMap<>();
+        animalStatistics.put(AnimalStatistics.ANIMAL_ACTIVE_GENOME, new IntegerValue(0));
+        animalStatistics.put(AnimalStatistics.ANIMAL_ENERGY, new IntegerValue(0));
+        animalStatistics.put(AnimalStatistics.ANIMAL_LIFESPAN, new IntegerValue(0));
+        animalStatistics.put(AnimalStatistics.ANIMAL_NUMBER_OF_CHILDREN, new IntegerValue(0));
+        animalStatistics.put(AnimalStatistics.ANIMAL_EATEN_PLANTS, new IntegerValue(0));
+        animalStatistics.put(AnimalStatistics.ANIMAL_GENOME, new StringValue("-"));
+        animalStatistics.put(AnimalStatistics.ANIMAL_DEATH_DAY, new StringValue("b. d."));
+        updateAnimalStatistics(animalStatistics);
     }
 }
