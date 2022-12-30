@@ -146,7 +146,6 @@ public class SimulationEngine implements IEngine, Runnable {
                 } else {
                     // Simulation executes default procedure
                     IntegerValue plantSpawnAmount = (IntegerValue) simulationOptions.get(ConfigurationConstant.PLANT_SPAWN_NUMBER);
-
                     List<Animal> animalsToRemove = map.cleanDeadAnimals();
                     animalsOrder.removeAll(animalsToRemove);
 
@@ -162,12 +161,13 @@ public class SimulationEngine implements IEngine, Runnable {
                     }
 
                     observers.forEach(observer -> {
-                        Platform.runLater(() ->animalsToRemove.forEach(observer::removeElementFromMap));
+                        Platform.runLater(() -> animalsToRemove.forEach(observer::removeElementFromMap));
                     });
 
                     for (Animal animal : animalsOrder) {
+                        animal.move();
                         Platform.runLater(() -> {
-                            for(ISimulationObserver observer: observers){
+                            for (ISimulationObserver observer : observers) {
                                 observer.removeElementFromMap(animal);
                             }
                             animal.move();
@@ -178,7 +178,7 @@ public class SimulationEngine implements IEngine, Runnable {
                                     observer.addElementToMap(animal, animal.getPosition(),false);
                                 }
                             }
-                    });
+                        });
                     }
 
                     // Update animal number
@@ -191,7 +191,6 @@ public class SimulationEngine implements IEngine, Runnable {
                     }
 
                     // Eat plants
-                    Thread.sleep(200);
                     Set<Vector2d> plantsToConsume = map.getPlantToConsume();
                     for (Vector2d vector2d : plantsToConsume) {
                         TreeSet<Animal> animals = map.getAnimalsFrom(vector2d);
@@ -199,14 +198,25 @@ public class SimulationEngine implements IEngine, Runnable {
                             Animal bestAnimal = map.resolveConflicts(vector2d, null);
                             Plant eatenPlant = bestAnimal.consume(map.getPlantFrom(vector2d));
                             countPlants--;
+
+                            if (eatenPlant.isOnEquator()){
+                                ((ForestedEquatorMap) map).decreaseEquatorPlantAmount();
+                            }
+
                             observers.forEach(observer -> {
                                 Platform.runLater(() -> {
+                                    // TODO nie zawsze plant jest jedzony ( w szczególności gdy równik pełen )
                                     observer.removeElementFromMap(eatenPlant);
                                 });
                             });
                         } else if (animals.size() == 1) {
                             Animal animal = animals.descendingSet().first();
                             Plant eatenPlant = animal.consume(map.getPlantFrom(vector2d));
+
+                            if (eatenPlant.isOnEquator()){
+                                ((ForestedEquatorMap) map).decreaseEquatorPlantAmount();
+                            }
+
                             observers.forEach(observer -> {
                                 Platform.runLater(() -> {
                                     observer.removeElementFromMap(eatenPlant);
@@ -220,7 +230,7 @@ public class SimulationEngine implements IEngine, Runnable {
                     map.cleanPlantsToConsume();
 
                     // Reproduce animals
-                    Thread.sleep(200);
+//                    Thread.sleep(200);
                     Set<Vector2d> positions = map.getReproduceConflictedPositions();
 
                     for (Vector2d position : positions) {
@@ -228,8 +238,9 @@ public class SimulationEngine implements IEngine, Runnable {
                         Animal bestAnimal = animals.descendingSet().first();
                         Animal partnerAnimal = map.resolveConflicts(position, bestAnimal);
 
-                        if (partnerAnimal == null)
+                        if (partnerAnimal == null) {
                             continue;
+                        }
 
                         Animal offspringAnimal = bestAnimal.reproduce(partnerAnimal);
 

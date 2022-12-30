@@ -67,6 +67,7 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
     public List<Animal> cleanDeadAnimals() {
         List<Animal> animalsToRemove = new ArrayList<>();
         for (Vector2d vector2d : deadAnimalsHashMap.keySet()) {
+            System.out.println("czysze zmarłych");
             Animal animal = deadAnimalsHashMap.get(vector2d);
             int tmp = mapDeathStat.get(animal.getPosition()) != null ? mapDeathStat.get(animal.getPosition()) : 0;
             mapDeathStat.put(animal.getPosition(),tmp + 1);
@@ -74,6 +75,11 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
             animalHashMap.remove(animal);
             animalOnFields.get(vector2d).remove(animal);
             mapBoundaries.removePosition(vector2d);
+
+            if (animalOnFields.get(vector2d).size() == 2){
+                conflictedPositions.remove(animal.getPosition());
+            }
+
         }
         deadAnimalsHashMap.clear();
 
@@ -233,10 +239,14 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
             }
 
             if (animal.getEnergy() <= 0) {
-                deadAnimalsHashMap.put(animal.getPosition(),animal);
+                addDeadAnimal(animal);
             }
 
         }
+    }
+
+    public void addDeadAnimal(Animal animal){
+        deadAnimalsHashMap.put(animal.getPosition(),animal);
     }
 
     public abstract Vector2d[] getMapBounds();

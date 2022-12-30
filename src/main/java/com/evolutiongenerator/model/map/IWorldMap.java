@@ -156,4 +156,6 @@ public interface IWorldMap {
 
     void clearReproduceConflictedPositions();
 
+    void addDeadAnimal(Animal animal);
+
 }

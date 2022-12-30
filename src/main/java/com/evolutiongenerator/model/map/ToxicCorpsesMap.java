@@ -13,7 +13,7 @@ public class ToxicCorpsesMap extends AbstractWorldMap implements IWorldMap {
         this.height = height;
         this.width = width;
         this.bottomLeftVector = new Vector2d(0, 0);
-        this.topRightVector = new Vector2d(width, height);
+        this.topRightVector = new Vector2d(width - 1, height - 1);
         this.availableGrassFields = width * height;
         this.plantValue = plantValue;
         this.mapVariant = mapVariant;
@@ -47,7 +47,7 @@ public class ToxicCorpsesMap extends AbstractWorldMap implements IWorldMap {
         if (Randomize.generateBooleanWithProbability(0.8)) {
             for (Vector2d vector2d : sortedMap.keySet()) {
                 if (!isPlantAt(vector2d)) {
-                    Plant plantToGrow = new Plant(vector2d, this.plantValue);
+                    Plant plantToGrow = new Plant(vector2d, this.plantValue,false);
                     this.plantHashMap.put(vector2d, plantToGrow);
                     this.availableGrassFields--;
                     return plantToGrow;
@@ -61,7 +61,7 @@ public class ToxicCorpsesMap extends AbstractWorldMap implements IWorldMap {
             tmpY = Randomize.generateInt(topRightVector.y, bottomLeftVector.y);
         }
         this.availableGrassFields--;
-        Plant plant = new Plant(new Vector2d(tmpX,tmpY),this.plantValue);
+        Plant plant = new Plant(new Vector2d(tmpX,tmpY),this.plantValue,false);
         this.plantHashMap.put(plant.getPosition(), plant);
         return plant;
     }
