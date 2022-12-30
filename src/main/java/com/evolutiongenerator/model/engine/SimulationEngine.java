@@ -112,7 +112,6 @@ public class SimulationEngine implements IEngine, Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
 
@@ -196,7 +195,6 @@ public class SimulationEngine implements IEngine, Runnable {
 
                     // Reproduce animals
 //                    Thread.sleep(200);
-                    Set<Animal> animalsToAdd = ConcurrentHashMap.newKeySet();
                     Set<Vector2d> positions = map.getReproduceConflictedPositions();
 
                     for (Vector2d position : positions) {
@@ -213,7 +211,6 @@ public class SimulationEngine implements IEngine, Runnable {
                         if (offspringAnimal != null) {
                             map.place(offspringAnimal);
                             animalsOrder.add(offspringAnimal);
-                            animalsToAdd.add(offspringAnimal);
                         }
                     }
 
@@ -244,8 +241,6 @@ public class SimulationEngine implements IEngine, Runnable {
                             for (ISimulationObserver observer : observers) {
                                 // Remove current animals
                                 observer.removeElementFromMap(animal);
-                            }
-                            for (ISimulationObserver observer : observers) {
                                 observer.addElementToMap(animal, animal.getPosition(), animal == observedAnimal);
                             }
                         }
@@ -253,12 +248,6 @@ public class SimulationEngine implements IEngine, Runnable {
                         for( ISimulationObserver observer : observers){
                             for(Plant plantToRemove : plantsToRemove){
                                 observer.removeElementFromMap(plantToRemove);
-                            }
-                        }
-
-                        for( ISimulationObserver observer : observers){
-                            for(Animal animal : animalsToAdd){
-                                observer.addElementToMap(animal, animal.getPosition(), false);
                             }
                         }
 
