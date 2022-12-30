@@ -26,7 +26,7 @@ public class SimulationEngine implements IEngine, Runnable {
     private IWorldMap map;
     // Use ArrayList to remember initial animal order
     private final List<Animal> animalsOrder = new CopyOnWriteArrayList<>();
-    private int moveDelay = 1000;
+    private int moveDelay = 100;
     private boolean isRunning = false;
     private boolean isPaused = true;
     private final List<ISimulationObserver> observers = new ArrayList<>();
@@ -168,6 +168,9 @@ public class SimulationEngine implements IEngine, Runnable {
                         TreeSet<Animal> animals = map.getAnimalsFrom(vector2d);
                         if (animals.size() > 1) {
                             Animal bestAnimal = map.resolveConflicts(vector2d, null);
+                            if(bestAnimal == null){
+                                continue;
+                            }
                             Plant eatenPlant = bestAnimal.consume(map.getPlantFrom(vector2d));
                             countPlants--;
 
@@ -179,6 +182,9 @@ public class SimulationEngine implements IEngine, Runnable {
 
                         } else if (animals.size() == 1) {
                             Animal animal = animals.descendingSet().first();
+                            if(animal == null){
+                                continue;
+                            }
                             Plant eatenPlant = animal.consume(map.getPlantFrom(vector2d));
                             countPlants--;
 
