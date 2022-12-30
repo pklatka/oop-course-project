@@ -170,7 +170,6 @@ public class SimulationEngine implements IEngine, Runnable {
                             for (ISimulationObserver observer : observers) {
                                 observer.removeElementFromMap(animal);
                             }
-                            animal.move();
                             for(ISimulationObserver observer: observers){
                                 if(animal == observedAnimal){
                                     observer.addElementToMap(animal, animal.getPosition(), true);
@@ -212,6 +211,7 @@ public class SimulationEngine implements IEngine, Runnable {
                         } else if (animals.size() == 1) {
                             Animal animal = animals.descendingSet().first();
                             Plant eatenPlant = animal.consume(map.getPlantFrom(vector2d));
+                            countPlants--;
 
                             if (eatenPlant.isOnEquator()){
                                 ((ForestedEquatorMap) map).decreaseEquatorPlantAmount();
@@ -222,7 +222,6 @@ public class SimulationEngine implements IEngine, Runnable {
                                     observer.removeElementFromMap(eatenPlant);
                                 });
                             });
-                            countPlants--;
                         }
                     }
 
