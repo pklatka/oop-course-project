@@ -22,12 +22,12 @@ public class Plant implements IMapElement {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Plant plant = (Plant) o;
-        return System.identityHashCode(o) == System.identityHashCode(this) && energy == plant.energy && isOnEquator == plant.isOnEquator && position.equals(plant.position);
+        return energy == plant.energy && isOnEquator == plant.isOnEquator && position.equals(plant.position);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(position, energy, isOnEquator) + System.identityHashCode(this);
+        return Objects.hash(position, energy, isOnEquator);
     }
 
     public Vector2d getPosition() {

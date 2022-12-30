@@ -154,7 +154,7 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
 
     public Animal resolveConflicts(Vector2d position, Animal animalToIgnore) {
         System.out.println("Animal bez ignore " + getAnimalsFrom(position));
-        TreeSet<Animal> animals = getAnimalsFrom(position).stream().filter(a -> !a.equals(animalToIgnore)).collect(Collectors.toCollection(TreeSet::new));
+        TreeSet<Animal> animals = getAnimalsFrom(position).stream().filter(a -> !a.equals(animalToIgnore) && a.getEnergy() > 0).collect(Collectors.toCollection(TreeSet::new));
         System.out.println("Animals w reproduce " + animals);
 
         if (animals.size() == 0)

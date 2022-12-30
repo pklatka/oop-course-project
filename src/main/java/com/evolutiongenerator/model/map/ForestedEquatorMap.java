@@ -26,8 +26,8 @@ public class ForestedEquatorMap extends AbstractWorldMap implements IWorldMap {
 
     @Override
     public Plant growPlant() {
-
-        if (availableGrassFields <= 0) return null;
+        System.out.println(width * height+ " " +  width + " " + height);
+        if (availableGrassFields <= 0 || plantHashMap.size() >= width * (height - 1)) return null;
 
         Vector2d equatorTopRight = getEquatorTopRight();
         Vector2d equatorBottomLeft = getEquatorBottomLeft();
@@ -50,7 +50,11 @@ public class ForestedEquatorMap extends AbstractWorldMap implements IWorldMap {
             tmpX = Randomize.generateInt(this.topRightVector.x, this.bottomLeftVector.x);
             tmpY = Randomize.generateInt(topRightVector.y, bottomLeftVector.y);
 
+            if (plantHashMap.size() - plantsOnEquator >= width * (height - 1)  )
+                return null;
+
             while (!(tmpY > equatorTopRight.y || tmpY < equatorBottomLeft.y) || isPlantAt(new Vector2d(tmpX, tmpY))) {
+                System.out.println("petla");
                 tmpX = Randomize.generateInt(this.topRightVector.x, this.bottomLeftVector.x);
                 tmpY = Randomize.generateInt(topRightVector.y, bottomLeftVector.y);
             }
