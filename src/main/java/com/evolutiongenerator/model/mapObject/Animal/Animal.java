@@ -18,6 +18,7 @@ public class Animal implements IMapElement, Comparable<Animal> {
     private int childrenAmount;
     private final IWorldMap map;
     private int energy;
+    private int eatenPlants;
     private final Genes genes;
     private final int ENERGY_TO_REPRODUCE;
     private final int REPRODUCE_COST;
@@ -31,6 +32,7 @@ public class Animal implements IMapElement, Comparable<Animal> {
         this.energy = energy;
         days = 0;
         childrenAmount = 0;
+        eatenPlants = 0;
         ENERGY_TO_REPRODUCE = minimalValueToReproduce;
         REPRODUCE_COST = reproduceCost;
     }
@@ -187,7 +189,12 @@ public class Animal implements IMapElement, Comparable<Animal> {
 
     public void consume(Plant plant) {
         this.energy += plant.getEnergy();
+        eatenPlants++;
         this.map.removePlant(plant.getPosition());
+    }
+
+    public int getEatenPlantsAmount(){
+        return eatenPlants;
     }
 
     public void increaseLivedDays() {
