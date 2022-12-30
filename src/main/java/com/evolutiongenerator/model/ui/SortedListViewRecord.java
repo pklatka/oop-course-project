@@ -33,7 +33,7 @@ public class SortedListViewRecord {
      */
     @Override
     public String toString() {
-        return value.get() + " (" + priority.get() + ")";
+        return "(" + priority.get() + ") " + value.get();
     }
 
     /**

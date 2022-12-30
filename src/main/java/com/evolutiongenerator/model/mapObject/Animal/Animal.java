@@ -11,7 +11,7 @@ import com.evolutiongenerator.utils.Vector2d;
 
 import java.util.*;
 
-public class Animal implements IMapElement, Comparable<Animal> {
+public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
     private MapDirection heading = MapDirection.getRandomDirection();
     private Vector2d position;
     private int days;
@@ -23,7 +23,8 @@ public class Animal implements IMapElement, Comparable<Animal> {
     private final int ENERGY_TO_REPRODUCE;
     private final int REPRODUCE_COST;
     private final ArrayList<IPositionChangeObserver> observers = new ArrayList<>();
-
+    private boolean isAlive = true;
+    private int deathDay = -1;
 
     public Animal(IWorldMap map, Vector2d initialPosition, Genes genes, int energy, int reproduceCost, int minimalValueToReproduce) {
         this.map = map;
@@ -70,12 +71,12 @@ public class Animal implements IMapElement, Comparable<Animal> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Animal animal = (Animal) o;
-        return days == animal.days && childrenAmount == animal.childrenAmount && energy == animal.energy && ENERGY_TO_REPRODUCE == animal.ENERGY_TO_REPRODUCE && REPRODUCE_COST == animal.REPRODUCE_COST && heading == animal.heading && position.equals(animal.position) && genes.equals(animal.genes);
+        return System.identityHashCode(animal) == System.identityHashCode(this) && ENERGY_TO_REPRODUCE == animal.ENERGY_TO_REPRODUCE && REPRODUCE_COST == animal.REPRODUCE_COST &&  genes.equals(animal.genes);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(heading, position, days, childrenAmount, energy, genes, ENERGY_TO_REPRODUCE, REPRODUCE_COST);
+        return Objects.hash(genes, ENERGY_TO_REPRODUCE, REPRODUCE_COST) + System.identityHashCode(this);
     }
 
     public MapDirection changeDirection(int gen) {
@@ -151,33 +152,37 @@ public class Animal implements IMapElement, Comparable<Animal> {
     /**
      * We assume that in order for an animal to reproduce it needs the share of energy required for parenting to be less or equal than half of its current enrgy
      *
-     * @param parnter Reproduction partner
+     * @param partner Reproduction partner
      * @return Descendant of parents (new Animal) if parents doesn't have enough energy returns null
      */
-    public Animal reproduce(Animal parnter) throws IllegalStateException {
+    public Animal reproduce(Animal partner) throws IllegalStateException {
 
-        if (!position.equals(parnter.position)) {
-            throw new IllegalStateException("Animals are not at the same field!");
+        if (!position.equals(partner.position)) {
+            return null; // TODO naprawić to. Czemu tu są animale z inna pozycją?
+//            throw new IllegalStateException("Animals are not at the same field!");
         }
 
-        if (energy >= ENERGY_TO_REPRODUCE && parnter.energy >= ENERGY_TO_REPRODUCE) {
+        System.out.println("Reproduce się wykonuje ");
+
+        if (energy >= ENERGY_TO_REPRODUCE && partner.energy >= ENERGY_TO_REPRODUCE) {
             int descendantEnergy = REPRODUCE_COST * 2;
-            int thisGenesForOffspringAmount = getGenesAmount(parnter);
+            int thisGenesForOffspringAmount = getGenesAmount(partner);
             int partnerGenesForOffspringAmount = genes.getGenesSize() - thisGenesForOffspringAmount;
             boolean isLeftSideGenes = Randomize.generateBoolean();
 
             List<Integer> offspringGenes;
-            if (energy > parnter.energy) {
+            if (energy > partner.energy) {
                 offspringGenes = genes.getOffspringGenes(thisGenesForOffspringAmount, isLeftSideGenes);
-                offspringGenes.addAll(parnter.genes.getOffspringGenes(partnerGenesForOffspringAmount, !isLeftSideGenes));
+                offspringGenes.addAll(partner.genes.getOffspringGenes(partnerGenesForOffspringAmount, !isLeftSideGenes));
             } else {
-                offspringGenes = parnter.genes.getOffspringGenes(partnerGenesForOffspringAmount, isLeftSideGenes);
+                offspringGenes = partner.genes.getOffspringGenes(partnerGenesForOffspringAmount, isLeftSideGenes);
                 offspringGenes.addAll(genes.getOffspringGenes(thisGenesForOffspringAmount, !isLeftSideGenes));
             }
-            energy -= REPRODUCE_COST;
-            parnter.energy -= REPRODUCE_COST;
+
+            decreaseEnergy(REPRODUCE_COST);
+            partner.decreaseEnergy(REPRODUCE_COST);
             childrenAmount += 1;
-            parnter.childrenAmount += 1;
+            partner.childrenAmount += 1;
             return new Animal(map, new Vector2d(position.x, position.y), genes.createOffspringGenes(offspringGenes), descendantEnergy, REPRODUCE_COST, ENERGY_TO_REPRODUCE);
         }
         return null;
@@ -187,10 +192,11 @@ public class Animal implements IMapElement, Comparable<Animal> {
         return Math.round((float) energy * genes.getGenesSize() / (energy + partner.energy));
     }
 
-    public void consume(Plant plant) {
+    public Plant consume(Plant plant) {
         this.energy += plant.getEnergy();
         eatenPlants++;
         this.map.removePlant(plant.getPosition());
+        return plant;
     }
 
     public int getEatenPlantsAmount(){
@@ -199,6 +205,10 @@ public class Animal implements IMapElement, Comparable<Animal> {
 
     public void increaseLivedDays() {
         days++;
+    }
+
+    public void decreaseEnergy(int value){
+        this.energy -= value;
     }
 
     @Override
@@ -210,4 +220,21 @@ public class Animal implements IMapElement, Comparable<Animal> {
                         .compare(this, animal);
     }
 
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
+    public void makeDead(int deathDay){
+        isAlive = false;
+        this.deathDay = deathDay;
+    }
+
+    public int getDeathDay(){
+        return deathDay;
+    }
+
+    public boolean isAlive(){
+        return isAlive;
+    }
 }

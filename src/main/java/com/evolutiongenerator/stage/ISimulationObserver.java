@@ -31,7 +31,7 @@ public interface ISimulationObserver {
      * @param mapElement Element to add.
      * @param position   Position of element.
      */
-    void addElementToMap(IMapElement mapElement, Vector2d position);
+    void addElementToMap(IMapElement mapElement, Vector2d position, boolean selectMapElement);
 
     /**
      * Remove element from map (GridPane).

@@ -69,12 +69,14 @@ public interface IWorldMap {
     /**
      * Used to remove dead animals from the map and hashmap
      */
-    void cleanDeadAnimals();
+    List<Animal> cleanDeadAnimals();
 
     /**
      * It is used to grow plants on the map on different variants of the map should be handled differently
+     *
+     * @return Plant that was grown on the map
      */
-    void growPlant();
+    Plant growPlant();
 
     /**
      * Used to remove a plant from a given position
@@ -117,7 +119,7 @@ public interface IWorldMap {
     /**
      * @return a list of conflicts that have arisen
      */
-    ArrayList<Vector2d> getReproduceConflictedPositions();
+    Set<Vector2d> getReproduceConflictedPositions();
 
     /**
      * @return Returns a variant of the map
@@ -144,5 +146,14 @@ public interface IWorldMap {
      * @return The animal that has priority to eat the plant/reproduction
      */
     Animal resolveConflicts(Vector2d position, Animal animalToIgnore);
+
+    /**
+     * is used to reduce the energy of animals after surviving the day
+     */
+    void decreaseAnimalsEnergy();
+
+    void cleanPlantsToConsume();
+
+    void clearReproduceConflictedPositions();
 
 }

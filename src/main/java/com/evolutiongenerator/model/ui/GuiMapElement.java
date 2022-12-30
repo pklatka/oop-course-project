@@ -108,7 +108,7 @@ public class GuiMapElement extends StackPane {
             return;
         }
 
-        this.getChildren().get(0).setStyle("-fx-stroke: #c20000; -fx-stroke-width: 2px;");
+        this.getChildren().get(0).setStyle("-fx-stroke: #0051ff; -fx-stroke-width: 2px;");
     }
 
     /**
@@ -119,7 +119,7 @@ public class GuiMapElement extends StackPane {
             return;
         }
 
-        this.getChildren().get(0).setStyle("-fx-stroke: transparent; -fx-stroke-width: 0px;");
+        this.getChildren().get(0).setStyle("-fx-stroke: none; -fx-stroke-width: 0px;");
     }
 
     /**

@@ -17,8 +17,8 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
     protected final HashMap<Animal, Vector2d> animalHashMap = new HashMap<>();
     protected final HashMap<Vector2d, Plant> plantHashMap = new HashMap<>();
     protected final HashMap<Vector2d, Animal> deadAnimalsHashMap = new HashMap<>();
-    protected final ArrayList<Vector2d> conflictedPositions = new ArrayList<>();
-    Set<Vector2d> plantPositionsToConsume = new LinkedHashSet<>();
+    protected final Set<Vector2d> conflictedPositions = new LinkedHashSet<>();
+    protected Set<Vector2d> plantPositionsToConsume = new LinkedHashSet<>();
 
 
     protected final MapBoundary mapBoundaries = new MapBoundary();
@@ -64,14 +64,20 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
     }
 
     @Override
-    public void cleanDeadAnimals() {
+    public List<Animal> cleanDeadAnimals() {
+        List<Animal> animalsToRemove = new ArrayList<>();
         for (Vector2d vector2d : deadAnimalsHashMap.keySet()) {
             Animal animal = deadAnimalsHashMap.get(vector2d);
+            int tmp = mapDeathStat.get(animal.getPosition()) != null ? mapDeathStat.get(animal.getPosition()) : 0;
+            mapDeathStat.put(animal.getPosition(),tmp + 1);
+            animalsToRemove.add(animal);
             animalHashMap.remove(animal);
             animalOnFields.get(vector2d).remove(animal);
             mapBoundaries.removePosition(vector2d);
         }
         deadAnimalsHashMap.clear();
+
+        return animalsToRemove;
     }
 
 
@@ -128,7 +134,7 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
 
     @Override
     public Set<Vector2d> getPlantToConsume() {
-        return plantPositionsToConsume;
+        return plantPositionsToConsume ;
     }
 
     @Override
@@ -141,7 +147,12 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
     }
 
     public Animal resolveConflicts(Vector2d position, Animal animalToIgnore) {
+        System.out.println("Animal bez ignore " + getAnimalsFrom(position));
         TreeSet<Animal> animals = getAnimalsFrom(position).stream().filter(a -> !a.equals(animalToIgnore)).collect(Collectors.toCollection(TreeSet::new));
+        System.out.println("Animals w reproduce " + animals);
+
+        if (animals.size() == 0)
+            return null;
 
         if (animals.size() == 1){
             return animals.first();
@@ -204,15 +215,28 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
 
     @Override
     public Vector2d generateRandomPosition() {
-        int tmpX = Randomize.generateInt(width, -width);
+        int tmpX = Randomize.generateInt(width, 0);
         int tmpY = Randomize.generateInt(height, 0);
         Vector2d position = new Vector2d(tmpX,tmpY);
         while (!isInsideMap(position)){
-            tmpX = Randomize.generateInt(width, -width);
+            tmpX = Randomize.generateInt(width, 0);
             tmpY = Randomize.generateInt(height, 0);
             position = new Vector2d(tmpX,tmpY);
         };
         return position;
+    }
+    public void decreaseAnimalsEnergy(){
+        for (Animal animal: animalHashMap.keySet()){
+            if (animal.getEnergy() > 0) {
+                animal.decreaseEnergy(1);
+                animal.increaseLivedDays();
+            }
+
+            if (animal.getEnergy() <= 0) {
+                deadAnimalsHashMap.put(animal.getPosition(),animal);
+            }
+
+        }
     }
 
     public abstract Vector2d[] getMapBounds();
@@ -232,8 +256,16 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
     }
 
     @Override
-    public ArrayList<Vector2d> getReproduceConflictedPositions() {
+    public Set<Vector2d> getReproduceConflictedPositions() {
         return this.conflictedPositions;
+    }
+
+    public void cleanPlantsToConsume(){
+        this.plantPositionsToConsume.clear();
+    }
+
+    public void clearReproduceConflictedPositions(){
+        this.conflictedPositions.clear();
     }
 
     @Override
