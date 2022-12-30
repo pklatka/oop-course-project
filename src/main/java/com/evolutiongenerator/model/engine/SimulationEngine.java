@@ -162,7 +162,9 @@ public class SimulationEngine implements IEngine, Runnable {
 
                     List<Animal> animalsToRemove = map.cleanDeadAnimals();
                     animalsOrder.removeAll(animalsToRemove);
-                    animalsToRemove.forEach(Animal::makeDead);
+                    animalsToRemove.forEach((animal) -> {
+                        animal.makeDead(day);
+                    });
 
                     // Update average animal life span
                     totalDeadAnimals += animalsToRemove.size();
@@ -288,7 +290,7 @@ public class SimulationEngine implements IEngine, Runnable {
                         animalStatistics.put(AnimalStatistics.ANIMAL_NUMBER_OF_CHILDREN, new IntegerValue(observedAnimal.getChildrenAmount()));
                         animalStatistics.put(AnimalStatistics.ANIMAL_LIFESPAN, new IntegerValue(observedAnimal.getDays()));
                         animalStatistics.put(AnimalStatistics.ANIMAL_EATEN_PLANTS, new IntegerValue(observedAnimal.getEatenPlantsAmount()));
-                        animalStatistics.put(AnimalStatistics.ANIMAL_DEATH_DAY, new StringValue(observedAnimal.isAlive() ? "Jeszcze żyje" : "Death"));
+                        animalStatistics.put(AnimalStatistics.ANIMAL_DEATH_DAY, new StringValue(observedAnimal.isAlive() ? "b. d." : ((Integer) observedAnimal.getDeathDay()).toString()));
                         Platform.runLater(() -> observers.forEach(ob -> ob.updateAnimalStatistics(animalStatistics)));
                     }
 

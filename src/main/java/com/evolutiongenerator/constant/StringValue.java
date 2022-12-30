@@ -7,6 +7,9 @@ public class StringValue implements ISimulationConfigurationValue {
         this.value = value;
     }
 
+    public StringValue(Integer value) {
+        this.value = value.toString();
+    }
 
     @Override
     public String toString() {

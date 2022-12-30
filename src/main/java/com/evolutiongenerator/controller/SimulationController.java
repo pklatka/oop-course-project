@@ -142,6 +142,7 @@ public class SimulationController implements Initializable, ISimulationObserver 
             resetPopularGenomes();
 
             // Get selected animal and send it to simulation
+            resetAnimalStatistics();
             if(selectedAnimal != null && selectedAnimal.getMapElement() instanceof Animal animal){
                 engine.selectAnimalToObserve(animal);
                 selectedAnimal.selectMapElement();
@@ -155,7 +156,6 @@ public class SimulationController implements Initializable, ISimulationObserver 
             isSimulationRunning = false;
 
             resetSelectedAnimal();
-
             engine.pause();
         }
     }
@@ -212,9 +212,6 @@ public class SimulationController implements Initializable, ISimulationObserver 
             selectedAnimal.unselectMapElement();
             engine.selectAnimalToObserve(null);
             selectedAnimal = null;
-
-            // Reset animal statistics
-            resetAnimalStatistics();
         }
 
         animalStatisticsStatus.setText("Wybierz zwierzę, aby śledzić jego statystyki");

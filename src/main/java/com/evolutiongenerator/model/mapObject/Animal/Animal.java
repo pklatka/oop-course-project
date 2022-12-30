@@ -23,8 +23,8 @@ public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
     private final int ENERGY_TO_REPRODUCE;
     private final int REPRODUCE_COST;
     private final ArrayList<IPositionChangeObserver> observers = new ArrayList<>();
-    private int eatenPlants = 0;
     private boolean isAlive = true;
+    private int deathDay = -1;
 
     public Animal(IWorldMap map, Vector2d initialPosition, Genes genes, int energy, int reproduceCost, int minimalValueToReproduce) {
         this.map = map;
@@ -225,12 +225,13 @@ public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
         return super.clone();
     }
 
-    public int getEatenPlantsAmount(){
-        return eatenPlants;
+    public void makeDead(int deathDay){
+        isAlive = false;
+        this.deathDay = deathDay;
     }
 
-    public void makeDead(){
-        isAlive = false;
+    public int getDeathDay(){
+        return deathDay;
     }
 
     public boolean isAlive(){
