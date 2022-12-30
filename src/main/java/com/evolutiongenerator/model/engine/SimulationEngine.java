@@ -247,6 +247,7 @@ public class SimulationEngine implements IEngine, Runnable {
 
                         if (offspringAnimal != null) {
                             map.place(offspringAnimal);
+                            animalsOrder.add(offspringAnimal);
                             observers.forEach(observer->{
                                 Platform.runLater(() -> observer.addElementToMap(offspringAnimal, offspringAnimal.getPosition(),false));
                             });
