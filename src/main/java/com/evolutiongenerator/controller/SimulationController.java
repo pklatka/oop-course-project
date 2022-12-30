@@ -393,14 +393,6 @@ public class SimulationController implements Initializable, ISimulationObserver 
     public void removeElementFromMap(IMapElement mapElement) {
         Pair<Vector2d, GuiMapElement> properties = elementProperties.get(mapElement);
         if (properties == null) {
-//            if(mapElement instanceof Plant){
-//                System.out.println("jestem rosliną");
-//                for(IMapElement el : elementProperties.keySet()){
-//                    if(el instanceof Plant){
-//                        System.out.println(el);
-//                    }
-//                }
-//            }
             System.out.println("Nie znaleziono elementu na mapie " + mapElement);
             return;
 //            throw new IllegalArgumentException("Element mapy nie istnieje lub został już usunięty.");

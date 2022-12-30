@@ -18,13 +18,14 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 
 public class SimulationEngine implements IEngine, Runnable {
 
     private IWorldMap map;
     // Use ArrayList to remember initial animal order
-    private final ArrayList<Animal> animalsOrder = new ArrayList<>();
+    private final List<Animal> animalsOrder = new CopyOnWriteArrayList<>();
     private int moveDelay = 1000;
     private boolean isRunning = false;
     private boolean isPaused = true;
@@ -187,7 +188,6 @@ public class SimulationEngine implements IEngine, Runnable {
                             }
 
                             plantsToRemove.add(eatenPlant);
-
                         }
                     }
 
@@ -267,7 +267,6 @@ public class SimulationEngine implements IEngine, Runnable {
                                 observer.addElementToMap(plantToAdd, plantToAdd.getPosition(), false);
                             }
                         }
-
                     });
 
                     // ******** Update statistics ********
@@ -294,9 +293,6 @@ public class SimulationEngine implements IEngine, Runnable {
 
                     // Update day number
                     simulationStatistics.put(SimulationStatistics.DAY, new IntegerValue(++day));
-
-                    // Decrease energy
-                    map.decreaseAnimalsEnergy();
 
                     // Write to statistics file
                     saveStatisticsToFile();
