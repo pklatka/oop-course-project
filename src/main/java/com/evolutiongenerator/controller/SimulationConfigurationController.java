@@ -152,10 +152,105 @@ public class SimulationConfigurationController implements Initializable {
                 args.put(key, simulationProperties.get(key).readProperty());
             }
 
+            checkIfSimulationConfigurationIsValid();
+
             return args;
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Niepoprawne argumenty symulacji. Sprawdź poprawność wprowadzonych danych.");
+            throw new IllegalArgumentException("Niepoprawna konfiguracja symulacji: " + e.getMessage());
         }
+    }
+
+    /**
+     * Checks if simulation configuration is valid.
+     *
+     * @throws IllegalArgumentException if configuration field is invalid
+     */
+    private void checkIfSimulationConfigurationIsValid() throws IllegalArgumentException{
+        // Check integer values
+        Integer mapWidth = ((IntegerValue) simulationProperties.get(ConfigurationConstant.MAP_WIDTH).readProperty()).getValue();
+        Integer mapHeight = ((IntegerValue) simulationProperties.get(ConfigurationConstant.MAP_HEIGHT).readProperty()).getValue();
+
+        if(!(0 < mapWidth && mapWidth <= 120)){
+            throw new IllegalArgumentException("Szerokość mapy musi być liczbą z przedziału (0, 120].");
+        }
+
+        if(!(0 < mapHeight && mapHeight <= 120)){
+            throw new IllegalArgumentException("Wysokość mapy musi być liczbą z przedziału (0, 120].");
+        }
+
+        Integer numberOfFields = mapWidth * mapHeight;
+
+        Integer animalStartNumber = ((IntegerValue) simulationProperties.get(ConfigurationConstant.ANIMAL_START_NUMBER).readProperty()).getValue();
+
+        if(animalStartNumber > numberOfFields){
+            throw new IllegalArgumentException("Liczba początkowych zwierząt nie może przekraczać liczby pól na mapie.");
+        }
+
+        if(animalStartNumber <= 0){
+            throw new IllegalArgumentException("Liczba początkowych zwierząt musi być większa od 0.");
+        }
+
+        Integer genotypeLength = ((IntegerValue) simulationProperties.get(ConfigurationConstant.GENOTYPE_LENGTH).readProperty()).getValue();
+        if (genotypeLength <= 0) {
+            throw new IllegalArgumentException("Długość genotypu musi być większa od 0.");
+        }
+
+        if(genotypeLength > 20){
+            throw new IllegalArgumentException("Długość genotypu nie może przekraczać 20.");
+        }
+
+        Integer animalStartEnergy = ((IntegerValue) simulationProperties.get(ConfigurationConstant.ANIMAL_START_ENERGY).readProperty()).getValue();
+
+        if(animalStartEnergy <= 0){
+            throw new IllegalArgumentException("Początkowa energia zwierząt musi być większa od 0.");
+        }
+
+        Integer animalReproductionEnergy = ((IntegerValue) simulationProperties.get(ConfigurationConstant.ANIMAL_REPRODUCTION_ENERGY).readProperty()).getValue();
+
+        if(animalReproductionEnergy <= 0){
+            throw new IllegalArgumentException("Energia potrzebna do rozmnażania się zwierząt musi być większa od 0.");
+        }
+
+        Integer animalReproductionEnergyCost = ((IntegerValue) simulationProperties.get(ConfigurationConstant.ANIMAL_REPRODUCTION_ENERGY_COST).readProperty()).getValue();
+
+        if(animalReproductionEnergyCost <= 0){
+            throw new IllegalArgumentException("Koszt rozmnażania się zwierząt musi być większy od 0.");
+        }
+
+        Integer plantStartNumber = ((IntegerValue) simulationProperties.get(ConfigurationConstant.PLANT_START_NUMBER).readProperty()).getValue();
+
+        if(plantStartNumber > numberOfFields){
+            throw new IllegalArgumentException("Liczba początkowych roślin nie może przekraczać liczby pól na mapie.");
+        }
+
+        if(plantStartNumber < 0){
+            throw new IllegalArgumentException("Liczba początkowych roślin musi być większa bądź równa 0.");
+        }
+
+        Integer plantEnergy = ((IntegerValue) simulationProperties.get(ConfigurationConstant.PLANT_ENERGY).readProperty()).getValue();
+
+        if(plantEnergy <= 0){
+            throw new IllegalArgumentException("Energia roślin musi być większa od 0.");
+        }
+
+        Integer plantSpawnNumber = ((IntegerValue) simulationProperties.get(ConfigurationConstant.PLANT_SPAWN_NUMBER).readProperty()).getValue();
+
+        if(plantSpawnNumber < 0){
+            throw new IllegalArgumentException("Liczba roślin rozmnażających się w jednym dniu musi być większa bądź równa 0.");
+        }
+
+        Integer minimumMutationNumber = ((IntegerValue) simulationProperties.get(ConfigurationConstant.MINIMUM_MUTATION_NUMBER).readProperty()).getValue();
+
+        if(minimumMutationNumber < 0){
+            throw new IllegalArgumentException("Minimalna liczba mutacji musi być większa bądź równa 0.");
+        }
+
+        Integer maximumMutationNumber = ((IntegerValue) simulationProperties.get(ConfigurationConstant.MAXIMUM_MUTATION_NUMBER).readProperty()).getValue();
+
+        if(maximumMutationNumber < 0) {
+            throw new IllegalArgumentException("Maksymalna liczba mutacji musi być większa bądź równa 0.");
+        }
+
     }
 
     // ************* File utilities *************
@@ -208,6 +303,12 @@ public class SimulationConfigurationController implements Initializable {
             // Save data as pairs of key and value separated by '='
             for (ConfigurationConstant key : simulationProperties.keySet()) {
                 lines.add(key + "=" + simulationProperties.get(key).readProperty());
+            }
+
+            try{
+                checkIfSimulationConfigurationIsValid();
+            }catch (IllegalArgumentException e){
+                throw new IllegalArgumentException("Niepoprawna konfiguracja symulacji: " + e.getMessage());
             }
 
             Charset utf8 = StandardCharsets.UTF_8;
@@ -362,7 +463,7 @@ public class SimulationConfigurationController implements Initializable {
         String filePath = new File("").getAbsolutePath().concat(configurationsFolderPath);
 
         try (Stream<Path> stream = Files.list(Paths.get(filePath))) {
-            exampleConfigurations = stream.filter(file -> !Files.isDirectory(file)).map(Path::getFileName).map(Path::toString).map((fileName) -> {
+            exampleConfigurations = stream.filter(file -> !Files.isDirectory(file)).map(Path::getFileName).map(Path::toString).sorted().map((fileName) -> {
                 // Remove extension from file name
                 int pos = fileName.lastIndexOf(".");
                 if (pos > 0 && pos < (fileName.length() - 1)) {
