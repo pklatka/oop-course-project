@@ -21,7 +21,6 @@ import java.util.concurrent.CountDownLatch;
 
 public class SimulationEngine implements IEngine, Runnable {
 
-    private MoveDirection[] directionArray;
     private IWorldMap map;
     // Use ArrayList to remember initial animal order
     private final ArrayList<Animal> animalsOrder = new ArrayList<>();
@@ -348,14 +347,12 @@ public class SimulationEngine implements IEngine, Runnable {
         Platform.runLater(() -> observers.forEach(ob -> {
             if(observedAnimal != null){
                 ob.removeElementFromMap(observedAnimal);
-                ob.addElementToMap(observedAnimal, observedAnimal.getPosition(), false);
+                if(observedAnimal.isAlive()){
+                    ob.addElementToMap(observedAnimal, observedAnimal.getPosition(), false);
+                }
             }
             observedAnimal = animal;
         }));
-    }
-
-    public void setDirectionArray(MoveDirection[] directionArray) {
-        this.directionArray = directionArray;
     }
 
     private void initializeStatisticsFile() throws IOException {
