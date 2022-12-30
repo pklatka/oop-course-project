@@ -195,8 +195,8 @@ public class SimulationConfigurationController implements Initializable {
             throw new IllegalArgumentException("Długość genotypu musi być większa od 0.");
         }
 
-        if(genotypeLength > 20){
-            throw new IllegalArgumentException("Długość genotypu nie może przekraczać 20.");
+        if(genotypeLength > 40){
+            throw new IllegalArgumentException("Długość genotypu nie może przekraczać 40.");
         }
 
         Integer animalStartEnergy = ((IntegerValue) simulationProperties.get(ConfigurationConstant.ANIMAL_START_ENERGY).readProperty()).getValue();
