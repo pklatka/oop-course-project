@@ -351,14 +351,12 @@ public class SimulationController implements Initializable, ISimulationObserver 
      * @param mapElement Element to add.
      */
     @Override
-    public void addElementToMap(IMapElement mapElement, Vector2d position, boolean selectMapElement) throws IllegalArgumentException {
+    public boolean addElementToMap(IMapElement mapElement, Vector2d position, boolean selectMapElement) {
         try {
             Vector2d mapPosition = new Vector2d(position.x, mapHeight - 1 - position.y);
             StackPane stackPane = mapFields.get(mapPosition);
             if(stackPane == null){
-                System.out.println("StackPane is null");
-                return;
-//                throw new IllegalArgumentException("Pozycja jest poza mapą");
+                return false;
             }
 
             GuiMapElement guiMapElement = new GuiMapElement(cellWidth, cellHeight, mapElement, simulationOptions);
@@ -379,8 +377,9 @@ public class SimulationController implements Initializable, ISimulationObserver 
                 addGenomeToPopularGenomes((Animal) mapElement);
             }
 
+            return true;
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(e);
+            return false;
         }
     }
 
@@ -390,12 +389,10 @@ public class SimulationController implements Initializable, ISimulationObserver 
      * @param mapElement Element to remove.
      */
     @Override
-    public void removeElementFromMap(IMapElement mapElement) {
+    public boolean removeElementFromMap(IMapElement mapElement) {
         Pair<Vector2d, GuiMapElement> properties = elementProperties.get(mapElement);
         if (properties == null) {
-            System.out.println("Nie znaleziono elementu na mapie " + mapElement);
-            return;
-//            throw new IllegalArgumentException("Element mapy nie istnieje lub został już usunięty.");
+            return false;
         }
 
         if (mapElement instanceof Animal) {
@@ -406,6 +403,8 @@ public class SimulationController implements Initializable, ISimulationObserver 
         GuiMapElement guiMapElement = properties.getValue();
         mapFields.get(mapPosition).getChildren().remove(guiMapElement);
         elementProperties.remove(mapElement);
+
+        return true;
     }
 
     /**

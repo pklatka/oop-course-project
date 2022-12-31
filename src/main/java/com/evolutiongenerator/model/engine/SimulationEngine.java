@@ -6,7 +6,6 @@ import com.evolutiongenerator.model.map.IWorldMap;
 import com.evolutiongenerator.model.map.ToxicCorpsesMap;
 import com.evolutiongenerator.model.mapObject.Animal.Animal;
 import com.evolutiongenerator.model.mapObject.Animal.Genes;
-import com.evolutiongenerator.model.mapObject.MoveDirection;
 import com.evolutiongenerator.model.mapObject.Plant;
 import com.evolutiongenerator.stage.ISimulationObserver;
 import com.evolutiongenerator.utils.Vector2d;
@@ -19,8 +18,13 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Class responsible for simulation logic.
+ *
+ * @author Patryk Klatka, Paweł Motyka
+ */
 public class SimulationEngine implements IEngine, Runnable {
 
     private IWorldMap map;
@@ -35,10 +39,10 @@ public class SimulationEngine implements IEngine, Runnable {
     private final Map<SimulationStatistics, ISimulationConfigurationValue> simulationStatistics;
     int totalDeadAnimals = 0;
     int totalSumOfAnimalLifespan = 0;
-    int countPlants = 0;
-    int mapWidth = 0;
-    int mapHeight = 0;
-    int day = 0;
+    int mapWidth;
+    int mapHeight;
+    AtomicInteger countPlants = new AtomicInteger(0);
+    AtomicInteger day = new AtomicInteger(0);
 
     public SimulationEngine(Map<ConfigurationConstant, ISimulationConfigurationValue> simulationOptions, ISimulationObserver observer) {
         this.simulationOptions = simulationOptions;
@@ -94,7 +98,7 @@ public class SimulationEngine implements IEngine, Runnable {
             });
         }
 
-        countPlants = initialPlantsAmount.getValue();
+        countPlants.set(initialPlantsAmount.getValue());
 
         // Initialize simulation statistics
         simulationStatistics = new HashMap<>();
@@ -115,27 +119,9 @@ public class SimulationEngine implements IEngine, Runnable {
     }
 
 
-    // Use it when you need to wait for thread
-    private void runAndWait() throws InterruptedException {
-        try {
-            // Why using CountDownLatch?
-            // Rendering grid might be time-consuming, so we must be ensured, that old grid has already been rendered.
-            CountDownLatch doneLatch = new CountDownLatch(observers.size());
-            for (ISimulationObserver simulationStageOld : observers) {
-                Platform.runLater(() -> {
-                    try {
-//                        simulationStageOld.renderGrid();
-                    } finally {
-                        doneLatch.countDown();
-                    }
-                });
-            }
-            doneLatch.await();
-        } catch (InterruptedException e) {
-            throw new InterruptedException(e.getMessage());
-        }
-    }
-
+    /**
+     * Main simulation procedure
+     */
     @Override
     public void run() {
         try {
@@ -151,7 +137,7 @@ public class SimulationEngine implements IEngine, Runnable {
                     animalsOrder.removeAll(animalsToRemove);
 
                     animalsToRemove.forEach((animal) -> {
-                        animal.makeDead(day);
+                        animal.makeDead(day.get());
                     });
 
 
@@ -172,26 +158,25 @@ public class SimulationEngine implements IEngine, Runnable {
                                 continue;
                             }
                             Plant eatenPlant = bestAnimal.consume(map.getPlantFrom(vector2d));
-                            countPlants--;
 
                             if (eatenPlant.isOnEquator()) {
                                 ((ForestedEquatorMap) map).decreaseEquatorPlantAmount();
                             }
 
+                            countPlants.decrementAndGet();
                             plantsToRemove.add(eatenPlant);
-
                         } else if (animals.size() == 1) {
                             Animal animal = animals.descendingSet().first();
                             if(animal == null){
                                 continue;
                             }
                             Plant eatenPlant = animal.consume(map.getPlantFrom(vector2d));
-                            countPlants--;
 
                             if (eatenPlant.isOnEquator()) {
                                 ((ForestedEquatorMap) map).decreaseEquatorPlantAmount();
                             }
 
+                            countPlants.decrementAndGet();
                             plantsToRemove.add(eatenPlant);
                         }
                     }
@@ -200,7 +185,6 @@ public class SimulationEngine implements IEngine, Runnable {
                     map.cleanPlantsToConsume();
 
                     // Reproduce animals
-//                    Thread.sleep(200);
                     Set<Vector2d> positions = map.getReproduceConflictedPositions();
 
                     for (Vector2d position : positions) {
@@ -227,41 +211,58 @@ public class SimulationEngine implements IEngine, Runnable {
                         Plant plant = map.growPlant();
                         if (plant == null) continue;
                         plantsToAdd.add(plant);
-                        countPlants++;
+                        countPlants.incrementAndGet();
                     }
 
                     // Decrease energy
                     map.decreaseAnimalsEnergy();
 
                     // Run GUI methods
-
+                    // Note: Why we are using booleans instead of throwing exception?
+                    // try-catch block is time-consuming, so we want to avoid it.
+                    // especially when we run animation with 100ms delay.
                     Platform.runLater(() -> {
-                        // Remove dead animals
-                        for(ISimulationObserver observer : observers){
-                            for(Animal animalToRemove : animalsToRemove) {
-                                observer.removeElementFromMap(animalToRemove);
+                            // Remove dead animals
+                            for(ISimulationObserver observer : observers){
+                                for(Animal animalToRemove : animalsToRemove) {
+                                    boolean result = observer.removeElementFromMap(animalToRemove);
+                                    if(!result){
+                                        System.out.println("Zwierzę do usunięcia nie zostało usunięte.");
+                                    }
+                                }
                             }
-                        }
 
-                        for (Animal animal : animalsOrder) {
-                            for (ISimulationObserver observer : observers) {
-                                // Remove current animals
-                                observer.removeElementFromMap(animal);
-                                observer.addElementToMap(animal, animal.getPosition(), animal == observedAnimal);
+                            for (Animal animal : animalsOrder) {
+                                for (ISimulationObserver observer : observers) {
+                                    // Remove current animals
+                                    boolean removeResult = observer.removeElementFromMap(animal);
+                                    if(!removeResult){
+                                        System.out.println("Zwierzę do usunięcia nie zostało usunięte.");
+                                    }
+                                    boolean addResult = observer.addElementToMap(animal, animal.getPosition(), animal == observedAnimal);
+                                    if(!addResult){
+                                        System.out.println("Zwierzę do dodania nie zostało dodane.");
+                                    }
+                                }
                             }
-                        }
 
-                        for( ISimulationObserver observer : observers){
-                            for(Plant plantToRemove : plantsToRemove){
-                                observer.removeElementFromMap(plantToRemove);
+                            for( ISimulationObserver observer : observers){
+                                for(Plant plantToRemove : plantsToRemove){
+                                    boolean result = observer.removeElementFromMap(plantToRemove);
+                                    if(!result){
+                                        System.out.println("Roślina do usunięcia nie została usunięta.");
+                                    }
+                                }
                             }
-                        }
 
-                        for( ISimulationObserver observer : observers){
-                            for(Plant plantToAdd : plantsToAdd){
-                                observer.addElementToMap(plantToAdd, plantToAdd.getPosition(), false);
+                            for( ISimulationObserver observer : observers){
+                                for(Plant plantToAdd : plantsToAdd){
+                                    boolean result = observer.addElementToMap(plantToAdd, plantToAdd.getPosition(), false);
+                                    if(!result){
+                                        System.out.println("Roślina do dodania nie została dodana.");
+                                    }
+                                }
                             }
-                        }
                     });
 
                     // ******** Update statistics ********
@@ -283,11 +284,11 @@ public class SimulationEngine implements IEngine, Runnable {
                     }
 
                     // Update plant number
-                    simulationStatistics.put(SimulationStatistics.NUMBER_OF_PLANTS, new IntegerValue(countPlants));
-                    simulationStatistics.put(SimulationStatistics.NUMBER_OF_EMPTY_FIELDS, new IntegerValue(mapWidth * mapHeight - countPlants - animalsOrder.size()));
+                    simulationStatistics.put(SimulationStatistics.NUMBER_OF_PLANTS, new IntegerValue(countPlants.get()));
+                    simulationStatistics.put(SimulationStatistics.NUMBER_OF_EMPTY_FIELDS, new IntegerValue(mapWidth * mapHeight - countPlants.get()));
 
                     // Update day number
-                    simulationStatistics.put(SimulationStatistics.DAY, new IntegerValue(++day));
+                    simulationStatistics.put(SimulationStatistics.DAY, new IntegerValue(day.incrementAndGet()));
 
                     // Write to statistics file
                     saveStatisticsToFile();
