@@ -31,7 +31,7 @@ public class SimulationEngine implements IEngine, Runnable {
     // Use ArrayList to remember initial animal order
     private final List<Animal> animalsOrder = new CopyOnWriteArrayList<>();
     private int moveDelay = 100;
-    private boolean isRunning = false;
+    private boolean isRunning = true;
     private boolean isPaused = true;
     private final List<ISimulationObserver> observers = new ArrayList<>();
     private final Map<ConfigurationConstant, ISimulationConfigurationValue> simulationOptions;
@@ -125,7 +125,6 @@ public class SimulationEngine implements IEngine, Runnable {
     @Override
     public void run() {
         try {
-            isRunning = true;
             while (isRunning) {
                 if (isPaused) {
                     // Simulation is paused
