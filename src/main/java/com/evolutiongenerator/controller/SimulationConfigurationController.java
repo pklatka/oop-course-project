@@ -217,6 +217,10 @@ public class SimulationConfigurationController implements Initializable {
             throw new IllegalArgumentException("Koszt rozmnażania się zwierząt musi być większy od 0.");
         }
 
+        if(animalReproductionEnergy < animalReproductionEnergyCost){
+            throw new IllegalArgumentException("Energia potrzebna do rozmnażania się zwierząt musi być większa od kosztu rozmnażania się.");
+        }
+
         Integer plantStartNumber = ((IntegerValue) simulationProperties.get(ConfigurationConstant.PLANT_START_NUMBER).readProperty()).getValue();
 
         if(plantStartNumber > numberOfFields){
