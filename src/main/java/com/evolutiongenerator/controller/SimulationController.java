@@ -237,6 +237,7 @@ public class SimulationController implements Initializable, ISimulationObserver 
     private void initializeMap() {
         GridPane grid = new GridPane();
 //        grid.setGridLinesVisible(true);
+        grid.setStyle("-fx-border-color: #003d00; -fx-border-width: 1px;");
 
         for (int i = 0; i < mapWidth; i++) {
             ColumnConstraints column = new ColumnConstraints(cellWidth);
