@@ -2,6 +2,7 @@ package com.evolutiongenerator.constant;
 
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 /**
  * String object wrapper, that additionally checks if the given string is a valid path.
@@ -17,6 +18,19 @@ public class PathValue implements ISimulationConfigurationValue {
         } catch (InvalidPathException e) {
             throw new InvalidPathException(e.getMessage(), e.getReason());
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PathValue pathValue = (PathValue) o;
+        return Objects.equals(path, pathValue.path);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(path);
     }
 
     public void setValue(String path) throws InvalidPathException {

@@ -1,5 +1,7 @@
 package com.evolutiongenerator.constant;
 
+import java.util.Objects;
+
 /**
  * Integer object wrapper, that implements ISimulationValue interface.
  *
@@ -10,6 +12,19 @@ public class IntegerValue implements ISimulationConfigurationValue {
 
     public IntegerValue(Integer value) {
         this.value = value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        IntegerValue that = (IntegerValue) o;
+        return Objects.equals(value, that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
     }
 
     public IntegerValue(String value) throws IllegalArgumentException {
@@ -27,7 +42,6 @@ public class IntegerValue implements ISimulationConfigurationValue {
     public void setValue(Integer value) {
         this.value = value;
     }
-
 
     @Override
     public String toString() {
