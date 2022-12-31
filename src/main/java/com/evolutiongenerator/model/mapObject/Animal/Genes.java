@@ -27,8 +27,9 @@ public class Genes {
         genesList = new ArrayList<>();
         this.mutationVariant = mutationVariant;
         this.behaviourVariant = behaviourVariant;
-        currentGenIndex = Randomize.generateInt(numberOfGenes - 1, 0);
         generateGenes(numberOfGenes);
+        currentGenIndex = Randomize.generateInt(numberOfGenes - 1, 0);
+        currentGen = this.genesList.get(currentGenIndex);
 
     }
 
