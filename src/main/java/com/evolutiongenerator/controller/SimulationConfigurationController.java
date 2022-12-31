@@ -170,12 +170,12 @@ public class SimulationConfigurationController implements Initializable {
         Integer mapWidth = ((IntegerValue) simulationProperties.get(ConfigurationConstant.MAP_WIDTH).readProperty()).getValue();
         Integer mapHeight = ((IntegerValue) simulationProperties.get(ConfigurationConstant.MAP_HEIGHT).readProperty()).getValue();
 
-        if(!(0 < mapWidth && mapWidth <= 120)){
-            throw new IllegalArgumentException("Szerokość mapy musi być liczbą z przedziału (0, 120].");
+        if(!(0 < mapWidth && mapWidth <= 100)){
+            throw new IllegalArgumentException("Szerokość mapy musi być liczbą z przedziału (0, 100].");
         }
 
-        if(!(0 < mapHeight && mapHeight <= 120)){
-            throw new IllegalArgumentException("Wysokość mapy musi być liczbą z przedziału (0, 120].");
+        if(!(0 < mapHeight && mapHeight <= 100)){
+            throw new IllegalArgumentException("Wysokość mapy musi być liczbą z przedziału (0, 100].");
         }
 
         Integer numberOfFields = mapWidth * mapHeight;
