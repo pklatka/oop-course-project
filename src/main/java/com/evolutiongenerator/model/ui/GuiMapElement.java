@@ -52,7 +52,7 @@ public class GuiMapElement extends StackPane {
     /**
      * Gets HSL color representing eneryg of animal
      */
-    private Color getAnimalEnergyColor(double percentage) {
+    Color getAnimalEnergyColor(double percentage) {
         double saturation = 1.0;
         double brightness = 0.75;
         double hue;
