@@ -67,7 +67,6 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
     public List<Animal> cleanDeadAnimals() {
         List<Animal> animalsToRemove = new ArrayList<>();
         for (Vector2d vector2d : deadAnimalsHashMap.keySet()) {
-            System.out.println("czysze zmarłych");
             Animal animal = deadAnimalsHashMap.get(vector2d);
             int tmp = mapDeathStat.get(animal.getPosition()) != null ? mapDeathStat.get(animal.getPosition()) : 0;
             mapDeathStat.put(animal.getPosition(),tmp + 1);
@@ -153,9 +152,7 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
     }
 
     public Animal resolveConflicts(Vector2d position, Animal animalToIgnore) {
-        System.out.println("Animal bez ignore " + getAnimalsFrom(position));
         TreeSet<Animal> animals = getAnimalsFrom(position).stream().filter(a -> !a.equals(animalToIgnore) && a.getEnergy() > 0).collect(Collectors.toCollection(TreeSet::new));
-        System.out.println("Animals w reproduce " + animals);
 
         if (animals.size() == 0)
             return null;

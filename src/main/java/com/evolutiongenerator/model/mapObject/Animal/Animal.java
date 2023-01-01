@@ -158,10 +158,8 @@ public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
 
         if (!position.equals(partner.position)) {
             return null;
-//            throw new IllegalStateException("Animals are not at the same field!"); // TODO nadal nie działa
         }
 
-        System.out.println("Reproduce się wykonuje ");
 
         if (energy >= ENERGY_TO_REPRODUCE && partner.energy >= ENERGY_TO_REPRODUCE) {
             int descendantEnergy = REPRODUCE_COST * 2;
