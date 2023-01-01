@@ -209,14 +209,14 @@ public class SimulationConfigurationController implements Initializable {
 
         Integer animalReproductionEnergy = ((IntegerValue) simulationProperties.get(ConfigurationConstant.ANIMAL_REPRODUCTION_ENERGY).readProperty()).getValue();
 
-        if (animalReproductionEnergy <= 0) {
-            throw new IllegalArgumentException("Energia potrzebna do rozmnażania się zwierząt musi być większa od 0.");
+        if (animalReproductionEnergy < 0) {
+            throw new IllegalArgumentException("Energia potrzebna do rozmnażania się zwierząt musi być większa bądź równa 0.");
         }
 
         Integer animalReproductionEnergyCost = ((IntegerValue) simulationProperties.get(ConfigurationConstant.ANIMAL_REPRODUCTION_ENERGY_COST).readProperty()).getValue();
 
-        if (animalReproductionEnergyCost <= 0) {
-            throw new IllegalArgumentException("Koszt rozmnażania się zwierząt musi być większy od 0.");
+        if (animalReproductionEnergyCost < 0) {
+            throw new IllegalArgumentException("Koszt rozmnażania się zwierząt musi być większy bądź równy 0.");
         }
 
         if (animalReproductionEnergy < animalReproductionEnergyCost) {
@@ -239,8 +239,8 @@ public class SimulationConfigurationController implements Initializable {
 
         Integer plantEnergy = ((IntegerValue) simulationProperties.get(ConfigurationConstant.PLANT_ENERGY).readProperty()).getValue();
 
-        if (plantEnergy <= 0) {
-            throw new IllegalArgumentException("Energia roślin musi być większa od 0.");
+        if (plantEnergy < 0) {
+            throw new IllegalArgumentException("Energia roślin musi być większa bądź równa 0.");
         }
 
         Integer plantSpawnNumber = ((IntegerValue) simulationProperties.get(ConfigurationConstant.PLANT_SPAWN_NUMBER).readProperty()).getValue();
