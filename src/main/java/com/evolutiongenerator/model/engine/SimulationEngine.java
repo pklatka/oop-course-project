@@ -128,7 +128,7 @@ public class SimulationEngine implements IEngine, Runnable {
             while (isRunning) {
                 if (isPaused) {
                     // Simulation is paused
-                    Thread.sleep(300);
+                    Thread.sleep(100);
                 } else {
                     // Simulation executes default procedure
                     IntegerValue plantSpawnAmount = (IntegerValue) simulationOptions.get(ConfigurationConstant.PLANT_SPAWN_NUMBER);
@@ -368,6 +368,12 @@ public class SimulationEngine implements IEngine, Runnable {
                 }
             }
             observedAnimal = animal;
+            if (observedAnimal != null) {
+                ob.removeElementFromMap(observedAnimal);
+                if(observedAnimal.isAlive()){
+                    ob.addElementToMap(observedAnimal, observedAnimal.getPosition(), true);
+                }
+            }
         }));
     }
 

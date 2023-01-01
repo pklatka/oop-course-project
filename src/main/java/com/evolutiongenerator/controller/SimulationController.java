@@ -142,20 +142,17 @@ public class SimulationController implements Initializable, ISimulationObserver 
             resetPopularGenomes();
 
             // Get selected animal and send it to simulation
-            resetAnimalStatistics();
             if(selectedAnimal != null && selectedAnimal.getMapElement() instanceof Animal animal){
                 engine.selectAnimalToObserve(animal);
-                selectedAnimal.selectMapElement();
             }else{
                 resetSelectedAnimal();
+                resetAnimalStatistics();
             }
 
             engine.resume();
         } else {
             simulationControlButton.setText("Start symulacji");
             isSimulationRunning = false;
-
-            resetSelectedAnimal();
             engine.pause();
         }
     }
@@ -190,7 +187,7 @@ public class SimulationController implements Initializable, ISimulationObserver 
         resetPopularGenomes();
 
         GuiMapElement clickedElement = (GuiMapElement) event.getSource();
-        if (selectedAnimal == clickedElement) {
+        if (clickedElement.equals(selectedAnimal)) {
             resetSelectedAnimal();
         } else {
             if (selectedAnimal != null) {
@@ -365,6 +362,7 @@ public class SimulationController implements Initializable, ISimulationObserver 
 
             if(selectMapElement){
                 guiMapElement.selectMapElement();
+                selectedAnimal = guiMapElement;
             }
 
             if(mapElement instanceof Plant){
