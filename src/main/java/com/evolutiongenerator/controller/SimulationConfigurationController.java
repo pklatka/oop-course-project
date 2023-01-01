@@ -6,6 +6,8 @@ import com.evolutiongenerator.handler.IConfigurationField;
 import com.evolutiongenerator.handler.TextFieldHandler;
 import com.evolutiongenerator.stage.SimulationStage;
 import com.evolutiongenerator.utils.FileChooser;
+import com.evolutiongenerator.utils.IntegerValue;
+import com.evolutiongenerator.utils.PathValue;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -24,7 +26,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import javafx.stage.FileChooser.ExtensionFilter;
-import javafx.stage.WindowEvent;
 
 /**
  * Controller for simulation configuration stage.
@@ -231,6 +232,10 @@ public class SimulationConfigurationController implements Initializable {
             throw new IllegalArgumentException("Liczba początkowych roślin musi być większa bądź równa 0.");
         }
 
+        if(plantStartNumber > mapWidth * mapHeight){
+            throw new IllegalArgumentException("Liczba początkowych roślin nie może przekraczać liczby pól na mapie.");
+        }
+
         Integer plantEnergy = ((IntegerValue) simulationProperties.get(ConfigurationConstant.PLANT_ENERGY).readProperty()).getValue();
 
         if(plantEnergy <= 0){
@@ -253,6 +258,10 @@ public class SimulationConfigurationController implements Initializable {
 
         if(maximumMutationNumber < 0) {
             throw new IllegalArgumentException("Maksymalna liczba mutacji musi być większa bądź równa 0.");
+        }
+
+        if(maximumMutationNumber < minimumMutationNumber){
+            throw new IllegalArgumentException("Maksymalna liczba mutacji musi być większa bądź równa minimalnej liczbie mutacji.");
         }
 
     }

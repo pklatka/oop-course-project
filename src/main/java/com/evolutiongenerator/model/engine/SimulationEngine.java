@@ -8,7 +8,7 @@ import com.evolutiongenerator.model.mapObject.Animal.Animal;
 import com.evolutiongenerator.model.mapObject.Animal.Genes;
 import com.evolutiongenerator.model.mapObject.Plant;
 import com.evolutiongenerator.stage.ISimulationObserver;
-import com.evolutiongenerator.utils.Vector2d;
+import com.evolutiongenerator.utils.*;
 import javafx.application.Platform;
 
 import java.io.IOException;

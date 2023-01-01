@@ -1,4 +1,6 @@
-package com.evolutiongenerator.constant;
+package com.evolutiongenerator.utils;
+
+import com.evolutiongenerator.constant.ISimulationConfigurationValue;
 
 import java.text.DecimalFormat;
 import java.util.Objects;

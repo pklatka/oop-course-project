@@ -1,4 +1,6 @@
-package com.evolutiongenerator.constant;
+package com.evolutiongenerator.utils;
+
+import com.evolutiongenerator.constant.ISimulationConfigurationValue;
 
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;

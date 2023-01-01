@@ -2,7 +2,7 @@ package com.evolutiongenerator.model.ui;
 
 import com.evolutiongenerator.constant.ConfigurationConstant;
 import com.evolutiongenerator.constant.ISimulationConfigurationValue;
-import com.evolutiongenerator.constant.IntegerValue;
+import com.evolutiongenerator.utils.IntegerValue;
 import com.evolutiongenerator.model.mapObject.IMapElement;
 import com.evolutiongenerator.model.mapObject.Plant;
 import javafx.geometry.Pos;

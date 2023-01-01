@@ -1,7 +1,7 @@
 package com.evolutiongenerator.handler;
 
 import com.evolutiongenerator.constant.ISimulationConfigurationValue;
-import com.evolutiongenerator.constant.IntegerValue;
+import com.evolutiongenerator.utils.IntegerValue;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 

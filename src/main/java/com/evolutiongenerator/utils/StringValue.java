@@ -1,4 +1,6 @@
-package com.evolutiongenerator.constant;
+package com.evolutiongenerator.utils;
+
+import com.evolutiongenerator.constant.ISimulationConfigurationValue;
 
 public class StringValue implements ISimulationConfigurationValue {
     public String value;

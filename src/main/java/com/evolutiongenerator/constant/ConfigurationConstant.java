@@ -1,5 +1,8 @@
 package com.evolutiongenerator.constant;
 
+import com.evolutiongenerator.utils.IntegerValue;
+import com.evolutiongenerator.utils.PathValue;
+
 /**
  * Configuration constants
  *
