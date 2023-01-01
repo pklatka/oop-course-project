@@ -77,14 +77,14 @@ public class AnimalTest {
     @Test
     public void testConsume(){
         assertNull(animal.consume(null));
-        Plant plant = new Plant(new Vector2d(2,2),30);
+        Plant plant = new Plant(new Vector2d(2,2),30,false);
         assertEquals(plant  ,animal.consume(plant));
     }
 
     @Test
     public void testGetEnergy(){
         assertEquals(200,animal.getEnergy());
-        Plant plant = new Plant(new Vector2d(2,2),30);
+        Plant plant = new Plant(new Vector2d(2,2),30,false);
         animal.consume(plant);
         assertEquals(230,animal.getEnergy());
 

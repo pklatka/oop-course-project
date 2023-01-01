@@ -35,7 +35,6 @@ public class ForestedEquatorMap extends AbstractWorldMap implements IWorldMap {
         if (Randomize.generateBooleanWithProbability(0.8) && plantsOnEquator < getEquatorCellAmount()) {
             tmpX = Randomize.generateInt(equatorTopRight.x, equatorBottomLeft.x);
             tmpY = Randomize.generateInt(equatorTopRight.y, equatorBottomLeft.y);
-
             while (isPlantAt(new Vector2d(tmpX, tmpY))) {
                 tmpX = Randomize.generateInt(equatorTopRight.x, equatorBottomLeft.x);
                 tmpY = Randomize.generateInt(equatorTopRight.y, equatorBottomLeft.y);

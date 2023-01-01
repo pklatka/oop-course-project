@@ -43,7 +43,7 @@ public class GuiMapElementTest {
 
     @Test
     public void testCreateMapElementRepresentationPlant(){
-        Plant plant = new Plant(null, 100);
+        Plant plant = new Plant(null, 100,false);
         Map<ConfigurationConstant, ISimulationConfigurationValue> simulationOptions = new HashMap<>();
         simulationOptions.put(ConfigurationConstant.ANIMAL_START_ENERGY, new IntegerValue(100));
 
