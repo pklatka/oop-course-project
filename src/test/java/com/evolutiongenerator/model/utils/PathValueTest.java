@@ -1,5 +1,6 @@
-package com.evolutiongenerator.constant;
+package com.evolutiongenerator.model.utils;
 
+import com.evolutiongenerator.utils.PathValue;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

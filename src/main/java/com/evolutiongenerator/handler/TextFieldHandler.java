@@ -1,12 +1,12 @@
 package com.evolutiongenerator.handler;
 
 import com.evolutiongenerator.constant.ISimulationConfigurationValue;
-import com.evolutiongenerator.constant.IntegerValue;
+import com.evolutiongenerator.utils.IntegerValue;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 
 /**
- * Wrapper class for TextField
+ * Wrapper class for TextField.
  *
  * @author Patryk Klatka
  */
@@ -17,8 +17,8 @@ public class TextFieldHandler implements IConfigurationField {
      * Constructor, sets textField and fromStringFunction,
      * adds listener to textField to reset exampleConfiguration value.
      *
-     * @param textField            TextField
-     * @param exampleConfiguration ExampleConfiguration object
+     * @param textField            TextField.
+     * @param exampleConfiguration ExampleConfiguration object.
      */
     public TextFieldHandler(TextField textField, ChoiceBox<String> exampleConfiguration) {
         this.textField = textField;
@@ -43,9 +43,9 @@ public class TextFieldHandler implements IConfigurationField {
     }
 
     /**
-     * Write value to TextField
+     * Write value to TextField.
      *
-     * @param value String value to write
+     * @param value String value to write.
      */
     @Override
     public void writeProperty(ISimulationConfigurationValue value) {
@@ -53,9 +53,10 @@ public class TextFieldHandler implements IConfigurationField {
     }
 
     /**
-     * Get value from TextField
+     * Get value from TextField.
      *
-     * @return ISimulationConfigurationValue value from TextField
+     * @return ISimulationConfigurationValue value from TextField.
+     * @throws IllegalArgumentException if value is not in TextField.
      */
     @Override
     public ISimulationConfigurationValue readProperty() throws IllegalArgumentException {

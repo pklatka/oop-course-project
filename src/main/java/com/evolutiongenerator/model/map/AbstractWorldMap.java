@@ -2,7 +2,6 @@ package com.evolutiongenerator.model.map;
 
 import com.evolutiongenerator.constant.MapVariant;
 import com.evolutiongenerator.model.mapObject.Animal.Animal;
-import com.evolutiongenerator.model.mapObject.IMapElement;
 import com.evolutiongenerator.model.mapObject.Plant;
 import com.evolutiongenerator.model.ui.MapVisualizer;
 import com.evolutiongenerator.utils.Randomize;
@@ -11,6 +10,11 @@ import com.evolutiongenerator.utils.Vector2d;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Abstract class representing a map of the world.
+ *
+ * @author Paweł Motyka
+ */
 public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObserver {
     protected final HashMap<Vector2d, TreeSet<Animal>> animalOnFields = new HashMap<>();
     protected final Map<Vector2d, Integer> mapDeathStat = new HashMap<>();
@@ -69,13 +73,13 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
         for (Vector2d vector2d : deadAnimalsHashMap.keySet()) {
             Animal animal = deadAnimalsHashMap.get(vector2d);
             int tmp = mapDeathStat.get(animal.getPosition()) != null ? mapDeathStat.get(animal.getPosition()) : 0;
-            mapDeathStat.put(animal.getPosition(),tmp + 1);
+            mapDeathStat.put(animal.getPosition(), tmp + 1);
             animalsToRemove.add(animal);
             animalHashMap.remove(animal);
             animalOnFields.get(vector2d).remove(animal);
             mapBoundaries.removePosition(vector2d);
 
-            if (animalOnFields.get(vector2d).size() == 2){
+            if (animalOnFields.get(vector2d).size() == 2) {
                 conflictedPositions.remove(animal.getPosition());
             }
 
@@ -139,7 +143,7 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
 
     @Override
     public Set<Vector2d> getPlantToConsume() {
-        return plantPositionsToConsume ;
+        return plantPositionsToConsume;
     }
 
     @Override
@@ -157,7 +161,7 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
         if (animals.size() == 0)
             return null;
 
-        if (animals.size() == 1){
+        if (animals.size() == 1) {
             return animals.first();
         }
 
@@ -188,6 +192,7 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
 
     /**
      * Used to remove plants from the map
+     *
      * @param position from which the plant is to be removed
      */
     public void removePlant(Vector2d position) {
@@ -220,16 +225,18 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
     public Vector2d generateRandomPosition() {
         int tmpX = Randomize.generateInt(width, 0);
         int tmpY = Randomize.generateInt(height, 0);
-        Vector2d position = new Vector2d(tmpX,tmpY);
-        while (!isInsideMap(position)){
+        Vector2d position = new Vector2d(tmpX, tmpY);
+        while (!isInsideMap(position)) {
             tmpX = Randomize.generateInt(width, 0);
             tmpY = Randomize.generateInt(height, 0);
-            position = new Vector2d(tmpX,tmpY);
-        };
+            position = new Vector2d(tmpX, tmpY);
+        }
+        ;
         return position;
     }
-    public void decreaseAnimalsEnergy(){
-        for (Animal animal: animalHashMap.keySet()){
+
+    public void decreaseAnimalsEnergy() {
+        for (Animal animal : animalHashMap.keySet()) {
             if (animal.getEnergy() > 0) {
                 animal.decreaseEnergy(1);
                 animal.increaseLivedDays();
@@ -242,8 +249,8 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
         }
     }
 
-    public void addDeadAnimal(Animal animal){
-        deadAnimalsHashMap.put(animal.getPosition(),animal);
+    public void addDeadAnimal(Animal animal) {
+        deadAnimalsHashMap.put(animal.getPosition(), animal);
     }
 
     public abstract Vector2d[] getMapBounds();
@@ -267,11 +274,11 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
         return this.conflictedPositions;
     }
 
-    public void cleanPlantsToConsume(){
+    public void cleanPlantsToConsume() {
         this.plantPositionsToConsume.clear();
     }
 
-    public void clearReproduceConflictedPositions(){
+    public void clearReproduceConflictedPositions() {
         this.conflictedPositions.clear();
     }
 

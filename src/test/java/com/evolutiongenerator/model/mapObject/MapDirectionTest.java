@@ -153,49 +153,49 @@ public class MapDirectionTest {
     @Test
     public void testToStringNorth(){
         MapDirection direction = MapDirection.NORTH;
-        assertEquals("NORTH", direction.toString());
+        assertEquals("N", direction.toString());
     }
 
     @Test
     public void testToStringNorthEast(){
         MapDirection direction = MapDirection.NORTH_EAST;
-        assertEquals("NORTH_EAST", direction.toString());
+        assertEquals("NE", direction.toString());
     }
 
     @Test
     public void testToStringEast(){
         MapDirection direction = MapDirection.EAST;
-        assertEquals("EAST", direction.toString());
+        assertEquals("E", direction.toString());
     }
 
     @Test
     public void testToStringSouthEast(){
         MapDirection direction = MapDirection.SOUTH_EAST;
-        assertEquals("SOUTH_EAST", direction.toString());
+        assertEquals("SE", direction.toString());
     }
 
     @Test
     public void testToStringSouth(){
         MapDirection direction = MapDirection.SOUTH;
-        assertEquals("SOUTH", direction.toString());
+        assertEquals("S", direction.toString());
     }
 
     @Test
     public void testToStringSouthWest(){
         MapDirection direction = MapDirection.SOUTH_WEST;
-        assertEquals("SOUTH_WEST", direction.toString());
+        assertEquals("SW", direction.toString());
     }
 
     @Test
     public void testToStringWest(){
         MapDirection direction = MapDirection.WEST;
-        assertEquals("WEST", direction.toString());
+        assertEquals("W", direction.toString());
     }
 
     @Test
     public void testToStringNorthWest(){
         MapDirection direction = MapDirection.NORTH_WEST;
-        assertEquals("NORTH_WEST", direction.toString());
+        assertEquals("NW", direction.toString());
     }
 
     @Test

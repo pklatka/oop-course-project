@@ -2,6 +2,11 @@ package com.evolutiongenerator.utils;
 
 import java.util.Objects;
 
+/**
+ * Class that represents a 2D vector.
+ *
+ * @author Patryk Klatka, Paweł Motyka
+ */
 public class Vector2d {
     public final int x;
     public final int y;

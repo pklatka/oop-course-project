@@ -1,5 +1,6 @@
-package com.evolutiongenerator.constant;
+package com.evolutiongenerator.model.utils;
 
+import com.evolutiongenerator.utils.IntegerValue;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

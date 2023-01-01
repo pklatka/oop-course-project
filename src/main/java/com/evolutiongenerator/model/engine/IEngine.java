@@ -2,6 +2,7 @@ package com.evolutiongenerator.model.engine;
 
 import com.evolutiongenerator.model.mapObject.Animal.Animal;
 import com.evolutiongenerator.stage.ISimulationObserver;
+
 /**
  * Interface for simulation engine which is responsible for initializing and running simulation.
  *

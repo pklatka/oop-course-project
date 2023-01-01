@@ -6,7 +6,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 /**
- * Wrapper class for storing data in ListView
+ * Wrapper class for storing data in ListView.
  *
  * @author Patryk Klatka
  */
@@ -18,8 +18,8 @@ public class SortedListViewRecord {
     /**
      * SortedListViewRecord constructor.
      *
-     * @param priority Priority (the smaller the value, the higher the priority)
-     * @param value    Value
+     * @param priority Priority (the smaller the value, the higher the priority).
+     * @param value    Value.
      */
     public SortedListViewRecord(int priority, String value) {
         this.priority.set(priority);
@@ -29,7 +29,7 @@ public class SortedListViewRecord {
     /**
      * Gets record as string.
      *
-     * @return String representation of record
+     * @return String representation of record.
      */
     @Override
     public String toString() {
@@ -39,7 +39,7 @@ public class SortedListViewRecord {
     /**
      * Checks if two records are equal.
      *
-     * @return True if records are equal, false otherwise
+     * @return True if records are equal, false otherwise.
      */
     @Override
     public boolean equals(Object o) {

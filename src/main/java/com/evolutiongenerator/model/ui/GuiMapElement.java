@@ -2,7 +2,7 @@ package com.evolutiongenerator.model.ui;
 
 import com.evolutiongenerator.constant.ConfigurationConstant;
 import com.evolutiongenerator.constant.ISimulationConfigurationValue;
-import com.evolutiongenerator.constant.IntegerValue;
+import com.evolutiongenerator.utils.IntegerValue;
 import com.evolutiongenerator.model.mapObject.IMapElement;
 import com.evolutiongenerator.model.mapObject.Plant;
 import javafx.geometry.Pos;
@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Class representing map element in GUI
+ * Class representing map element in GUI.
  *
  * @author Patryk Klatka
  */
@@ -29,9 +29,12 @@ public class GuiMapElement extends StackPane {
     private final Map<ConfigurationConstant, ISimulationConfigurationValue> simulationOptions;
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param mapElement map element to be represented
+     * @param width             width of the map element
+     * @param height            height of the map element
+     * @param mapElement        map element to be represented.
+     * @param simulationOptions simulation options
      */
     public GuiMapElement(double width, double height, IMapElement mapElement, Map<ConfigurationConstant, ISimulationConfigurationValue> simulationOptions) throws IllegalArgumentException {
         super();
@@ -50,6 +53,11 @@ public class GuiMapElement extends StackPane {
         }
     }
 
+    /**
+     * Checks if two elements are equal.
+     *
+     * @param o object to be compared.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -64,7 +72,9 @@ public class GuiMapElement extends StackPane {
     }
 
     /**
-     * Gets HSL color representing energy of animal
+     * Gets HSL color representing energy of animal.
+     *
+     * @param percentage percentage of energy.
      */
     Color getAnimalEnergyColor(double percentage) {
         double saturation = 1.0;
@@ -83,7 +93,9 @@ public class GuiMapElement extends StackPane {
     }
 
     /**
-     * Creates map element representation
+     * Creates map element representation.
+     *
+     * @throws IllegalArgumentException If no start energy was set.
      */
     private void createMapElementRepresentation() throws IllegalArgumentException {
         if (mapElement instanceof Animal animal) {
@@ -115,7 +127,7 @@ public class GuiMapElement extends StackPane {
     }
 
     /**
-     * Selects map element
+     * Selects map element.
      */
     public void selectMapElement() {
         if (this.getChildren().size() < 1) {
@@ -126,7 +138,7 @@ public class GuiMapElement extends StackPane {
     }
 
     /**
-     * Deselects map element
+     * Deselects map element.
      */
     public void unselectMapElement() {
         if (this.getChildren().size() < 1) {
@@ -137,7 +149,7 @@ public class GuiMapElement extends StackPane {
     }
 
     /**
-     * Gets map element
+     * Gets map element.
      */
     public IMapElement getMapElement() {
         return mapElement;

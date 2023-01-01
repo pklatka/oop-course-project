@@ -7,6 +7,7 @@ import com.evolutiongenerator.model.mapObject.Animal.Animal;
 import com.evolutiongenerator.model.mapObject.Animal.Genes;
 import com.evolutiongenerator.utils.Vector2d;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -21,8 +22,8 @@ public class MapTest {
     private static Genes genes;
     private static Animal animal;
 
-    @BeforeAll
-    public static void init() {
+    @BeforeEach
+    public void init() {
         map = new ForestedEquatorMap(20, 20, 20, MapVariant.GLOBE);
         genes = new Genes(10, 0, 0, MutationVariant.SLIGHT_CORRECTION, AnimalBehaviourVariant.NORMAL);
         animal = new Animal(map, new Vector2d(2, 2), genes, 200, 30, 50);
@@ -33,7 +34,6 @@ public class MapTest {
     public void isInsideMapTest() {
         assertTrue(map.isInsideMap(animal.getPosition()));
     }
-
     @Test
     public void placeTest() {
         assertEquals(1, map.getAnimalsFrom(new Vector2d(2, 2)).size());

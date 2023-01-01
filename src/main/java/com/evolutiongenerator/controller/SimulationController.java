@@ -4,17 +4,17 @@ import com.evolutiongenerator.constant.*;
 import com.evolutiongenerator.model.engine.IEngine;
 import com.evolutiongenerator.model.engine.SimulationEngine;
 import com.evolutiongenerator.model.mapObject.Animal.Animal;
-import com.evolutiongenerator.model.mapObject.Animal.Genes;
 import com.evolutiongenerator.model.mapObject.IMapElement;
 import com.evolutiongenerator.model.mapObject.Plant;
 import com.evolutiongenerator.model.ui.GuiMapElement;
 import com.evolutiongenerator.model.ui.SortedListViewRecord;
 import com.evolutiongenerator.stage.ISimulationObserver;
+import com.evolutiongenerator.utils.DoubleValue;
+import com.evolutiongenerator.utils.IntegerValue;
+import com.evolutiongenerator.utils.StringValue;
 import com.evolutiongenerator.utils.Vector2d;
 import javafx.application.Platform;
 import javafx.beans.Observable;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -33,7 +33,7 @@ import java.net.URL;
 import java.util.*;
 
 /**
- * Controller for simulation stage
+ * Controller for simulation stage.
  *
  * @author Patryk Klatka
  */
@@ -104,16 +104,16 @@ public class SimulationController implements Initializable, ISimulationObserver 
     // ****** Setters ******
 
     /**
-     * Sets simulation arguments
+     * Sets simulation arguments.
      *
-     * @param simulationOptions Simulation arguments
+     * @param simulationOptions Simulation arguments.
      */
     public void setSimulationOptions(Map<ConfigurationConstant, ISimulationConfigurationValue> simulationOptions) {
         this.simulationOptions = simulationOptions;
     }
 
     /**
-     * Sets simulation options
+     * Sets simulation options.
      */
     private void setSimulationOptions() {
         for (ConfigurationConstant configurationConstant : simulationOptions.keySet()) {
@@ -131,9 +131,9 @@ public class SimulationController implements Initializable, ISimulationObserver 
     // ****** Handlers ******
 
     /**
-     * Handles simulation control button
+     * Handles simulation control button.
      *
-     * @param actionEvent Action event
+     * @param actionEvent Action event.
      */
     private void simulationControlButtonHandler(ActionEvent actionEvent) {
         if (simulationControlButton.getText().equals("Start symulacji")) {
@@ -142,11 +142,10 @@ public class SimulationController implements Initializable, ISimulationObserver 
             resetPopularGenomes();
 
             // Get selected animal and send it to simulation
-            if(selectedAnimal != null && selectedAnimal.getMapElement() instanceof Animal animal){
+            if (selectedAnimal != null && selectedAnimal.getMapElement() instanceof Animal animal) {
                 engine.selectAnimalToObserve(animal);
-            }else{
+            } else {
                 resetSelectedAnimal();
-                resetAnimalStatistics();
             }
 
             engine.resume();
@@ -158,9 +157,11 @@ public class SimulationController implements Initializable, ISimulationObserver 
     }
 
     /**
-     * Handles popular genomes list view
+     * Handles popular genomes list view.
      *
-     * @param observable Observable
+     * @param observable Observable.
+     * @param oldValue   Old value.
+     * @param newValue   New value.
      */
     private void popularGenomesHandler(Observable observable, SortedListViewRecord oldValue, SortedListViewRecord newValue) {
         if (isSimulationRunning) {
@@ -178,6 +179,11 @@ public class SimulationController implements Initializable, ISimulationObserver 
         }
     }
 
+    /**
+     * Handles map element click.
+     *
+     * @param event Mouse event.
+     */
     private void mapElementMouseClickHandler(MouseEvent event) {
         if (isSimulationRunning) {
             return;
@@ -196,13 +202,17 @@ public class SimulationController implements Initializable, ISimulationObserver 
             selectedAnimal = (GuiMapElement) event.getSource();
             selectedAnimal.selectMapElement();
             animalStatisticsStatus.setText("Wybrano zwierzę do śledzenia");
+
+            if (selectedAnimal != null && selectedAnimal.getMapElement() instanceof Animal animal) {
+                engine.selectAnimalToObserve(animal);
+            }
         }
     }
 
     // ****** Utils ******
 
     /**
-     * Resets selected animals on map
+     * Resets selected animals on map.
      */
     private void resetSelectedAnimal() {
         if (selectedAnimal != null) {
@@ -215,7 +225,7 @@ public class SimulationController implements Initializable, ISimulationObserver 
     }
 
     /**
-     * Resets popular genomes list view
+     * Resets popular genomes list view.
      */
     private void resetPopularGenomes() {
         if (popularGenomes.getSelectionModel().getSelectedItem() == null) {
@@ -229,11 +239,10 @@ public class SimulationController implements Initializable, ISimulationObserver 
     // ****** Initializers ******
 
     /**
-     * Initializes simulation map
+     * Initializes simulation map.
      */
     private void initializeMap() {
         GridPane grid = new GridPane();
-//        grid.setGridLinesVisible(true);
         grid.setStyle("-fx-border-color: #003d00; -fx-border-width: 1px;");
 
         for (int i = 0; i < mapWidth; i++) {
@@ -263,7 +272,7 @@ public class SimulationController implements Initializable, ISimulationObserver 
     }
 
     /**
-     * Initializes simulation stage
+     * Initializes simulation stage.
      */
     private void initializeStage() {
         // Read arguments
@@ -298,10 +307,10 @@ public class SimulationController implements Initializable, ISimulationObserver 
 
 
     /**
-     * Main method for initializing simulation stage
+     * Main method for initializing simulation stage.
      *
-     * @param location  URL
-     * @param resources Resource bundle
+     * @param location  URL.
+     * @param resources Resource bundle.
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -309,11 +318,10 @@ public class SimulationController implements Initializable, ISimulationObserver 
     }
 
     /**
-     * Closes simulation stage
+     * Closes simulation stage.
      */
-    public void exit(WindowEvent event){
+    public void exit(WindowEvent event) {
         engine.kill();
-//        simulationThread.interrupt();
     }
 
     // ****** Render utils ******
@@ -334,7 +342,7 @@ public class SimulationController implements Initializable, ISimulationObserver 
                     case NUMBER_OF_PLANTS -> numberOfPlants.setText(integerValue.toString());
                     case NUMBER_OF_EMPTY_FIELDS -> numberOfEmptyFields.setText(integerValue.toString());
                 }
-            }else if (value instanceof DoubleValue doubleValue) {
+            } else if (value instanceof DoubleValue doubleValue) {
                 switch (configurationConstant) {
                     case AVERAGE_ANIMAL_LIFESPAN -> averageAnimalLifespan.setText(doubleValue.toString());
                     case AVERAGE_ANIMAL_ENERGY -> averageAnimalEnergy.setText(doubleValue.toString());
@@ -346,28 +354,30 @@ public class SimulationController implements Initializable, ISimulationObserver 
     /**
      * Add element to map (GridPane).
      *
-     * @param mapElement Element to add.
+     * @param mapElement       Element to add.
+     * @param position         Position on map.
+     * @param selectMapElement If true, element will be selected.
      */
     @Override
     public boolean addElementToMap(IMapElement mapElement, Vector2d position, boolean selectMapElement) {
         try {
             Vector2d mapPosition = new Vector2d(position.x, mapHeight - 1 - position.y);
             StackPane stackPane = mapFields.get(mapPosition);
-            if(stackPane == null){
+            if (stackPane == null) {
                 return false;
             }
 
             GuiMapElement guiMapElement = new GuiMapElement(cellWidth, cellHeight, mapElement, simulationOptions);
             guiMapElement.setOnMouseClicked(this::mapElementMouseClickHandler);
 
-            if(selectMapElement){
+            if (selectMapElement) {
                 guiMapElement.selectMapElement();
                 selectedAnimal = guiMapElement;
             }
 
-            if(mapElement instanceof Plant){
+            if (mapElement instanceof Plant) {
                 stackPane.getChildren().add(0, guiMapElement);
-            }else{
+            } else {
                 stackPane.getChildren().add(guiMapElement);
             }
             elementProperties.put(mapElement, new Pair<>(mapPosition, guiMapElement));
@@ -408,10 +418,12 @@ public class SimulationController implements Initializable, ISimulationObserver 
 
     /**
      * Change element position on map (GridPane).
+     * <p>
      * Note: you can only change position of the animal.
      *
      * @param mapElement  Element to change position.
      * @param newPosition New position of element.
+     * @throws IllegalArgumentException If element is not an animal.
      */
     @Override
     public void changeElementPositionOnMap(IMapElement mapElement, Vector2d newPosition) throws IllegalArgumentException {
@@ -476,32 +488,17 @@ public class SimulationController implements Initializable, ISimulationObserver 
     public void updateAnimalStatistics(Map<AnimalStatistics, ISimulationConfigurationValue> animalStatistics) {
         for (AnimalStatistics configurationConstant : animalStatistics.keySet()) {
             ISimulationConfigurationValue value = animalStatistics.get(configurationConstant);
-            if (value instanceof IntegerValue integerValue) {
+            if (value instanceof StringValue stringValue) {
                 switch (configurationConstant) {
-                    case ANIMAL_ACTIVE_GENOME -> selectedAnimalActiveGenome.setText(integerValue.toString());
-                    case ANIMAL_ENERGY -> selectedAnimalEnergy.setText(integerValue.toString());
-                    case ANIMAL_LIFESPAN -> selectedAnimalLifespan.setText(integerValue.toString());
-                    case ANIMAL_NUMBER_OF_CHILDREN -> selectedAnimalNumberOfChildren.setText(integerValue.toString());
-                    case ANIMAL_EATEN_PLANTS -> selectedAnimalEatenPlants.setText(integerValue.toString());
-                }
-            } else if (value instanceof StringValue stringValue) {
-                switch (configurationConstant) {
+                    case ANIMAL_ACTIVE_GENOME -> selectedAnimalActiveGenome.setText(stringValue.toString());
                     case ANIMAL_GENOME -> selectedAnimalGenome.setText(stringValue.toString());
                     case ANIMAL_DEATH_DAY -> selectedAnimalDeathDay.setText(stringValue.toString());
+                    case ANIMAL_ENERGY -> selectedAnimalEnergy.setText(stringValue.toString());
+                    case ANIMAL_LIFESPAN -> selectedAnimalLifespan.setText(stringValue.toString());
+                    case ANIMAL_NUMBER_OF_CHILDREN -> selectedAnimalNumberOfChildren.setText(stringValue.toString());
+                    case ANIMAL_EATEN_PLANTS -> selectedAnimalEatenPlants.setText(stringValue.toString());
                 }
             }
         }
-    }
-
-    public void resetAnimalStatistics(){
-        Map<AnimalStatistics, ISimulationConfigurationValue> animalStatistics = new HashMap<>();
-        animalStatistics.put(AnimalStatistics.ANIMAL_ACTIVE_GENOME, new IntegerValue(0));
-        animalStatistics.put(AnimalStatistics.ANIMAL_ENERGY, new IntegerValue(0));
-        animalStatistics.put(AnimalStatistics.ANIMAL_LIFESPAN, new IntegerValue(0));
-        animalStatistics.put(AnimalStatistics.ANIMAL_NUMBER_OF_CHILDREN, new IntegerValue(0));
-        animalStatistics.put(AnimalStatistics.ANIMAL_EATEN_PLANTS, new IntegerValue(0));
-        animalStatistics.put(AnimalStatistics.ANIMAL_GENOME, new StringValue("-"));
-        animalStatistics.put(AnimalStatistics.ANIMAL_DEATH_DAY, new StringValue("b. d."));
-        updateAnimalStatistics(animalStatistics);
     }
 }

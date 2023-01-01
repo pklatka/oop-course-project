@@ -113,7 +113,7 @@
                         <Font name="Arial" size="17.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="genomLength" layoutX="707.0" layoutY="259.0" prefHeight="25.0" prefWidth="150.0" />
+                  <TextField fx:id="genomeLength" layoutX="707.0" layoutY="259.0" prefHeight="25.0" prefWidth="150.0" />
                   <Label layoutX="469.0" layoutY="309.0" text="Startowa energia zwierzaków:">
                      <font>
                         <Font name="Arial" size="17.0" />

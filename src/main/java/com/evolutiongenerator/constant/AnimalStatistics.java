@@ -1,5 +1,10 @@
 package com.evolutiongenerator.constant;
 
+/**
+ * Animal statistics constants.
+ *
+ * @author Patryk Klatka
+ */
 public enum AnimalStatistics {
     ANIMAL_GENOME,
     ANIMAL_ACTIVE_GENOME,

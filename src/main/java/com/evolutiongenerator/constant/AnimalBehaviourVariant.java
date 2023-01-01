@@ -3,13 +3,13 @@ package com.evolutiongenerator.constant;
 import java.util.Arrays;
 
 /**
- * Animal behaviour variants constants
+ * Animal behaviour variants constants.
  *
  * @author Patryk Klatka
  */
 public enum AnimalBehaviourVariant implements ISimulationConfigurationValue {
     /**
-     * The animal always performs the genes sequentially, one after the other
+     * The animal always performs the genes sequentially, one after the other.
      */
     NORMAL,
 
@@ -20,9 +20,9 @@ public enum AnimalBehaviourVariant implements ISimulationConfigurationValue {
     A_BIT_OF_MADNESS;
 
     /**
-     * Returns a string representation of constant
+     * Returns a string representation of constant.
      *
-     * @return String representation of constant
+     * @return String representation of constant.
      */
     public String toString() {
         return switch (this) {
@@ -32,9 +32,10 @@ public enum AnimalBehaviourVariant implements ISimulationConfigurationValue {
     }
 
     /**
-     * Returns a parsed from string AnimalBehaviourVariant value
+     * Returns a parsed from string AnimalBehaviourVariant value.
      *
-     * @return ISimulationConfigurationValue value
+     * @param value String value.
+     * @return ISimulationConfigurationValue value.
      */
     public static ISimulationConfigurationValue fromString(String value) throws IllegalArgumentException {
         return Arrays.stream(AnimalBehaviourVariant.values())

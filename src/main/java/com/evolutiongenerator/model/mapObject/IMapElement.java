@@ -5,4 +5,5 @@ package com.evolutiongenerator.model.mapObject;
  *
  * @author Patryk Klatka, Paweł Motyka
  */
-public interface IMapElement { }
+public interface IMapElement {
+}

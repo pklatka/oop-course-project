@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * Creates a new simulation stage
+ * Creates a new simulation stage.
  *
  * @author Patryk Klatka
  */
@@ -25,9 +25,9 @@ public class SimulationStage extends Application {
     /**
      * SimulationStage constructor.
      *
-     * @param args  Simulation configuration
-     * @param stage Stage
-     * @throws IOException If the fxml file is not found
+     * @param args  Simulation configuration.
+     * @param stage Stage.
+     * @throws IOException If the fxml file is not found.
      */
     public SimulationStage(Map<ConfigurationConstant, ISimulationConfigurationValue> args, Stage stage) throws IOException {
         this.args = args;
@@ -37,8 +37,8 @@ public class SimulationStage extends Application {
     /**
      * Starts simulation stage.
      *
-     * @param primaryStage Stage
-     * @throws IOException If the fxml file is not found
+     * @param primaryStage Stage.
+     * @throws IOException If the fxml file is not found.
      */
     @Override
     public void start(Stage primaryStage) throws IOException {
@@ -61,7 +61,7 @@ public class SimulationStage extends Application {
     /**
      * Launches the stage.
      *
-     * @param args Arguments
+     * @param args Arguments.
      */
     public static void main(String[] args) {
         launch(args);

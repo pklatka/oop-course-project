@@ -1,4 +1,6 @@
-package com.evolutiongenerator.constant;
+package com.evolutiongenerator.utils;
+
+import com.evolutiongenerator.constant.ISimulationConfigurationValue;
 
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
@@ -12,6 +14,12 @@ import java.util.Objects;
 public class PathValue implements ISimulationConfigurationValue {
     private String path;
 
+    /**
+     * Constructor which creates PathValue from string.
+     *
+     * @param path String path.
+     * @throws InvalidPathException if the string is not a valid path.
+     */
     public PathValue(String path) throws InvalidPathException {
         try {
             setValue(path);
@@ -33,6 +41,12 @@ public class PathValue implements ISimulationConfigurationValue {
         return Objects.hash(path);
     }
 
+    /**
+     * Sets path from string.
+     *
+     * @param path String path.
+     * @throws InvalidPathException if the string is not a valid path.
+     */
     public void setValue(String path) throws InvalidPathException {
         try {
             Paths.get(path);
@@ -52,9 +66,9 @@ public class PathValue implements ISimulationConfigurationValue {
     }
 
     /**
-     * Returns a parsed from string PathValue value
+     * Returns a parsed from string PathValue value.
      *
-     * @return ISimulationConfigurationValue value
+     * @return ISimulationConfigurationValue value.
      */
     public static ISimulationConfigurationValue fromString(String value) {
         return new PathValue(value);
