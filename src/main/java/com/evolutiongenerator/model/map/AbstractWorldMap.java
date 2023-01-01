@@ -275,6 +275,10 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
         this.conflictedPositions.clear();
     }
 
+    public void increasePlantSpaceAmount(){
+        this.availableGrassFields++;
+    }
+
     @Override
     public String toString() {
         MapVisualizer mapVisualizer = new MapVisualizer(this);

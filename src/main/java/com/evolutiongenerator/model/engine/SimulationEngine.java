@@ -160,6 +160,8 @@ public class SimulationEngine implements IEngine, Runnable {
 
                             if (eatenPlant.isOnEquator()) {
                                 ((ForestedEquatorMap) map).decreaseEquatorPlantAmount();
+                            } else {
+                                map.increasePlantSpaceAmount();
                             }
 
                             countPlants.decrementAndGet();
@@ -215,7 +217,6 @@ public class SimulationEngine implements IEngine, Runnable {
 
                     // Decrease energy
                     map.decreaseAnimalsEnergy();
-
                     // Run GUI methods
                     // Note: Why we are using booleans instead of throwing exception?
                     // try-catch block is time-consuming, so we want to avoid it.

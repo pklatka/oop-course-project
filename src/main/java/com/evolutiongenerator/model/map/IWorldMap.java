@@ -158,4 +158,6 @@ public interface IWorldMap {
 
     void addDeadAnimal(Animal animal);
 
+    void increasePlantSpaceAmount();
+
 }

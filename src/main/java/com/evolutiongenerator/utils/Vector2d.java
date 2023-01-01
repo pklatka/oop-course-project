@@ -24,54 +24,55 @@ public class Vector2d {
     }
 
     public Vector2d upperRight(Vector2d other){
-        // Pierwsza ćwiartka
+        // Fist quadrant
         if(this.x < other.x && this.y < other.y){
             return other;
         }
 
-        // Druga ćwiartka
+        // Second quadrant
         if (this.x > other.x && this.y < other.y){
             return new Vector2d(this.x, other.y);
         }
 
-        // Trzecia ćwiartka
+        // Third quadrant
         if (this.x > other.x && this.y > other.y){
             return this;
         }
 
-        // Czwarta ćwiartka
+        // Fourth quadrant
         if (this.x < other.x && this.y > other.y){
             return new Vector2d(other.x, this.y);
         }
 
-        // Jeżeli punkt other ma chociaż jedną współrzędną taką samą,
-        // to nie powstanie prostokąt.
+
+        // If point other has at least one coordinate equal to this point
+        // then rectangle won't be created
         return null;
     }
 
     public Vector2d lowerLeft(Vector2d other){
-        // Pierwsza ćwiartka
+        // Fist quadrant
         if(this.x < other.x && this.y < other.y){
             return this;
         }
 
-        // Druga ćwiartka
+        // Second quadrant
         if (this.x > other.x && this.y < other.y){
             return new Vector2d(other.x, this.y);
         }
 
-        // Trzecia ćwiartka
+        // Third quadrant
         if (this.x > other.x && this.y > other.y){
             return other;
         }
 
-        // Czwarta ćwiartka
+        // Fourth quadrant
         if (this.x < other.x && this.y > other.y){
             return new Vector2d(this.x, other.y);
         }
 
-        // Jeżeli punkt other ma chociaż jedną współrzędną taką samą,
-        // to nie powstanie prostokąt.
+        // If point other has at least one coordinate equal to this point
+        // then rectangle won't be created
         return null;
     }
 

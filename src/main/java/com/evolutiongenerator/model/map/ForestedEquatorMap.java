@@ -26,7 +26,8 @@ public class ForestedEquatorMap extends AbstractWorldMap implements IWorldMap {
 
     @Override
     public Plant growPlant() {
-        if (availableGrassFields <= 0 || plantHashMap.size() >= width * (height - 1)) return null;
+        if (availableGrassFields <= 0 || plantHashMap.size() >= width * height)
+            return null;
 
         Vector2d equatorTopRight = getEquatorTopRight();
         Vector2d equatorBottomLeft = getEquatorBottomLeft();
@@ -35,7 +36,6 @@ public class ForestedEquatorMap extends AbstractWorldMap implements IWorldMap {
         if (Randomize.generateBooleanWithProbability(0.8) && plantsOnEquator < getEquatorCellAmount()) {
             tmpX = Randomize.generateInt(equatorTopRight.x, equatorBottomLeft.x);
             tmpY = Randomize.generateInt(equatorTopRight.y, equatorBottomLeft.y);
-
             while (isPlantAt(new Vector2d(tmpX, tmpY))) {
                 tmpX = Randomize.generateInt(equatorTopRight.x, equatorBottomLeft.x);
                 tmpY = Randomize.generateInt(equatorTopRight.y, equatorBottomLeft.y);
@@ -49,10 +49,10 @@ public class ForestedEquatorMap extends AbstractWorldMap implements IWorldMap {
             tmpX = Randomize.generateInt(this.topRightVector.x, this.bottomLeftVector.x);
             tmpY = Randomize.generateInt(topRightVector.y, bottomLeftVector.y);
 
-            if (plantHashMap.size() - plantsOnEquator >= width * (height - 1)  )
+            if (plantHashMap.size() - plantsOnEquator >= width * height)
                 return null;
 
-            while (!(tmpY > equatorTopRight.y || tmpY < equatorBottomLeft.y) || isPlantAt(new Vector2d(tmpX, tmpY))) {
+            while (!(tmpY >= equatorTopRight.y || tmpY <= equatorBottomLeft.y) || isPlantAt(new Vector2d(tmpX, tmpY))) {
                 tmpX = Randomize.generateInt(this.topRightVector.x, this.bottomLeftVector.x);
                 tmpY = Randomize.generateInt(topRightVector.y, bottomLeftVector.y);
             }
@@ -88,14 +88,14 @@ public class ForestedEquatorMap extends AbstractWorldMap implements IWorldMap {
      */
     private Vector2d getEquatorTopRight() {
         int equatorCellAmount = getEquatorHeightCellAmount();
-        return new Vector2d(topRightVector.x, (this.height - 1) / 2 + equatorCellAmount / 2);
+        return new Vector2d(topRightVector.x, (this.height - 1) / 2 + equatorCellAmount / 2 + 1);
     }
 
-    private int getEquatorCellAmount(){
+    private int getEquatorCellAmount() {
         return getEquatorHeightCellAmount() * width;
     }
 
-    public void decreaseEquatorPlantAmount(){
+    public void decreaseEquatorPlantAmount() {
         this.plantsOnEquator--;
     }
 }

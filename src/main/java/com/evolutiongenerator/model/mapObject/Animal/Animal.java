@@ -40,16 +40,7 @@ public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
 
     @Override
     public String toString() {
-        return switch (heading) {
-            case NORTH -> "N " + energy + "  " + position + " DNI " + getDays() + " dzieci " + getChildrenAmount();
-            case SOUTH -> "S " + energy + "  " + position + " DNI " + getDays() + " dzieci " + getChildrenAmount();
-            case EAST -> "E " + energy + "  " + position + " DNI " + getDays() + " dzieci " + getChildrenAmount();
-            case WEST -> "W " + energy + "  " + position + " DNI " + getDays() + " dzieci " + getChildrenAmount();
-            case NORTH_EAST -> "NE " + energy + "  " + position + " DNI " + getDays() + " dzieci " + getChildrenAmount();
-            case NORTH_WEST -> "NW " + energy + "  " + position + " DNI " + getDays() + " dzieci " + getChildrenAmount();
-            case SOUTH_EAST -> "SE " + energy + "  " + position + " DNI " + getDays() + " dzieci " + getChildrenAmount();
-            case SOUTH_WEST -> "SW " + energy + "  " + position + " DNI " + getDays() + " dzieci " + getChildrenAmount();
-        };
+        return heading.toString() + " " +  energy + " " + position + " DNI " + getDays() + " dzieci " + getChildrenAmount();
     }
 
 
@@ -118,7 +109,6 @@ public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
         MapDirection direction = changeDirection(currentGen);
         Vector2d oldPosition = new Vector2d(position.x, position.y);
         Vector2d unitVector = direction.toUnitVector();
-
         if (!map.isInsideMap(position.add(unitVector))) {
             Vector2d preferredPosition = position.add(unitVector);
             Vector2d newPosition = map.getRelativePositionToMapVariant(preferredPosition);
@@ -190,6 +180,8 @@ public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
     }
 
     public Plant consume(Plant plant) {
+        if (plant == null)
+            return null;
         this.energy += plant.getEnergy();
         eatenPlants++;
         this.map.removePlant(plant.getPosition());
@@ -237,5 +229,9 @@ public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
 
     public boolean isAlive(){
         return isAlive;
+    }
+
+    public MapDirection getHeading() {
+        return heading;
     }
 }
