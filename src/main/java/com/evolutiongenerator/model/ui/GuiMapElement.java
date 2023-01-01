@@ -13,6 +13,7 @@ import javafx.scene.shape.Rectangle;
 import com.evolutiongenerator.model.mapObject.Animal.Animal;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Class representing map element in GUI
@@ -49,8 +50,21 @@ public class GuiMapElement extends StackPane {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GuiMapElement that = (GuiMapElement) o;
+        return Double.compare(that.width, width) == 0 && Double.compare(that.height, height) == 0 && Double.compare(that.widthPadding, widthPadding) == 0 && Double.compare(that.heightPadding, heightPadding) == 0 && Objects.equals(mapElement, that.mapElement);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(width, height, widthPadding, heightPadding, mapElement);
+    }
+
     /**
-     * Gets HSL color representing eneryg of animal
+     * Gets HSL color representing energy of animal
      */
     private Color getAnimalEnergyColor(double percentage) {
         double saturation = 1.0;

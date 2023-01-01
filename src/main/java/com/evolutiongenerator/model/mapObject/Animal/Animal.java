@@ -136,8 +136,7 @@ public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
         if (map.isOccupied(position)) {
             TreeSet<Animal> animals = map.getAnimalsFrom(position);
 
-            if (animals != null && !animals.isEmpty()) {
-                animals.add(this);
+            if (animals != null && animals.size() >= 1) {
                 this.map.addReproduceConflictedPosition(position);
             }
         }
@@ -158,11 +157,9 @@ public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
     public Animal reproduce(Animal partner) throws IllegalStateException {
 
         if (!position.equals(partner.position)) {
-            return null; // TODO naprawić to. Czemu tu są animale z inna pozycją?
-//            throw new IllegalStateException("Animals are not at the same field!");
+            return null;
         }
 
-        System.out.println("Reproduce się wykonuje ");
 
         if (energy >= ENERGY_TO_REPRODUCE && partner.energy >= ENERGY_TO_REPRODUCE) {
             int descendantEnergy = REPRODUCE_COST * 2;
@@ -209,6 +206,10 @@ public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
 
     public void decreaseEnergy(int value){
         this.energy -= value;
+
+        if (this.energy <= 0){
+            map.addDeadAnimal(this);
+        }
     }
 
     @Override

@@ -16,7 +16,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.evolutiongenerator.controller.SimulationController">
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="820.0" prefWidth="1120.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.evolutiongenerator.controller.SimulationController">
   <columnConstraints>
     <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="300.0" minWidth="300.0" prefWidth="300.0" />
     <ColumnConstraints hgrow="SOMETIMES" minWidth="500.0" />
@@ -282,7 +282,7 @@
             </ScrollPane>
          </children>
       </VBox>
-      <VBox fx:id="mapContainer" alignment="CENTER" minHeight="800.0" minWidth="800.0" GridPane.columnIndex="1">
+      <VBox fx:id="mapContainer" alignment="CENTER" minHeight="800.0" minWidth="800.0" style="-fx-background-color: #003d00;" GridPane.columnIndex="1">
          <padding>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </padding></VBox>

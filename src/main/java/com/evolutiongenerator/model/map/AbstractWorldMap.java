@@ -74,6 +74,11 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
             animalHashMap.remove(animal);
             animalOnFields.get(vector2d).remove(animal);
             mapBoundaries.removePosition(vector2d);
+
+            if (animalOnFields.get(vector2d).size() == 2){
+                conflictedPositions.remove(animal.getPosition());
+            }
+
         }
         deadAnimalsHashMap.clear();
 
@@ -147,9 +152,7 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
     }
 
     public Animal resolveConflicts(Vector2d position, Animal animalToIgnore) {
-        System.out.println("Animal bez ignore " + getAnimalsFrom(position));
-        TreeSet<Animal> animals = getAnimalsFrom(position).stream().filter(a -> !a.equals(animalToIgnore)).collect(Collectors.toCollection(TreeSet::new));
-        System.out.println("Animals w reproduce " + animals);
+        TreeSet<Animal> animals = getAnimalsFrom(position).stream().filter(a -> !a.equals(animalToIgnore) && a.getEnergy() > 0).collect(Collectors.toCollection(TreeSet::new));
 
         if (animals.size() == 0)
             return null;
@@ -233,10 +236,14 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
             }
 
             if (animal.getEnergy() <= 0) {
-                deadAnimalsHashMap.put(animal.getPosition(),animal);
+                addDeadAnimal(animal);
             }
 
         }
+    }
+
+    public void addDeadAnimal(Animal animal){
+        deadAnimalsHashMap.put(animal.getPosition(),animal);
     }
 
     public abstract Vector2d[] getMapBounds();

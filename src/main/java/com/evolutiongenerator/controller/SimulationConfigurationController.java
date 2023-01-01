@@ -170,12 +170,12 @@ public class SimulationConfigurationController implements Initializable {
         Integer mapWidth = ((IntegerValue) simulationProperties.get(ConfigurationConstant.MAP_WIDTH).readProperty()).getValue();
         Integer mapHeight = ((IntegerValue) simulationProperties.get(ConfigurationConstant.MAP_HEIGHT).readProperty()).getValue();
 
-        if(!(0 < mapWidth && mapWidth <= 120)){
-            throw new IllegalArgumentException("Szerokość mapy musi być liczbą z przedziału (0, 120].");
+        if(!(0 < mapWidth && mapWidth <= 100)){
+            throw new IllegalArgumentException("Szerokość mapy musi być liczbą z przedziału (0, 100].");
         }
 
-        if(!(0 < mapHeight && mapHeight <= 120)){
-            throw new IllegalArgumentException("Wysokość mapy musi być liczbą z przedziału (0, 120].");
+        if(!(0 < mapHeight && mapHeight <= 100)){
+            throw new IllegalArgumentException("Wysokość mapy musi być liczbą z przedziału (0, 100].");
         }
 
         Integer numberOfFields = mapWidth * mapHeight;
@@ -195,8 +195,8 @@ public class SimulationConfigurationController implements Initializable {
             throw new IllegalArgumentException("Długość genotypu musi być większa od 0.");
         }
 
-        if(genotypeLength > 20){
-            throw new IllegalArgumentException("Długość genotypu nie może przekraczać 20.");
+        if(genotypeLength > 40){
+            throw new IllegalArgumentException("Długość genotypu nie może przekraczać 40.");
         }
 
         Integer animalStartEnergy = ((IntegerValue) simulationProperties.get(ConfigurationConstant.ANIMAL_START_ENERGY).readProperty()).getValue();
@@ -215,6 +215,10 @@ public class SimulationConfigurationController implements Initializable {
 
         if(animalReproductionEnergyCost <= 0){
             throw new IllegalArgumentException("Koszt rozmnażania się zwierząt musi być większy od 0.");
+        }
+
+        if(animalReproductionEnergy < animalReproductionEnergyCost){
+            throw new IllegalArgumentException("Energia potrzebna do rozmnażania się zwierząt musi być większa od kosztu rozmnażania się.");
         }
 
         Integer plantStartNumber = ((IntegerValue) simulationProperties.get(ConfigurationConstant.PLANT_START_NUMBER).readProperty()).getValue();

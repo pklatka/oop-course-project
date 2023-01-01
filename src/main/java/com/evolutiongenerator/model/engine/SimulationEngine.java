@@ -6,7 +6,6 @@ import com.evolutiongenerator.model.map.IWorldMap;
 import com.evolutiongenerator.model.map.ToxicCorpsesMap;
 import com.evolutiongenerator.model.mapObject.Animal.Animal;
 import com.evolutiongenerator.model.mapObject.Animal.Genes;
-import com.evolutiongenerator.model.mapObject.MoveDirection;
 import com.evolutiongenerator.model.mapObject.Plant;
 import com.evolutiongenerator.stage.ISimulationObserver;
 import com.evolutiongenerator.utils.Vector2d;
@@ -17,15 +16,22 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Class responsible for simulation logic.
+ *
+ * @author Patryk Klatka, Paweł Motyka
+ */
 public class SimulationEngine implements IEngine, Runnable {
 
     private IWorldMap map;
     // Use ArrayList to remember initial animal order
-    private final ArrayList<Animal> animalsOrder = new ArrayList<>();
-    private int moveDelay = 1000;
-    private boolean isRunning = false;
+    private final List<Animal> animalsOrder = new CopyOnWriteArrayList<>();
+    private int moveDelay = 100;
+    private boolean isRunning = true;
     private boolean isPaused = true;
     private final List<ISimulationObserver> observers = new ArrayList<>();
     private final Map<ConfigurationConstant, ISimulationConfigurationValue> simulationOptions;
@@ -33,10 +39,10 @@ public class SimulationEngine implements IEngine, Runnable {
     private final Map<SimulationStatistics, ISimulationConfigurationValue> simulationStatistics;
     int totalDeadAnimals = 0;
     int totalSumOfAnimalLifespan = 0;
-    int countPlants = 0;
-    int mapWidth = 0;
-    int mapHeight = 0;
-    int day = 0;
+    int mapWidth;
+    int mapHeight;
+    AtomicInteger countPlants = new AtomicInteger(0);
+    AtomicInteger day = new AtomicInteger(0);
 
     public SimulationEngine(Map<ConfigurationConstant, ISimulationConfigurationValue> simulationOptions, ISimulationObserver observer) {
         this.simulationOptions = simulationOptions;
@@ -87,12 +93,12 @@ public class SimulationEngine implements IEngine, Runnable {
 
         for (int i = 0; i < initialPlantsAmount.getValue(); i++) {
             Plant plant = map.growPlant();
-            observers.forEach(ob->{
-                Platform.runLater(() ->ob.addElementToMap(plant, plant.getPosition(), false));
+            observers.forEach(ob -> {
+                Platform.runLater(() -> ob.addElementToMap(plant, plant.getPosition(), false));
             });
         }
 
-        countPlants = initialPlantsAmount.getValue();
+        countPlants.set(initialPlantsAmount.getValue());
 
         // Initialize simulation statistics
         simulationStatistics = new HashMap<>();
@@ -105,126 +111,72 @@ public class SimulationEngine implements IEngine, Runnable {
 
         Platform.runLater(() -> observers.forEach(ob -> ob.renderMainStatistics(simulationStatistics)));
 
-        try{
+        try {
             initializeStatisticsFile();
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
-    // Use it when you need to wait for thread
-    private void runAndWait() throws InterruptedException {
-        try {
-            // Why using CountDownLatch?
-            // Rendering grid might be time-consuming, so we must be ensured, that old grid has already been rendered.
-            CountDownLatch doneLatch = new CountDownLatch(observers.size());
-            for (ISimulationObserver simulationStageOld : observers) {
-                Platform.runLater(() -> {
-                    try {
-//                        simulationStageOld.renderGrid();
-                    } finally {
-                        doneLatch.countDown();
-                    }
-                });
-            }
-            doneLatch.await();
-        } catch (InterruptedException e) {
-            throw new InterruptedException(e.getMessage());
-        }
-    }
 
+    /**
+     * Main simulation procedure
+     */
     @Override
     public void run() {
         try {
-            isRunning = true;
             while (isRunning) {
                 if (isPaused) {
                     // Simulation is paused
-//                    if(observedAnimal != null){
-//                        for(ISimulationObserver observer: observers){
-//                            observer.removeElementFromMap(observedAnimal);
-//                        }
-//
-//                        for(ISimulationObserver observer: observers){
-//
-//                            observer.addElementToMap(observedAnimal, observedAnimal.getPosition(),false);
-//
-//                        }
-//
-//                        observedAnimal = null;
-//
-//                    }
-                    Thread.sleep(300);
+                    Thread.sleep(100);
                 } else {
                     // Simulation executes default procedure
                     IntegerValue plantSpawnAmount = (IntegerValue) simulationOptions.get(ConfigurationConstant.PLANT_SPAWN_NUMBER);
-
                     List<Animal> animalsToRemove = map.cleanDeadAnimals();
                     animalsOrder.removeAll(animalsToRemove);
+
                     animalsToRemove.forEach((animal) -> {
-                        animal.makeDead(day);
+                        animal.makeDead(day.get());
                     });
 
-                    // Update average animal life span
-                    totalDeadAnimals += animalsToRemove.size();
-                    totalSumOfAnimalLifespan += animalsToRemove.stream().mapToInt(Animal::getDays).sum();
-                    if(totalDeadAnimals != 0){
-                        simulationStatistics.put(SimulationStatistics.AVERAGE_ANIMAL_LIFESPAN, new DoubleValue((double) (totalSumOfAnimalLifespan/totalDeadAnimals)));
-                    }
-
-                    observers.forEach(observer -> {
-                        Platform.runLater(() ->animalsToRemove.forEach(observer::removeElementFromMap));
-                    });
 
                     for (Animal animal : animalsOrder) {
-                        Platform.runLater(() -> {
-                            for(ISimulationObserver observer: observers){
-                                observer.removeElementFromMap(animal);
-                            }
-                            animal.move();
-                            for(ISimulationObserver observer: observers){
-                                if(animal == observedAnimal){
-                                    observer.addElementToMap(animal, animal.getPosition(), true);
-                                }else{
-                                    observer.addElementToMap(animal, animal.getPosition(),false);
-                                }
-                            }
-                    });
-                    }
-
-                    // Update animal number
-                    simulationStatistics.put(SimulationStatistics.NUMBER_OF_ANIMALS, new IntegerValue(animalsOrder.size()));
-
-                    // Update average animal energy
-                    if(animalsOrder.size() != 0){
-                        int sumOfAnimalEnergy = animalsOrder.stream().mapToInt(Animal::getEnergy).sum();
-                        simulationStatistics.put(SimulationStatistics.AVERAGE_ANIMAL_ENERGY, new DoubleValue((double) (sumOfAnimalEnergy/animalsOrder.size())));
+                        animal.move();
                     }
 
                     // Eat plants
-                    Thread.sleep(200);
+                    Set<Plant> plantsToRemove = ConcurrentHashMap.newKeySet();
+                    Set<Plant> plantsToAdd = ConcurrentHashMap.newKeySet();
+
                     Set<Vector2d> plantsToConsume = map.getPlantToConsume();
                     for (Vector2d vector2d : plantsToConsume) {
                         TreeSet<Animal> animals = map.getAnimalsFrom(vector2d);
                         if (animals.size() > 1) {
                             Animal bestAnimal = map.resolveConflicts(vector2d, null);
+                            if(bestAnimal == null){
+                                continue;
+                            }
                             Plant eatenPlant = bestAnimal.consume(map.getPlantFrom(vector2d));
-                            countPlants--;
-                            observers.forEach(observer -> {
-                                Platform.runLater(() -> {
-                                    observer.removeElementFromMap(eatenPlant);
-                                });
-                            });
+
+                            if (eatenPlant.isOnEquator()) {
+                                ((ForestedEquatorMap) map).decreaseEquatorPlantAmount();
+                            }
+
+                            countPlants.decrementAndGet();
+                            plantsToRemove.add(eatenPlant);
                         } else if (animals.size() == 1) {
                             Animal animal = animals.descendingSet().first();
+                            if(animal == null){
+                                continue;
+                            }
                             Plant eatenPlant = animal.consume(map.getPlantFrom(vector2d));
-                            observers.forEach(observer -> {
-                                Platform.runLater(() -> {
-                                    observer.removeElementFromMap(eatenPlant);
-                                });
-                            });
-                            countPlants--;
+
+                            if (eatenPlant.isOnEquator()) {
+                                ((ForestedEquatorMap) map).decreaseEquatorPlantAmount();
+                            }
+
+                            countPlants.decrementAndGet();
+                            plantsToRemove.add(eatenPlant);
                         }
                     }
 
@@ -232,7 +184,6 @@ public class SimulationEngine implements IEngine, Runnable {
                     map.cleanPlantsToConsume();
 
                     // Reproduce animals
-                    Thread.sleep(200);
                     Set<Vector2d> positions = map.getReproduceConflictedPositions();
 
                     for (Vector2d position : positions) {
@@ -240,17 +191,15 @@ public class SimulationEngine implements IEngine, Runnable {
                         Animal bestAnimal = animals.descendingSet().first();
                         Animal partnerAnimal = map.resolveConflicts(position, bestAnimal);
 
-                        if (partnerAnimal == null)
+                        if (partnerAnimal == null) {
                             continue;
+                        }
 
                         Animal offspringAnimal = bestAnimal.reproduce(partnerAnimal);
 
                         if (offspringAnimal != null) {
                             map.place(offspringAnimal);
                             animalsOrder.add(offspringAnimal);
-                            observers.forEach(observer->{
-                                Platform.runLater(() -> observer.addElementToMap(offspringAnimal, offspringAnimal.getPosition(),false));
-                            });
                         }
                     }
 
@@ -260,21 +209,85 @@ public class SimulationEngine implements IEngine, Runnable {
                     for (int i = 0; i < plantSpawnAmount.getValue(); i++) {
                         Plant plant = map.growPlant();
                         if (plant == null) continue;
-                        observers.forEach(observer->{
-                            Platform.runLater(() -> observer.addElementToMap(plant, plant.getPosition(),false));
-                        });
-                        countPlants++;
+                        plantsToAdd.add(plant);
+                        countPlants.incrementAndGet();
                     }
-
-                    // Update plant number
-                    simulationStatistics.put(SimulationStatistics.NUMBER_OF_PLANTS, new IntegerValue(countPlants));
-                    simulationStatistics.put(SimulationStatistics.NUMBER_OF_EMPTY_FIELDS, new IntegerValue(mapWidth * mapHeight - countPlants - animalsOrder.size()));
-
-                    // Update day number
-                    simulationStatistics.put(SimulationStatistics.DAY, new IntegerValue(++day));
 
                     // Decrease energy
                     map.decreaseAnimalsEnergy();
+
+                    // Run GUI methods
+                    // Note: Why we are using booleans instead of throwing exception?
+                    // try-catch block is time-consuming, so we want to avoid it.
+                    // especially when we run animation with 100ms delay.
+                    Platform.runLater(() -> {
+                            // Remove dead animals
+                            for(ISimulationObserver observer : observers){
+                                for(Animal animalToRemove : animalsToRemove) {
+                                    boolean result = observer.removeElementFromMap(animalToRemove);
+                                    if(!result){
+                                        System.out.println("Zwierzę do usunięcia nie zostało usunięte.");
+                                    }
+                                }
+                            }
+
+                            for (Animal animal : animalsOrder) {
+                                for (ISimulationObserver observer : observers) {
+                                    // Remove current animals
+                                    boolean removeResult = observer.removeElementFromMap(animal);
+                                    if(!removeResult){
+                                        System.out.println("Zwierzę do usunięcia nie zostało usunięte.");
+                                    }
+                                    boolean addResult = observer.addElementToMap(animal, animal.getPosition(), animal == observedAnimal);
+                                    if(!addResult){
+                                        System.out.println("Zwierzę do dodania nie zostało dodane.");
+                                    }
+                                }
+                            }
+
+                            for( ISimulationObserver observer : observers){
+                                for(Plant plantToRemove : plantsToRemove){
+                                    boolean result = observer.removeElementFromMap(plantToRemove);
+                                    if(!result){
+                                        System.out.println("Roślina do usunięcia nie została usunięta.");
+                                    }
+                                }
+                            }
+
+                            for( ISimulationObserver observer : observers){
+                                for(Plant plantToAdd : plantsToAdd){
+                                    boolean result = observer.addElementToMap(plantToAdd, plantToAdd.getPosition(), false);
+                                    if(!result){
+                                        System.out.println("Roślina do dodania nie została dodana.");
+                                    }
+                                }
+                            }
+                    });
+
+                    // ******** Update statistics ********
+
+                    // Update average animal life span
+                    totalDeadAnimals += animalsToRemove.size();
+                    totalSumOfAnimalLifespan += animalsToRemove.stream().mapToInt(Animal::getDays).sum();
+                    if (totalDeadAnimals != 0) {
+                        simulationStatistics.put(SimulationStatistics.AVERAGE_ANIMAL_LIFESPAN, new DoubleValue((double) (totalSumOfAnimalLifespan / totalDeadAnimals)));
+                    }
+
+                    // Update animal number
+                    simulationStatistics.put(SimulationStatistics.NUMBER_OF_ANIMALS, new IntegerValue(animalsOrder.size()));
+
+                    // Update average animal energy
+                    if (animalsOrder.size() != 0) {
+                        int sumOfAnimalEnergy = animalsOrder.stream().mapToInt(Animal::getEnergy).sum();
+                        simulationStatistics.put(SimulationStatistics.AVERAGE_ANIMAL_ENERGY, new DoubleValue((double) (sumOfAnimalEnergy / animalsOrder.size())));
+                    }
+
+                    // Update plant number
+                    simulationStatistics.put(SimulationStatistics.NUMBER_OF_PLANTS, new IntegerValue(countPlants.get()));
+                    simulationStatistics.put(SimulationStatistics.NUMBER_OF_EMPTY_FIELDS, new IntegerValue(mapWidth * mapHeight - countPlants.get()));
+
+                    // Update day number
+                    simulationStatistics.put(SimulationStatistics.DAY, new IntegerValue(day.incrementAndGet()));
 
                     // Write to statistics file
                     saveStatisticsToFile();
@@ -283,7 +296,7 @@ public class SimulationEngine implements IEngine, Runnable {
                     Platform.runLater(() -> observers.forEach(ob -> ob.renderMainStatistics(simulationStatistics)));
 
                     // Update animal statistics
-                    if(observedAnimal != null){
+                    if (observedAnimal != null) {
                         Map<AnimalStatistics, ISimulationConfigurationValue> animalStatistics = new HashMap<>();
                         animalStatistics.put(AnimalStatistics.ANIMAL_GENOME, new StringValue(observedAnimal.getGenome().toString()));
                         animalStatistics.put(AnimalStatistics.ANIMAL_ACTIVE_GENOME, new IntegerValue(observedAnimal.getGenome().getCurrentGen()));
@@ -348,13 +361,19 @@ public class SimulationEngine implements IEngine, Runnable {
     @Override
     public void selectAnimalToObserve(Animal animal) {
         Platform.runLater(() -> observers.forEach(ob -> {
-            if(observedAnimal != null){
+            if (observedAnimal != null) {
                 ob.removeElementFromMap(observedAnimal);
-                if(observedAnimal.isAlive()){
+                if (observedAnimal.isAlive()) {
                     ob.addElementToMap(observedAnimal, observedAnimal.getPosition(), false);
                 }
             }
             observedAnimal = animal;
+            if (observedAnimal != null) {
+                ob.removeElementFromMap(observedAnimal);
+                if(observedAnimal.isAlive()){
+                    ob.addElementToMap(observedAnimal, observedAnimal.getPosition(), true);
+                }
+            }
         }));
     }
 
@@ -363,14 +382,14 @@ public class SimulationEngine implements IEngine, Runnable {
             PathValue filePath = (PathValue) simulationOptions.get(ConfigurationConstant.STATISTICS_FILE_PATH);
 
             // If path is not specified - do not initialize file
-            if(filePath == null){
+            if (filePath == null) {
                 return;
             }
 
             ArrayList<String> lines = new ArrayList<>();
             StringBuilder line = new StringBuilder();
             for (SimulationStatistics statistic : SimulationStatistics.values()) {
-                if(simulationStatistics.containsKey(statistic)){
+                if (simulationStatistics.containsKey(statistic)) {
                     line.append(statistic.toString()).append(',');
                 }
             }
@@ -380,10 +399,9 @@ public class SimulationEngine implements IEngine, Runnable {
             Charset utf8 = StandardCharsets.UTF_8;
             Path path = Paths.get(filePath.getValue());
             Files.write(path, lines, utf8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-        }catch (InvalidPathException e){
+        } catch (InvalidPathException e) {
             throw new IOException("Błędna ścieżka do pliku z zapisem danych", e);
-        }
-        catch (IOException | IllegalArgumentException e) {
+        } catch (IOException | IllegalArgumentException e) {
             throw new IOException(e);
         }
     }
@@ -393,14 +411,14 @@ public class SimulationEngine implements IEngine, Runnable {
             PathValue filePath = (PathValue) simulationOptions.get(ConfigurationConstant.STATISTICS_FILE_PATH);
 
             // If path is not specified - do not save statistics
-            if(filePath == null){
+            if (filePath == null) {
                 return;
             }
 
             ArrayList<String> lines = new ArrayList<>();
             StringBuilder line = new StringBuilder();
             for (SimulationStatistics statistic : SimulationStatistics.values()) {
-                if(simulationStatistics.containsKey(statistic)){
+                if (simulationStatistics.containsKey(statistic)) {
                     line.append(simulationStatistics.get(statistic).toString()).append(',');
                 }
             }
@@ -410,10 +428,9 @@ public class SimulationEngine implements IEngine, Runnable {
             Charset utf8 = StandardCharsets.UTF_8;
             Path path = Paths.get(filePath.getValue());
             Files.write(path, lines, utf8, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-        }catch (InvalidPathException e){
+        } catch (InvalidPathException e) {
             throw new IOException("Błędna ścieżka do pliku z zapisem danych", e);
-        }
-        catch (IOException | IllegalArgumentException e) {
+        } catch (IOException | IllegalArgumentException e) {
             throw new IOException(e);
         }
     }
