@@ -3,7 +3,7 @@ package com.evolutiongenerator.constant;
 import java.util.Arrays;
 
 /**
- * Map variants constants
+ * Map variants constants.
  *
  * @author Patryk Klatka
  */
@@ -24,9 +24,9 @@ public enum MapVariant implements ISimulationConfigurationValue {
     INFERNAL_PORTAL;
 
     /**
-     * Returns a string representation of constant
+     * Returns a string representation of constant.
      *
-     * @return String representation of constant
+     * @return String representation of constant.
      */
     public String toString() {
         return switch (this) {
@@ -36,9 +36,10 @@ public enum MapVariant implements ISimulationConfigurationValue {
     }
 
     /**
-     * Returns a parsed from string MapVariant value
+     * Returns a parsed from string MapVariant value.
      *
-     * @return ISimulationConfigurationValue value
+     * @param value String value.
+     * @return ISimulationConfigurationValue value.
      */
     public static ISimulationConfigurationValue fromString(String value) throws IllegalArgumentException {
         return Arrays.stream(MapVariant.values())

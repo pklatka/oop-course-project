@@ -4,6 +4,11 @@ import com.evolutiongenerator.utils.Vector2d;
 
 import java.util.Objects;
 
+/**
+ * Class representing a plant.
+ *
+ * @author Paweł Motyka
+ */
 public class Plant implements IMapElement {
     private Vector2d position;
     private int energy;
@@ -13,7 +18,7 @@ public class Plant implements IMapElement {
     public Plant(Vector2d position, int energy, boolean isOnEquator) {
         this.position = position;
         this.energy = energy;
-        this.isOnEquator =isOnEquator;
+        this.isOnEquator = isOnEquator;
     }
 
 

@@ -1,5 +1,10 @@
 package com.evolutiongenerator.constant;
 
+/**
+ * Simulation statistics constants.
+ *
+ * @author Patryk Klatka
+ */
 public enum SimulationStatistics {
     DAY,
     NUMBER_OF_ANIMALS,

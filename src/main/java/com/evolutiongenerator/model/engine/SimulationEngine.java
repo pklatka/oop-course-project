@@ -10,6 +10,7 @@ import com.evolutiongenerator.model.mapObject.Plant;
 import com.evolutiongenerator.stage.ISimulationObserver;
 import com.evolutiongenerator.utils.*;
 import javafx.application.Platform;
+import javafx.scene.control.Alert;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -28,7 +29,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SimulationEngine implements IEngine, Runnable {
 
     private IWorldMap map;
-    // Use ArrayList to remember initial animal order
     private final List<Animal> animalsOrder = new CopyOnWriteArrayList<>();
     private int moveDelay = 100;
     private boolean isRunning = true;
@@ -44,6 +44,11 @@ public class SimulationEngine implements IEngine, Runnable {
     AtomicInteger countPlants = new AtomicInteger(0);
     AtomicInteger day = new AtomicInteger(0);
 
+    /**
+     * Constructor for SimulationEngine class. Initializes simulation options, map and statistics.
+     *
+     * @param simulationOptions Map of simulation options.
+     */
     public SimulationEngine(Map<ConfigurationConstant, ISimulationConfigurationValue> simulationOptions, ISimulationObserver observer) {
         this.simulationOptions = simulationOptions;
         this.observers.add(observer);
@@ -55,7 +60,6 @@ public class SimulationEngine implements IEngine, Runnable {
         this.mapHeight = mapHeight.getValue();
         MapVariant mapVariant = (MapVariant) simulationOptions.get(ConfigurationConstant.MAP_VARIANT);
         IntegerValue plantValue = (IntegerValue) simulationOptions.get(ConfigurationConstant.PLANT_ENERGY);
-
 
         IntegerValue genLength = (IntegerValue) simulationOptions.get(ConfigurationConstant.GENOTYPE_LENGTH);
         IntegerValue maximumMutationNumber = (IntegerValue) simulationOptions.get(ConfigurationConstant.MAXIMUM_MUTATION_NUMBER);
@@ -115,12 +119,13 @@ public class SimulationEngine implements IEngine, Runnable {
             initializeStatisticsFile();
         } catch (IOException e) {
             e.printStackTrace();
+            alert(Alert.AlertType.ERROR, "Error", "Błąd pliku", "Nie udało się zainicjować pliku z statystykami");
         }
     }
 
 
     /**
-     * Main simulation procedure
+     * Main simulation procedure.
      */
     @Override
     public void run() {
@@ -130,7 +135,7 @@ public class SimulationEngine implements IEngine, Runnable {
                     // Simulation is paused
                     Thread.sleep(100);
                 } else {
-                    // Simulation executes default procedure
+                    // Simulation default procedure
                     IntegerValue plantSpawnAmount = (IntegerValue) simulationOptions.get(ConfigurationConstant.PLANT_SPAWN_NUMBER);
                     List<Animal> animalsToRemove = map.cleanDeadAnimals();
                     animalsOrder.removeAll(animalsToRemove);
@@ -153,7 +158,7 @@ public class SimulationEngine implements IEngine, Runnable {
                         TreeSet<Animal> animals = map.getAnimalsFrom(vector2d);
                         if (animals.size() > 1) {
                             Animal bestAnimal = map.resolveConflicts(vector2d, null);
-                            if(bestAnimal == null){
+                            if (bestAnimal == null) {
                                 continue;
                             }
                             Plant eatenPlant = bestAnimal.consume(map.getPlantFrom(vector2d));
@@ -168,7 +173,7 @@ public class SimulationEngine implements IEngine, Runnable {
                             plantsToRemove.add(eatenPlant);
                         } else if (animals.size() == 1) {
                             Animal animal = animals.descendingSet().first();
-                            if(animal == null){
+                            if (animal == null) {
                                 continue;
                             }
                             Plant eatenPlant = animal.consume(map.getPlantFrom(vector2d));
@@ -222,47 +227,47 @@ public class SimulationEngine implements IEngine, Runnable {
                     // try-catch block is time-consuming, so we want to avoid it.
                     // especially when we run animation with 100ms delay.
                     Platform.runLater(() -> {
-                            // Remove dead animals
-                            for(ISimulationObserver observer : observers){
-                                for(Animal animalToRemove : animalsToRemove) {
-                                    boolean result = observer.removeElementFromMap(animalToRemove);
-                                    if(!result){
-                                        System.out.println("Zwierzę do usunięcia nie zostało usunięte.");
-                                    }
+                        // Remove dead animals
+                        for (ISimulationObserver observer : observers) {
+                            for (Animal animalToRemove : animalsToRemove) {
+                                boolean result = observer.removeElementFromMap(animalToRemove);
+                                if (!result) {
+                                    System.out.println("Zwierzę do usunięcia nie zostało usunięte.");
                                 }
                             }
+                        }
 
-                            for (Animal animal : animalsOrder) {
-                                for (ISimulationObserver observer : observers) {
-                                    // Remove current animals
-                                    boolean removeResult = observer.removeElementFromMap(animal);
-                                    if(!removeResult){
-                                        System.out.println("Zwierzę do usunięcia nie zostało usunięte.");
-                                    }
-                                    boolean addResult = observer.addElementToMap(animal, animal.getPosition(), animal == observedAnimal);
-                                    if(!addResult){
-                                        System.out.println("Zwierzę do dodania nie zostało dodane.");
-                                    }
+                        for (Animal animal : animalsOrder) {
+                            for (ISimulationObserver observer : observers) {
+                                // Remove current animals
+                                boolean removeResult = observer.removeElementFromMap(animal);
+                                if (!removeResult) {
+                                    System.out.println("Zwierzę do usunięcia nie zostało usunięte.");
+                                }
+                                boolean addResult = observer.addElementToMap(animal, animal.getPosition(), animal == observedAnimal);
+                                if (!addResult) {
+                                    System.out.println("Zwierzę do dodania nie zostało dodane.");
                                 }
                             }
+                        }
 
-                            for( ISimulationObserver observer : observers){
-                                for(Plant plantToRemove : plantsToRemove){
-                                    boolean result = observer.removeElementFromMap(plantToRemove);
-                                    if(!result){
-                                        System.out.println("Roślina do usunięcia nie została usunięta.");
-                                    }
+                        for (ISimulationObserver observer : observers) {
+                            for (Plant plantToRemove : plantsToRemove) {
+                                boolean result = observer.removeElementFromMap(plantToRemove);
+                                if (!result) {
+                                    System.out.println("Roślina do usunięcia nie została usunięta.");
                                 }
                             }
+                        }
 
-                            for( ISimulationObserver observer : observers){
-                                for(Plant plantToAdd : plantsToAdd){
-                                    boolean result = observer.addElementToMap(plantToAdd, plantToAdd.getPosition(), false);
-                                    if(!result){
-                                        System.out.println("Roślina do dodania nie została dodana.");
-                                    }
+                        for (ISimulationObserver observer : observers) {
+                            for (Plant plantToAdd : plantsToAdd) {
+                                boolean result = observer.addElementToMap(plantToAdd, plantToAdd.getPosition(), false);
+                                if (!result) {
+                                    System.out.println("Roślina do dodania nie została dodana.");
                                 }
                             }
+                        }
                     });
 
                     // ******** Update statistics ********
@@ -320,16 +325,25 @@ public class SimulationEngine implements IEngine, Runnable {
         }
     }
 
+    /**
+     * Pause simulation.
+     */
     @Override
     public void pause() {
         isPaused = true;
     }
 
+    /**
+     * Resume simulation.
+     */
     @Override
     public void resume() {
         isPaused = false;
     }
 
+    /**
+     * Stop simulation.
+     */
     public void kill() {
         isRunning = false;
     }
@@ -337,7 +351,7 @@ public class SimulationEngine implements IEngine, Runnable {
     /**
      * Add ISimulationObserver.
      *
-     * @param observer
+     * @param observer Observer to add.
      */
     @Override
     public void addObserver(ISimulationObserver observer) {
@@ -347,7 +361,7 @@ public class SimulationEngine implements IEngine, Runnable {
     /**
      * Remove ISimulationObserver.
      *
-     * @param observer
+     * @param observer Observer to remove.
      */
     @Override
     public void removeObserver(ISimulationObserver observer) {
@@ -371,13 +385,18 @@ public class SimulationEngine implements IEngine, Runnable {
             observedAnimal = animal;
             if (observedAnimal != null) {
                 ob.removeElementFromMap(observedAnimal);
-                if(observedAnimal.isAlive()){
+                if (observedAnimal.isAlive()) {
                     ob.addElementToMap(observedAnimal, observedAnimal.getPosition(), true);
                 }
             }
         }));
     }
 
+    /**
+     * Initialize statistics file.
+     *
+     * @throws IOException If file cannot be initialized.
+     */
     private void initializeStatisticsFile() throws IOException {
         try {
             PathValue filePath = (PathValue) simulationOptions.get(ConfigurationConstant.STATISTICS_FILE_PATH);
@@ -407,6 +426,11 @@ public class SimulationEngine implements IEngine, Runnable {
         }
     }
 
+    /**
+     * Save statistics to file.
+     *
+     * @throws IOException If file cannot be saved.
+     */
     public void saveStatisticsToFile() throws IOException {
         try {
             PathValue filePath = (PathValue) simulationOptions.get(ConfigurationConstant.STATISTICS_FILE_PATH);
@@ -434,5 +458,21 @@ public class SimulationEngine implements IEngine, Runnable {
         } catch (IOException | IllegalArgumentException e) {
             throw new IOException(e);
         }
+    }
+
+    /**
+     * Shows alert with given parameters.
+     *
+     * @param alertType Alert type.
+     * @param title     Alert title.
+     * @param header    Alert header.
+     * @param content   Alert content.
+     */
+    private void alert(Alert.AlertType alertType, String title, String header, String content) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.show();
     }
 }

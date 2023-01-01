@@ -72,7 +72,7 @@ public class SimulationConfigurationController implements Initializable {
     @FXML
     private TextField animalStartNumber;
     @FXML
-    private TextField genomLength;
+    private TextField genomeLength;
     @FXML
     private TextField animalStartEnergy;
     @FXML
@@ -114,7 +114,7 @@ public class SimulationConfigurationController implements Initializable {
     /**
      * Sets the fileChooser utility from simulationConfiguration stage.
      *
-     * @param fileChooser reference to fileChooser utility
+     * @param fileChooser reference to fileChooser utility.
      */
     public void setFileChooserUtil(FileChooser fileChooser) {
         this.fileChooser = fileChooser;
@@ -126,8 +126,8 @@ public class SimulationConfigurationController implements Initializable {
     /**
      * Get path to the example configuration file.
      *
-     * @param filename name of the example configuration file
-     * @return path to file
+     * @param filename name of the example configuration file.
+     * @return path to file.
      */
     private String getExampleConfigurationPath(String filename) throws IllegalArgumentException {
         if (filename == null || filename.equals("")) {
@@ -140,9 +140,10 @@ public class SimulationConfigurationController implements Initializable {
     /**
      * Gets saved options as EnumMap.
      *
-     * @return EnumMap with saved options
+     * @return EnumMap with saved options.
+     * @throws IllegalArgumentException if any of the options is not set or is invalid.
      */
-    private Map<ConfigurationConstant, ISimulationConfigurationValue> getSimulationOptions() {
+    private Map<ConfigurationConstant, ISimulationConfigurationValue> getSimulationOptions() throws IllegalArgumentException {
         try {
             Map<ConfigurationConstant, ISimulationConfigurationValue> args = new EnumMap<>(ConfigurationConstant.class);
             // ******* Additional arguments *******
@@ -164,18 +165,18 @@ public class SimulationConfigurationController implements Initializable {
     /**
      * Checks if simulation configuration is valid.
      *
-     * @throws IllegalArgumentException if configuration field is invalid
+     * @throws IllegalArgumentException if configuration field is invalid.
      */
-    private void checkIfSimulationConfigurationIsValid() throws IllegalArgumentException{
+    private void checkIfSimulationConfigurationIsValid() throws IllegalArgumentException {
         // Check integer values
         Integer mapWidth = ((IntegerValue) simulationProperties.get(ConfigurationConstant.MAP_WIDTH).readProperty()).getValue();
         Integer mapHeight = ((IntegerValue) simulationProperties.get(ConfigurationConstant.MAP_HEIGHT).readProperty()).getValue();
 
-        if(!(0 < mapWidth && mapWidth <= 100)){
+        if (!(0 < mapWidth && mapWidth <= 100)) {
             throw new IllegalArgumentException("Szerokość mapy musi być liczbą z przedziału (0, 100].");
         }
 
-        if(!(0 < mapHeight && mapHeight <= 100)){
+        if (!(0 < mapHeight && mapHeight <= 100)) {
             throw new IllegalArgumentException("Wysokość mapy musi być liczbą z przedziału (0, 100].");
         }
 
@@ -183,11 +184,11 @@ public class SimulationConfigurationController implements Initializable {
 
         Integer animalStartNumber = ((IntegerValue) simulationProperties.get(ConfigurationConstant.ANIMAL_START_NUMBER).readProperty()).getValue();
 
-        if(animalStartNumber > numberOfFields){
+        if (animalStartNumber > numberOfFields) {
             throw new IllegalArgumentException("Liczba początkowych zwierząt nie może przekraczać liczby pól na mapie.");
         }
 
-        if(animalStartNumber <= 0){
+        if (animalStartNumber <= 0) {
             throw new IllegalArgumentException("Liczba początkowych zwierząt musi być większa od 0.");
         }
 
@@ -196,71 +197,71 @@ public class SimulationConfigurationController implements Initializable {
             throw new IllegalArgumentException("Długość genotypu musi być większa od 0.");
         }
 
-        if(genotypeLength > 40){
+        if (genotypeLength > 40) {
             throw new IllegalArgumentException("Długość genotypu nie może przekraczać 40.");
         }
 
         Integer animalStartEnergy = ((IntegerValue) simulationProperties.get(ConfigurationConstant.ANIMAL_START_ENERGY).readProperty()).getValue();
 
-        if(animalStartEnergy <= 0){
+        if (animalStartEnergy <= 0) {
             throw new IllegalArgumentException("Początkowa energia zwierząt musi być większa od 0.");
         }
 
         Integer animalReproductionEnergy = ((IntegerValue) simulationProperties.get(ConfigurationConstant.ANIMAL_REPRODUCTION_ENERGY).readProperty()).getValue();
 
-        if(animalReproductionEnergy <= 0){
+        if (animalReproductionEnergy <= 0) {
             throw new IllegalArgumentException("Energia potrzebna do rozmnażania się zwierząt musi być większa od 0.");
         }
 
         Integer animalReproductionEnergyCost = ((IntegerValue) simulationProperties.get(ConfigurationConstant.ANIMAL_REPRODUCTION_ENERGY_COST).readProperty()).getValue();
 
-        if(animalReproductionEnergyCost <= 0){
+        if (animalReproductionEnergyCost <= 0) {
             throw new IllegalArgumentException("Koszt rozmnażania się zwierząt musi być większy od 0.");
         }
 
-        if(animalReproductionEnergy < animalReproductionEnergyCost){
+        if (animalReproductionEnergy < animalReproductionEnergyCost) {
             throw new IllegalArgumentException("Energia potrzebna do rozmnażania się zwierząt musi być większa od kosztu rozmnażania się.");
         }
 
         Integer plantStartNumber = ((IntegerValue) simulationProperties.get(ConfigurationConstant.PLANT_START_NUMBER).readProperty()).getValue();
 
-        if(plantStartNumber > numberOfFields){
+        if (plantStartNumber > numberOfFields) {
             throw new IllegalArgumentException("Liczba początkowych roślin nie może przekraczać liczby pól na mapie.");
         }
 
-        if(plantStartNumber < 0){
+        if (plantStartNumber < 0) {
             throw new IllegalArgumentException("Liczba początkowych roślin musi być większa bądź równa 0.");
         }
 
-        if(plantStartNumber > mapWidth * mapHeight){
+        if (plantStartNumber > mapWidth * mapHeight) {
             throw new IllegalArgumentException("Liczba początkowych roślin nie może przekraczać liczby pól na mapie.");
         }
 
         Integer plantEnergy = ((IntegerValue) simulationProperties.get(ConfigurationConstant.PLANT_ENERGY).readProperty()).getValue();
 
-        if(plantEnergy <= 0){
+        if (plantEnergy <= 0) {
             throw new IllegalArgumentException("Energia roślin musi być większa od 0.");
         }
 
         Integer plantSpawnNumber = ((IntegerValue) simulationProperties.get(ConfigurationConstant.PLANT_SPAWN_NUMBER).readProperty()).getValue();
 
-        if(plantSpawnNumber < 0){
+        if (plantSpawnNumber < 0) {
             throw new IllegalArgumentException("Liczba roślin rozmnażających się w jednym dniu musi być większa bądź równa 0.");
         }
 
         Integer minimumMutationNumber = ((IntegerValue) simulationProperties.get(ConfigurationConstant.MINIMUM_MUTATION_NUMBER).readProperty()).getValue();
 
-        if(minimumMutationNumber < 0){
+        if (minimumMutationNumber < 0) {
             throw new IllegalArgumentException("Minimalna liczba mutacji musi być większa bądź równa 0.");
         }
 
         Integer maximumMutationNumber = ((IntegerValue) simulationProperties.get(ConfigurationConstant.MAXIMUM_MUTATION_NUMBER).readProperty()).getValue();
 
-        if(maximumMutationNumber < 0) {
+        if (maximumMutationNumber < 0) {
             throw new IllegalArgumentException("Maksymalna liczba mutacji musi być większa bądź równa 0.");
         }
 
-        if(maximumMutationNumber < minimumMutationNumber){
+        if (maximumMutationNumber < minimumMutationNumber) {
             throw new IllegalArgumentException("Maksymalna liczba mutacji musi być większa bądź równa minimalnej liczbie mutacji.");
         }
 
@@ -271,7 +272,9 @@ public class SimulationConfigurationController implements Initializable {
     /**
      * Loads configuration from filePath.
      *
-     * @param filePath path to file
+     * @param filePath path to file.
+     * @throws IOException              if file cannot be read.
+     * @throws IllegalArgumentException if file is not valid.
      */
     private void loadConfiguration(String filePath) throws IOException, IllegalArgumentException {
         if (filePath == null || filePath.equals("")) {
@@ -307,7 +310,8 @@ public class SimulationConfigurationController implements Initializable {
     /**
      * Saves current configuration to file.
      *
-     * @param filePath path to file
+     * @param filePath path to file.
+     * @throws IOException if file cannot be written.
      */
     private void saveConfiguration(String filePath) throws IOException {
         try {
@@ -318,9 +322,9 @@ public class SimulationConfigurationController implements Initializable {
                 lines.add(key + "=" + simulationProperties.get(key).readProperty());
             }
 
-            try{
+            try {
                 checkIfSimulationConfigurationIsValid();
-            }catch (IllegalArgumentException e){
+            } catch (IllegalArgumentException e) {
                 throw new IllegalArgumentException("Niepoprawna konfiguracja symulacji: " + e.getMessage());
             }
 
@@ -329,10 +333,9 @@ public class SimulationConfigurationController implements Initializable {
             Files.write(path, lines, utf8, StandardOpenOption.CREATE);
 
             alert(Alert.AlertType.INFORMATION, "Zapis pliku", "Informacja", "Plik został zapisany");
-        }catch (InvalidPathException e){
+        } catch (InvalidPathException e) {
             throw new IOException("Błędna ścieżka do pliku z zapisem danych", e);
-        }
-        catch (IOException | IllegalArgumentException e) {
+        } catch (IOException | IllegalArgumentException e) {
             throw new IOException(e);
         }
     }
@@ -341,6 +344,8 @@ public class SimulationConfigurationController implements Initializable {
 
     /**
      * Handles exampleConfiguration button.
+     *
+     * @param event ActionEvent.
      */
     private void exampleConfigurationHandler(ActionEvent event) {
         try {
@@ -366,6 +371,8 @@ public class SimulationConfigurationController implements Initializable {
 
     /**
      * Handles loadConfiguration button.
+     *
+     * @param event ActionEvent.
      */
     private void loadConfigurationHandler(ActionEvent event) {
         try {
@@ -386,6 +393,8 @@ public class SimulationConfigurationController implements Initializable {
 
     /**
      * Handles saveConfiguration button.
+     *
+     * @param event ActionEvent.
      */
     private void saveConfigurationHandler(ActionEvent event) {
         try {
@@ -406,6 +415,8 @@ public class SimulationConfigurationController implements Initializable {
 
     /**
      * Handles statisticsFileLocation button.
+     *
+     * @param event ActionEvent.
      */
     private void statisticsFileLocationHandler(ActionEvent event) {
         if (saveStatistics.isSelected()) {
@@ -432,6 +443,8 @@ public class SimulationConfigurationController implements Initializable {
 
     /**
      * Handles saveStatistics checkbox.
+     *
+     * @param event ActionEvent.
      */
     private void saveStatisticsHandler(ActionEvent event) {
         if (saveStatistics.isSelected()) {
@@ -445,6 +458,8 @@ public class SimulationConfigurationController implements Initializable {
 
     /**
      * Handles runSimulation button.
+     *
+     * @param event ActionEvent.
      */
     private void runSimulationHandler(ActionEvent event) {
         try {
@@ -470,6 +485,8 @@ public class SimulationConfigurationController implements Initializable {
 
     /**
      * Loads example configurations from resources folder and initializes variables which handle form.
+     *
+     * @throws IOException if example configurations cannot be loaded.
      */
     private void loadProperties() throws IOException {
         // Load files from configurationsFolderPath directory
@@ -492,7 +509,7 @@ public class SimulationConfigurationController implements Initializable {
         simulationProperties.put(ConfigurationConstant.MAP_WIDTH, new TextFieldHandler(mapWidth, exampleConfiguration));
         simulationProperties.put(ConfigurationConstant.MAP_HEIGHT, new TextFieldHandler(mapHeight, exampleConfiguration));
         simulationProperties.put(ConfigurationConstant.ANIMAL_START_NUMBER, new TextFieldHandler(animalStartNumber, exampleConfiguration));
-        simulationProperties.put(ConfigurationConstant.GENOTYPE_LENGTH, new TextFieldHandler(genomLength, exampleConfiguration));
+        simulationProperties.put(ConfigurationConstant.GENOTYPE_LENGTH, new TextFieldHandler(genomeLength, exampleConfiguration));
         simulationProperties.put(ConfigurationConstant.ANIMAL_START_ENERGY, new TextFieldHandler(animalStartEnergy, exampleConfiguration));
         simulationProperties.put(ConfigurationConstant.ANIMAL_REPRODUCTION_ENERGY, new TextFieldHandler(animalCreationEnergy, exampleConfiguration));
         simulationProperties.put(ConfigurationConstant.ANIMAL_REPRODUCTION_ENERGY_COST, new TextFieldHandler(animalCreationEnergyConsumption, exampleConfiguration));
@@ -513,8 +530,8 @@ public class SimulationConfigurationController implements Initializable {
     /**
      * Initializes ChoiceBox from List of strings.
      *
-     * @param choiceBox ChoiceBox to initialize
-     * @param values    List of strings to initialize ChoiceBox
+     * @param choiceBox ChoiceBox to initialize.
+     * @param values    List of strings to initialize ChoiceBox.
      */
     private void initializeChoiceBox(ChoiceBox<ISimulationConfigurationValue> choiceBox, ISimulationConfigurationValue[] values) {
         choiceBox.getItems().addAll(values);
@@ -530,8 +547,8 @@ public class SimulationConfigurationController implements Initializable {
     /**
      * Initializes SimulationConfiguration handlers, listeners, variables.
      *
-     * @param location  URL
-     * @param resources ResourceBundle
+     * @param location  URL.
+     * @param resources ResourceBundle.
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -570,10 +587,10 @@ public class SimulationConfigurationController implements Initializable {
     /**
      * Shows alert with given parameters.
      *
-     * @param alertType Alert type
-     * @param title     Alert title
-     * @param header    Alert header
-     * @param content   Alert content
+     * @param alertType Alert type.
+     * @param title     Alert title.
+     * @param header    Alert header.
+     * @param content   Alert content.
      */
     private void alert(Alert.AlertType alertType, String title, String header, String content) {
         Alert alert = new Alert(alertType);

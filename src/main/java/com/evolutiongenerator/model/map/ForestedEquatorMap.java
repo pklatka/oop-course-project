@@ -5,6 +5,11 @@ import com.evolutiongenerator.model.mapObject.Plant;
 import com.evolutiongenerator.utils.Randomize;
 import com.evolutiongenerator.utils.Vector2d;
 
+/**
+ * Class representing a map of the world with a forested equator.
+ *
+ * @author Paweł Motyka
+ */
 public class ForestedEquatorMap extends AbstractWorldMap implements IWorldMap {
     private int plantsOnEquator;
 
@@ -50,6 +55,7 @@ public class ForestedEquatorMap extends AbstractWorldMap implements IWorldMap {
             tmpY = Randomize.generateInt(topRightVector.y, bottomLeftVector.y);
 
             if (plantHashMap.size() - plantsOnEquator >= width * height)
+
                 return null;
 
             while (!(tmpY >= equatorTopRight.y || tmpY <= equatorBottomLeft.y) || isPlantAt(new Vector2d(tmpX, tmpY))) {

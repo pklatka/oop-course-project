@@ -6,7 +6,7 @@ import java.text.DecimalFormat;
 import java.util.Objects;
 
 /**
- * Wrapper for double value, which implements ISimulationConfigurationValue interface.
+ * Double object wrapper, that implements ISimulationValue interface.
  *
  * @author Patryk Klatka
  */
@@ -14,7 +14,7 @@ public class DoubleValue implements ISimulationConfigurationValue {
     Double value;
     private static final DecimalFormat df = new DecimalFormat("0.00");
 
-    public DoubleValue(Double value){
+    public DoubleValue(Double value) {
         this.value = value;
     }
 

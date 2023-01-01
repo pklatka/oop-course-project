@@ -3,6 +3,11 @@ package com.evolutiongenerator.model.mapObject;
 import com.evolutiongenerator.utils.Randomize;
 import com.evolutiongenerator.utils.Vector2d;
 
+/**
+ * Class representing a map direction.
+ *
+ * @author Paweł Motyka
+ */
 public enum MapDirection {
     NORTH, NORTH_EAST, EAST, SOUTH_EAST, SOUTH, SOUTH_WEST, WEST, NORTH_WEST;
 

@@ -4,7 +4,9 @@ import com.evolutiongenerator.constant.ISimulationConfigurationValue;
 import javafx.scene.control.ChoiceBox;
 
 /**
- * Wrapper class for ChoiceBox
+ * Wrapper class for ChoiceBox.
+ *
+ * @author Patryk Klatka
  */
 public class ChoiceBoxHandler implements IConfigurationField {
     private final ChoiceBox<ISimulationConfigurationValue> choiceBox;
@@ -13,8 +15,8 @@ public class ChoiceBoxHandler implements IConfigurationField {
      * Constructor, sets choiceBox and fromStringFunction,
      * adds listener to choiceBox to reset exampleConfiguration value.
      *
-     * @param choiceBox            ChoiceBox of strings
-     * @param exampleConfiguration ExampleConfiguration object
+     * @param choiceBox            ChoiceBox of strings.
+     * @param exampleConfiguration ExampleConfiguration object.
      */
     public ChoiceBoxHandler(ChoiceBox<ISimulationConfigurationValue> choiceBox, ChoiceBox<String> exampleConfiguration) {
         this.choiceBox = choiceBox;
@@ -26,9 +28,9 @@ public class ChoiceBoxHandler implements IConfigurationField {
     }
 
     /**
-     * Write value to ChoiceBox
+     * Write value to ChoiceBox.
      *
-     * @param value ISimulationConfigurationValue value to write
+     * @param value ISimulationConfigurationValue value to write.
      */
     @Override
     public void writeProperty(ISimulationConfigurationValue value) {
@@ -38,9 +40,10 @@ public class ChoiceBoxHandler implements IConfigurationField {
     }
 
     /**
-     * Get value from ChoiceBox
+     * Get value from ChoiceBox.
      *
-     * @return ISimulationConfigurationValue value from ChoiceBox
+     * @return ISimulationConfigurationValue value from ChoiceBox.
+     * @throws IllegalArgumentException if value is not in ChoiceBox.
      */
     @Override
     public ISimulationConfigurationValue readProperty() throws IllegalArgumentException {

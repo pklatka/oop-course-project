@@ -4,7 +4,7 @@ import com.evolutiongenerator.utils.IntegerValue;
 import com.evolutiongenerator.utils.PathValue;
 
 /**
- * Configuration constants
+ * Configuration constants.
  *
  * @author Patryk Klatka
  */
@@ -45,9 +45,10 @@ public enum ConfigurationConstant {
         MUTATION_VARIANT;
 
         /**
-         * Returns a parsed from string ISimulationConfigurationValue value
+         * Returns a parsed from string ISimulationConfigurationValue value.
          *
-         * @return ISimulationConfigurationValue value
+         * @param value String value.
+         * @return ISimulationConfigurationValue value.
          */
         public ISimulationConfigurationValue getValueFromString(String value) throws IllegalArgumentException {
             try {
@@ -68,9 +69,9 @@ public enum ConfigurationConstant {
 
 
     /**
-     * Returns a ConfigurationConstantType of constant
+     * Returns a ConfigurationConstantType of constant.
      *
-     * @return ConfigurationConstantType of constant
+     * @return ConfigurationConstantType of constant.
      */
     public ConfigurationConstantType getType() throws IllegalArgumentException {
         return switch (this) {

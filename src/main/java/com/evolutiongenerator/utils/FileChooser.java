@@ -7,7 +7,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import java.io.File;
 
 /**
- * Wrapper class for javafx.stage.FileChooser
+ * Wrapper class for javafx.stage.FileChooser.
  *
  * @author Patryk Klatka
  */
@@ -15,19 +15,19 @@ public class FileChooser {
     private final Stage stage;
 
     /**
-     * Constructor, sets stage
+     * Constructor, sets stage.
      *
-     * @param stage Stage object
+     * @param stage Stage object.
      */
     public FileChooser(Stage stage) {
         this.stage = stage;
     }
 
     /**
-     * Show file chooser dialog to get file path
+     * Show file chooser dialog to get file path.
      *
-     * @param extensionFilter Extension filter for file chooser
-     * @return File path
+     * @param extensionFilter Extension filter for file chooser.
+     * @return File path.
      */
     public String getFilePath(ExtensionFilter extensionFilter) {
         javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
@@ -38,7 +38,7 @@ public class FileChooser {
         //Show save file dialog
         File file = fileChooser.showOpenDialog(stage);
 
-        if(file == null){
+        if (file == null) {
             return null;
         }
 
@@ -46,10 +46,10 @@ public class FileChooser {
     }
 
     /**
-     * Show file chooser dialog to get location where to save file
+     * Show file chooser dialog to get location where to save file.
      *
-     * @param extensionFilter Extension filter for file chooser
-     * @return File path
+     * @param extensionFilter Extension filter for file chooser.
+     * @return File path.
      */
     public String saveFilePath(ExtensionFilter extensionFilter) {
         javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
@@ -60,7 +60,7 @@ public class FileChooser {
         //Show save file dialog
         File file = fileChooser.showSaveDialog(stage);
 
-        if(file == null){
+        if (file == null) {
             return null;
         }
 

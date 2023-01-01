@@ -29,6 +29,12 @@ public class IntegerValue implements ISimulationConfigurationValue {
         return Objects.hash(value);
     }
 
+    /**
+     * Constructor which creates IntegerValue from string.
+     *
+     * @param value String value.
+     * @throws IllegalArgumentException if the string cannot be parsed to Integer.
+     */
     public IntegerValue(String value) throws IllegalArgumentException {
         try {
             this.value = Integer.valueOf(value);
@@ -51,9 +57,9 @@ public class IntegerValue implements ISimulationConfigurationValue {
     }
 
     /**
-     * Returns a parsed from string IntegerValue value
+     * Returns a parsed from string IntegerValue value.
      *
-     * @return ISimulationConfigurationValue value
+     * @return ISimulationConfigurationValue value.
      */
     public static ISimulationConfigurationValue fromString(String value) {
         return new IntegerValue(value);

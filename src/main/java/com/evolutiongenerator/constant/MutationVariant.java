@@ -3,7 +3,7 @@ package com.evolutiongenerator.constant;
 import java.util.Arrays;
 
 /**
- * Mutation variants constants
+ * Mutation variants constants.
  *
  * @author Patryk Klatka
  */
@@ -18,9 +18,9 @@ public enum MutationVariant implements ISimulationConfigurationValue {
     SLIGHT_CORRECTION;
 
     /**
-     * Returns a string representation of constant
+     * Returns a string representation of constant.
      *
-     * @return String representation of constant
+     * @return String representation of constant.
      */
     public String toString() {
         return switch (this) {
@@ -30,9 +30,10 @@ public enum MutationVariant implements ISimulationConfigurationValue {
     }
 
     /**
-     * Returns a parsed from string MutationVariant value
+     * Returns a parsed from string MutationVariant value.
      *
-     * @return ISimulationConfigurationValue value
+     * @param value String value.
+     * @return ISimulationConfigurationValue value.
      */
     public static ISimulationConfigurationValue fromString(String value) throws IllegalArgumentException {
         return Arrays.stream(MutationVariant.values())

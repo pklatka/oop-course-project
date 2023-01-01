@@ -6,6 +6,11 @@ import com.evolutiongenerator.utils.Vector2d;
 import java.util.Comparator;
 import java.util.TreeMap;
 
+/**
+ * Class representing the boundaries of the map.
+ *
+ * @author Patryk Klatka, Paweł Motyka
+ */
 public class MapBoundary implements IPositionChangeObserver {
 
     private final TreeMap<Vector2d, Integer> oxAxis = new TreeMap<>(Comparator.comparingInt(v -> v.x));

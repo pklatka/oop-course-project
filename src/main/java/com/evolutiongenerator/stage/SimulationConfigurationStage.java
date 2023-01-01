@@ -20,8 +20,8 @@ public class SimulationConfigurationStage extends Application {
     /**
      * Starts the stage.
      *
-     * @param stage Stage
-     * @throws IOException If the fxml file is not found
+     * @param stage Stage.
+     * @throws IOException If the fxml file is not found.
      */
     @Override
     public void start(Stage stage) throws IOException {
@@ -46,7 +46,7 @@ public class SimulationConfigurationStage extends Application {
     /**
      * Launches the stage.
      *
-     * @param args Arguments
+     * @param args Arguments.
      */
     public static void main(String[] args) {
         launch();

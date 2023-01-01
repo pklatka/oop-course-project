@@ -7,6 +7,11 @@ import com.evolutiongenerator.utils.Vector2d;
 
 import java.util.*;
 
+/**
+ * Class representing a map of the world with toxic corpses.
+ *
+ * @author Paweł Motyka
+ */
 public class ToxicCorpsesMap extends AbstractWorldMap implements IWorldMap {
 
     public ToxicCorpsesMap(int width, int height, int plantValue, MapVariant mapVariant) {
@@ -47,7 +52,7 @@ public class ToxicCorpsesMap extends AbstractWorldMap implements IWorldMap {
         if (Randomize.generateBooleanWithProbability(0.8)) {
             for (Vector2d vector2d : sortedMap.keySet()) {
                 if (!isPlantAt(vector2d)) {
-                    Plant plantToGrow = new Plant(vector2d, this.plantValue,false);
+                    Plant plantToGrow = new Plant(vector2d, this.plantValue, false);
                     this.plantHashMap.put(vector2d, plantToGrow);
                     this.availableGrassFields--;
                     return plantToGrow;
@@ -61,7 +66,7 @@ public class ToxicCorpsesMap extends AbstractWorldMap implements IWorldMap {
             tmpY = Randomize.generateInt(topRightVector.y, bottomLeftVector.y);
         }
         this.availableGrassFields--;
-        Plant plant = new Plant(new Vector2d(tmpX,tmpY),this.plantValue,false);
+        Plant plant = new Plant(new Vector2d(tmpX, tmpY), this.plantValue, false);
         this.plantHashMap.put(plant.getPosition(), plant);
         return plant;
     }

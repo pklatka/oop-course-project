@@ -11,6 +11,11 @@ import com.evolutiongenerator.utils.Vector2d;
 
 import java.util.*;
 
+/**
+ * Class representing an animal.
+ *
+ * @author Paweł Motyka
+ */
 public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
     private MapDirection heading = MapDirection.getRandomDirection();
     private Vector2d position;
@@ -44,7 +49,6 @@ public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
     }
 
 
-
     public int getDays() {
         return days;
     }
@@ -62,7 +66,7 @@ public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Animal animal = (Animal) o;
-        return System.identityHashCode(animal) == System.identityHashCode(this) && ENERGY_TO_REPRODUCE == animal.ENERGY_TO_REPRODUCE && REPRODUCE_COST == animal.REPRODUCE_COST &&  genes.equals(animal.genes);
+        return System.identityHashCode(animal) == System.identityHashCode(this) && ENERGY_TO_REPRODUCE == animal.ENERGY_TO_REPRODUCE && REPRODUCE_COST == animal.REPRODUCE_COST && genes.equals(animal.genes);
     }
 
     @Override
@@ -131,7 +135,7 @@ public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
             }
         }
 
-        if (map.isPlantAt(position)){
+        if (map.isPlantAt(position)) {
             map.addPlantToConsume(position);
         }
 
@@ -188,7 +192,7 @@ public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
         return plant;
     }
 
-    public int getEatenPlantsAmount(){
+    public int getEatenPlantsAmount() {
         return eatenPlants;
     }
 
@@ -196,10 +200,10 @@ public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
         days++;
     }
 
-    public void decreaseEnergy(int value){
+    public void decreaseEnergy(int value) {
         this.energy -= value;
 
-        if (this.energy <= 0){
+        if (this.energy <= 0) {
             map.addDeadAnimal(this);
         }
     }
@@ -207,10 +211,10 @@ public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
     @Override
     public int compareTo(Animal animal) {
         return Comparator.comparing(Animal::getEnergy)
-                        .thenComparing(Animal::getDays)
-                        .thenComparingInt(Animal::getChildrenAmount)
-                        .thenComparing(Animal::hashCode)
-                        .compare(this, animal);
+                .thenComparing(Animal::getDays)
+                .thenComparingInt(Animal::getChildrenAmount)
+                .thenComparing(Animal::hashCode)
+                .compare(this, animal);
     }
 
     @Override
@@ -218,16 +222,16 @@ public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
         return super.clone();
     }
 
-    public void makeDead(int deathDay){
+    public void makeDead(int deathDay) {
         isAlive = false;
         this.deathDay = deathDay;
     }
 
-    public int getDeathDay(){
+    public int getDeathDay() {
         return deathDay;
     }
 
-    public boolean isAlive(){
+    public boolean isAlive() {
         return isAlive;
     }
 
