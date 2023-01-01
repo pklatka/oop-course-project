@@ -18,6 +18,10 @@ public class StringValue implements ISimulationConfigurationValue {
         this.value = value.toString();
     }
 
+    public StringValue(int value) {
+        this.value = Integer.toString(value);
+    }
+
     @Override
     public String toString() {
         return value;

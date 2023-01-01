@@ -186,7 +186,7 @@
                                              </font>
                                           </Label>
                                           <Region prefHeight="17.0" prefWidth="9.0" HBox.hgrow="ALWAYS" />
-                                          <Label fx:id="selectedAnimalActiveGenome" alignment="CENTER" prefHeight="17.0" prefWidth="75.0" text="0" textAlignment="CENTER">
+                                          <Label fx:id="selectedAnimalActiveGenome" alignment="CENTER" prefHeight="17.0" prefWidth="75.0" text="-" textAlignment="CENTER">
                                              <font>
                                                 <Font name="Arial" size="15.0" />
                                              </font>
@@ -201,7 +201,7 @@
                                              </font>
                                           </Label>
                                           <Region prefHeight="17.0" prefWidth="9.0" HBox.hgrow="ALWAYS" />
-                                          <Label fx:id="selectedAnimalEnergy" alignment="CENTER" prefHeight="17.0" prefWidth="75.0" text="0" textAlignment="CENTER">
+                                          <Label fx:id="selectedAnimalEnergy" alignment="CENTER" prefHeight="17.0" prefWidth="75.0" text="-" textAlignment="CENTER">
                                              <font>
                                                 <Font name="Arial" size="15.0" />
                                              </font>
@@ -216,7 +216,7 @@
                                              </font>
                                           </Label>
                                           <Region prefHeight="17.0" prefWidth="9.0" HBox.hgrow="ALWAYS" />
-                                          <Label fx:id="selectedAnimalEatenPlants" alignment="CENTER" prefHeight="17.0" prefWidth="75.0" text="0" textAlignment="CENTER">
+                                          <Label fx:id="selectedAnimalEatenPlants" alignment="CENTER" prefHeight="17.0" prefWidth="75.0" text="-" textAlignment="CENTER">
                                              <font>
                                                 <Font name="Arial" size="15.0" />
                                              </font>
@@ -231,7 +231,7 @@
                                              </font>
                                           </Label>
                                           <Region prefHeight="17.0" prefWidth="9.0" HBox.hgrow="ALWAYS" />
-                                          <Label fx:id="selectedAnimalNumberOfChildren" alignment="CENTER" prefHeight="17.0" prefWidth="75.0" text="0" textAlignment="CENTER">
+                                          <Label fx:id="selectedAnimalNumberOfChildren" alignment="CENTER" prefHeight="17.0" prefWidth="75.0" text="-" textAlignment="CENTER">
                                              <font>
                                                 <Font name="Arial" size="15.0" />
                                              </font>
@@ -246,7 +246,7 @@
                                              </font>
                                           </Label>
                                           <Region prefHeight="17.0" prefWidth="9.0" HBox.hgrow="ALWAYS" />
-                                          <Label fx:id="selectedAnimalLifespan" alignment="CENTER" prefHeight="17.0" prefWidth="75.0" text="0" textAlignment="CENTER">
+                                          <Label fx:id="selectedAnimalLifespan" alignment="CENTER" prefHeight="17.0" prefWidth="75.0" text="-" textAlignment="CENTER">
                                              <font>
                                                 <Font name="Arial" size="15.0" />
                                              </font>
@@ -261,7 +261,7 @@
                                              </font>
                                           </Label>
                                           <Region prefHeight="17.0" prefWidth="9.0" HBox.hgrow="ALWAYS" />
-                                          <Label fx:id="selectedAnimalDeathDay" alignment="CENTER" prefHeight="17.0" prefWidth="75.0" text="b. d." textAlignment="CENTER">
+                                          <Label fx:id="selectedAnimalDeathDay" alignment="CENTER" prefHeight="17.0" prefWidth="75.0" text="-" textAlignment="CENTER">
                                              <font>
                                                 <Font name="Arial" size="15.0" />
                                              </font>

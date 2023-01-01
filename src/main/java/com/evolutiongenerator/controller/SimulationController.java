@@ -146,7 +146,6 @@ public class SimulationController implements Initializable, ISimulationObserver 
                 engine.selectAnimalToObserve(animal);
             } else {
                 resetSelectedAnimal();
-                resetAnimalStatistics();
             }
 
             engine.resume();
@@ -203,6 +202,10 @@ public class SimulationController implements Initializable, ISimulationObserver 
             selectedAnimal = (GuiMapElement) event.getSource();
             selectedAnimal.selectMapElement();
             animalStatisticsStatus.setText("Wybrano zwierzę do śledzenia");
+
+            if (selectedAnimal != null && selectedAnimal.getMapElement() instanceof Animal animal) {
+                engine.selectAnimalToObserve(animal);
+            }
         }
     }
 
@@ -485,35 +488,17 @@ public class SimulationController implements Initializable, ISimulationObserver 
     public void updateAnimalStatistics(Map<AnimalStatistics, ISimulationConfigurationValue> animalStatistics) {
         for (AnimalStatistics configurationConstant : animalStatistics.keySet()) {
             ISimulationConfigurationValue value = animalStatistics.get(configurationConstant);
-            if (value instanceof IntegerValue integerValue) {
+            if (value instanceof StringValue stringValue) {
                 switch (configurationConstant) {
-                    case ANIMAL_ACTIVE_GENOME -> selectedAnimalActiveGenome.setText(integerValue.toString());
-                    case ANIMAL_ENERGY -> selectedAnimalEnergy.setText(integerValue.toString());
-                    case ANIMAL_LIFESPAN -> selectedAnimalLifespan.setText(integerValue.toString());
-                    case ANIMAL_NUMBER_OF_CHILDREN -> selectedAnimalNumberOfChildren.setText(integerValue.toString());
-                    case ANIMAL_EATEN_PLANTS -> selectedAnimalEatenPlants.setText(integerValue.toString());
-                }
-            } else if (value instanceof StringValue stringValue) {
-                switch (configurationConstant) {
+                    case ANIMAL_ACTIVE_GENOME -> selectedAnimalActiveGenome.setText(stringValue.toString());
                     case ANIMAL_GENOME -> selectedAnimalGenome.setText(stringValue.toString());
                     case ANIMAL_DEATH_DAY -> selectedAnimalDeathDay.setText(stringValue.toString());
+                    case ANIMAL_ENERGY -> selectedAnimalEnergy.setText(stringValue.toString());
+                    case ANIMAL_LIFESPAN -> selectedAnimalLifespan.setText(stringValue.toString());
+                    case ANIMAL_NUMBER_OF_CHILDREN -> selectedAnimalNumberOfChildren.setText(stringValue.toString());
+                    case ANIMAL_EATEN_PLANTS -> selectedAnimalEatenPlants.setText(stringValue.toString());
                 }
             }
         }
-    }
-
-    /**
-     * Resets animal statistics to default values.
-     */
-    public void resetAnimalStatistics() {
-        Map<AnimalStatistics, ISimulationConfigurationValue> animalStatistics = new HashMap<>();
-        animalStatistics.put(AnimalStatistics.ANIMAL_ACTIVE_GENOME, new IntegerValue(0));
-        animalStatistics.put(AnimalStatistics.ANIMAL_ENERGY, new IntegerValue(0));
-        animalStatistics.put(AnimalStatistics.ANIMAL_LIFESPAN, new IntegerValue(0));
-        animalStatistics.put(AnimalStatistics.ANIMAL_NUMBER_OF_CHILDREN, new IntegerValue(0));
-        animalStatistics.put(AnimalStatistics.ANIMAL_EATEN_PLANTS, new IntegerValue(0));
-        animalStatistics.put(AnimalStatistics.ANIMAL_GENOME, new StringValue("-"));
-        animalStatistics.put(AnimalStatistics.ANIMAL_DEATH_DAY, new StringValue("b. d."));
-        updateAnimalStatistics(animalStatistics);
     }
 }

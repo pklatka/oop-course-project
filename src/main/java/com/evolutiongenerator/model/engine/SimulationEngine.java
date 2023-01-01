@@ -302,17 +302,7 @@ public class SimulationEngine implements IEngine, Runnable {
                     Platform.runLater(() -> observers.forEach(ob -> ob.renderMainStatistics(simulationStatistics)));
 
                     // Update animal statistics
-                    if (observedAnimal != null) {
-                        Map<AnimalStatistics, ISimulationConfigurationValue> animalStatistics = new HashMap<>();
-                        animalStatistics.put(AnimalStatistics.ANIMAL_GENOME, new StringValue(observedAnimal.getGenome().toString()));
-                        animalStatistics.put(AnimalStatistics.ANIMAL_ACTIVE_GENOME, new IntegerValue(observedAnimal.getGenome().getCurrentGen()));
-                        animalStatistics.put(AnimalStatistics.ANIMAL_ENERGY, new IntegerValue(observedAnimal.getEnergy()));
-                        animalStatistics.put(AnimalStatistics.ANIMAL_NUMBER_OF_CHILDREN, new IntegerValue(observedAnimal.getChildrenAmount()));
-                        animalStatistics.put(AnimalStatistics.ANIMAL_LIFESPAN, new IntegerValue(observedAnimal.getDays()));
-                        animalStatistics.put(AnimalStatistics.ANIMAL_EATEN_PLANTS, new IntegerValue(observedAnimal.getEatenPlantsAmount()));
-                        animalStatistics.put(AnimalStatistics.ANIMAL_DEATH_DAY, new StringValue(observedAnimal.isAlive() ? "b. d." : ((Integer) observedAnimal.getDeathDay()).toString()));
-                        Platform.runLater(() -> observers.forEach(ob -> ob.updateAnimalStatistics(animalStatistics)));
-                    }
+                    updateObservedAnimalStatistics();
 
                     // Delay simulation
                     Thread.sleep(moveDelay);
@@ -323,6 +313,38 @@ public class SimulationEngine implements IEngine, Runnable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Update observed animal statistics.
+     */
+    private void updateObservedAnimalStatistics() {
+        if (observedAnimal != null) {
+            Map<AnimalStatistics, ISimulationConfigurationValue> animalStatistics = new HashMap<>();
+            animalStatistics.put(AnimalStatistics.ANIMAL_GENOME, new StringValue(observedAnimal.getGenome().toString()));
+            animalStatistics.put(AnimalStatistics.ANIMAL_ACTIVE_GENOME, observedAnimal.getGenome().getCurrentGen() == -1 ? new StringValue("-") : new StringValue(observedAnimal.getGenome().getCurrentGen()));
+            animalStatistics.put(AnimalStatistics.ANIMAL_ENERGY, new StringValue(observedAnimal.getEnergy()));
+            animalStatistics.put(AnimalStatistics.ANIMAL_NUMBER_OF_CHILDREN, new StringValue(observedAnimal.getChildrenAmount()));
+            animalStatistics.put(AnimalStatistics.ANIMAL_LIFESPAN, new StringValue(observedAnimal.getDays()));
+            animalStatistics.put(AnimalStatistics.ANIMAL_EATEN_PLANTS, new StringValue(observedAnimal.getEatenPlantsAmount()));
+            animalStatistics.put(AnimalStatistics.ANIMAL_DEATH_DAY, observedAnimal.isAlive() ? new StringValue("-") : new StringValue(observedAnimal.getDeathDay()));
+            Platform.runLater(() -> observers.forEach(ob -> ob.updateAnimalStatistics(animalStatistics)));
+        }
+    }
+
+    /**
+     * Reset observed animal statistics.
+     */
+    private void resetObservedAnimalStatistics() {
+        Map<AnimalStatistics, ISimulationConfigurationValue> animalStatistics = new HashMap<>();
+        animalStatistics.put(AnimalStatistics.ANIMAL_ACTIVE_GENOME, new StringValue("-"));
+        animalStatistics.put(AnimalStatistics.ANIMAL_ENERGY, new StringValue("-"));
+        animalStatistics.put(AnimalStatistics.ANIMAL_LIFESPAN, new StringValue("-"));
+        animalStatistics.put(AnimalStatistics.ANIMAL_NUMBER_OF_CHILDREN, new StringValue("-"));
+        animalStatistics.put(AnimalStatistics.ANIMAL_EATEN_PLANTS, new StringValue("-"));
+        animalStatistics.put(AnimalStatistics.ANIMAL_GENOME, new StringValue("-"));
+        animalStatistics.put(AnimalStatistics.ANIMAL_DEATH_DAY, new StringValue("-"));
+        Platform.runLater(() -> observers.forEach(ob -> ob.updateAnimalStatistics(animalStatistics)));
     }
 
     /**
@@ -387,7 +409,10 @@ public class SimulationEngine implements IEngine, Runnable {
                 ob.removeElementFromMap(observedAnimal);
                 if (observedAnimal.isAlive()) {
                     ob.addElementToMap(observedAnimal, observedAnimal.getPosition(), true);
+                    updateObservedAnimalStatistics();
                 }
+            } else {
+                resetObservedAnimalStatistics();
             }
         }));
     }
