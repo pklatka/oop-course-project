@@ -180,7 +180,6 @@ public class Animal implements IMapElement, Comparable<Animal>, Cloneable {
     }
 
     public Plant consume(Plant plant) {
-
         if (plant == null)
             return null;
         this.energy += plant.getEnergy();
